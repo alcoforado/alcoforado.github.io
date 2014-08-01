@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Voronoi</title>
+    <link rel="stylesheet" href="app.css" type="text/css" />
+    <script src="lib/webgl-utils.js"></script>
+    <script src="lib/Shaders.js"></script>
+    <script src="lib/Shapes.js"></script>
+    <script src="lib/Input.js"></script>
+    <script>
+        window.onload = main;
+        function main()
+        {
+            var canvas = document.getElementById("canvas");
+            var gl = glUtils.getWebGLContext(canvas);
+            if (!gl) {
+                return;
+            }
+            gl.clearColor(0, 0, 0, 1);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+         
+            shader = ShaderColor2D(gl);
+            shader.shapes = [];
+
+            var input=PointSelect(canvas);
+            input.onAddPoint = function()
+            {
+                shader.shapes = [];
+
+               
+                /*shader.shapes.push(new Rect2D([-0.33, -0.33], [0.27, 0.27],
+                [0, 0, 0, 1,
+                 1, 0, 0, 1,
+                 1, 1, 0, 1,
+                 0, 1, 0, 1]));*/
+                shader.shapes=input.screenPointsAsNormalizedSquares(2, [1, 0, 1, 1]);
+                gl.clear(gl.COLOR_BUFFER_BIT);
+                shader.draw();
+            }
+        
+        }
+    </script>
+</head>
+<body>
+    
+    <h1>The Voronoi Diagram (The beach curves)</h1>
+    <h2>Mouse left click to select points in the screen. Then press the space bar</h2>
+    <div id="content"></div>
+
+    <canvas id="canvas" width="400" height="300"></canvas>
+
+</body>
+</html>
+
+

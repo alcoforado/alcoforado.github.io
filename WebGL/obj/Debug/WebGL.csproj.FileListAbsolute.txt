@@ -1,0 +1,6 @@
+C:\Users\mmendes\workspace\WebGL\WebGL\bin\WebGL.dll.config
+C:\Users\mmendes\workspace\WebGL\WebGL\bin\WebGL.dll
+C:\Users\mmendes\workspace\WebGL\WebGL\bin\WebGL.pdb
+C:\Users\mmendes\workspace\WebGL\WebGL\obj\Debug\WebGL.csprojResolveAssemblyReference.cache
+C:\Users\mmendes\workspace\WebGL\WebGL\obj\Debug\WebGL.dll
+C:\Users\mmendes\workspace\WebGL\WebGL\obj\Debug\WebGL.pdb
