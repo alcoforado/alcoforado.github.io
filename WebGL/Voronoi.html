@@ -24,6 +24,9 @@
             shader = ShaderColor2D(gl);
             shader.shapes = [];
 
+            shader.points=[new Point(0,0),new Point(0,0.5)]
+
+            shader.draw()
             var input=PointSelect(canvas);
             input.onAddPoint = function()
             {

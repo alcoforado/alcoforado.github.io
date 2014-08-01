@@ -67,3 +67,9 @@ Rect2D.prototype.writeColors = function () {
 }
 
 
+
+function Point(x,y)
+{
+    this.x = x;
+    this.y = y;
+}

@@ -35,10 +35,22 @@ Voronoi = function (pts, x1, x2, dx) {
         dx: dx,
         iterate: function(ly)
         {
-            for (var x=this.xfirst;x<this.xend;x+=dx)
+            var result = [];
+            selectPts(this.points, ly);
+            for (var x=this.xfirst;x<=this.xend;x+=this.dx)
             {
-                this.selectPts()
+                var min=Number.MAX_VALUE
+                for (var i = 0; i < this.points.length;i++)
+                {
+                    if (!this.points[i].active)
+                        break;
+                    var dd = this.points[i].beachLine(x, ly);
+                    if (dd < min)
+                       min = dd;
+                }
+                result.push(new Point(x,min))
             }
+            return result;
         }
     }
 

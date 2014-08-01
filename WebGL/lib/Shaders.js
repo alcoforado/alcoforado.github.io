@@ -69,6 +69,7 @@ ShaderColor2D = function (gl) {
      attribute vec4 a_color;\
      varying vec4 f_color;\
     void main() {\
+        gl_PointSize=10.0;\
         gl_Position = vec4(a_position, 0, 1);\
         f_color=a_color;\
     }";
@@ -90,18 +91,25 @@ ShaderColor2D = function (gl) {
 
         shapes: [],
 
+        points: [],
+
+        buffer: gl.createBuffer(),
+
+        iBuffer: gl.createBuffer(),
+
+        pointBuffer: gl.createBuffer(),
+
         draw: function () {
             gl.useProgram(program);
 
             // look up where the vertex data needs to go.
             var positionLocation = gl.getAttribLocation(program, "a_position");
-            var colorLocation    = gl.getAttribLocation(program, "a_color")
+            var colorLocation = gl.getAttribLocation(program, "a_color")
 
-            var buffer = gl.createBuffer();
-            gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+            
+        //    gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
 
-            var iBuffer = gl.createBuffer();
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, iBuffer)
+        //    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.iBuffer)
 
 
             var vertices = [];
@@ -110,12 +118,11 @@ ShaderColor2D = function (gl) {
             for (var i = 0; i < this.shapes.length; i++) {
                 var points = this.shapes[i].writeVertices();
                 var colors = this.shapes[i].writeColors();
-                if (points.length/2 != colors.length/4)
+                if (points.length / 2 != colors.length / 4)
                     throw "Colors must be set for all points";
                 var j = 0;
                 var k = 0;
-                while (j < points.length)
-                {
+                while (j < points.length) {
                     vertices.push(points[j++]);
                     vertices.push(points[j++]);
                     vertices.push(colors[k++]);
@@ -124,25 +131,42 @@ ShaderColor2D = function (gl) {
                     vertices.push(colors[k++]);
                 }
                 var ind = this.shapes[i].writeIndices();
-                for (var l = 0; l < ind.length ; l++)
-                {
+                for (var l = 0; l < ind.length ; l++) {
                     ind[l] += off;
                 }
-                off += points.length/2;
+                off += points.length / 2;
                 indices = indices.concat(ind);
 
             }
 
 
-            gl.bufferData(gl.ARRAY_BUFFER,         new Float32Array(vertices), gl.STATIC_DRAW);
-            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW)
+       //     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
+        //    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.DYNAMIC_DRAW)
             gl.enableVertexAttribArray(positionLocation);
             gl.enableVertexAttribArray(colorLocation)
-            gl.vertexAttribPointer(positionLocation, 2,gl.FLOAT, false,  24, 0);
-            gl.vertexAttribPointer(colorLocation   , 4,gl.FLOAT, false,  24, 2*4);
+       //     gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 24, 0);
+       //     gl.vertexAttribPointer(colorLocation, 4, gl.FLOAT, false, 24, 2 * 4);
 
             // draw
-            gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0); 
+        //    gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
+
+
+
+            pointsV = [];
+            for (var i = 0; i < this.points.length; i++) {
+                pointsV.push(this.points[i].x);
+                pointsV.push(this.points[i].y);
+                pointsV.push(1.0);
+                pointsV.push(1.0);
+                pointsV.push(1.0);
+                pointsV.push(1.0);
+            }
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.pointBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(pointsV), gl.DYNAMIC_DRAW);
+            gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 24, 0);
+            gl.vertexAttribPointer(colorLocation, 4, gl.FLOAT, false, 24, 2 * 4);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+            gl.drawArrays(gl.POINTS, 0, this.points.length)
         }
     }
 }
