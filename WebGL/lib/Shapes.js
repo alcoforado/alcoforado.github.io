@@ -90,16 +90,15 @@ function ColorFiller(Color) {
         this.color=Color;
     else
     {
-        color=[Color];
+        this.color=[Color];
     }
 
-    
-    this.color = Color;
+  
 
 }
-ColorFiller.prototype = function Fill(points) {
+ColorFiller.prototype.fill = function(points) {
     for (var i = 0; i < points.length; i++) {
-        points[i].color = this.color[i % color.length];
+        points[i].color = this.color[i % this.color.length];
     }
 }
 
@@ -112,7 +111,7 @@ function LineStrip() {
     
 
 }
-LineStrip.prototype.AddPoint(point)
+LineStrip.prototype.AddPoint = function(point)
 {
     this.points.push(point);
 }

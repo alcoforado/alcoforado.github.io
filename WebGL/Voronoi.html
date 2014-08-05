@@ -42,12 +42,12 @@
                 gl.clear(gl.COLOR_BUFFER_BIT);
                 shader.draw();
             }
-           
+  /*         
             window.addEventListener("keydown",
                 function (event) {
                     if (event.keyCode == 32) {
                         var pts=input.screenPointsAsNormalized();
-                        var Voronoi = CreateVoronoi(pts, -1.0, 1.0, 2.0 / canvas.width);
+                        var Voronoi = CreateVoronoi(pts, -1.0, 1.0, 2.0 / canvas.width,-1.0,1.0,2.0/canvas.height);
                         var dy = 2.0/canvas.height; 
                         var y=1.0;
                         var id=0;
@@ -60,7 +60,7 @@
                             else
                             {
                                 y-=dy;
-                                var result = Voronoi.iterate(y);
+                                var result = Voronoi.drawBeachLine(y);
                                 shader.points = result;
                                 shader.lineStrips = [[new Point(-1.0, y, new Color(1, 1, 1, 1)), new Point(1, y, new Color(1, 1, 1, 1))]]
                                 shader.draw();
@@ -69,7 +69,36 @@
                     }
                 }
                 ,false)
-        
+*/
+            var colorF=new ColorFiller(new Color(1, 0, 0, 1));
+            window.addEventListener("keydown",
+               function (event) {
+                   if (event.keyCode == 32) {
+                       var pts = input.screenPointsAsNormalized();
+                       var Voronoi = CreateVoronoi(pts, -1.0, 1.0, 2.0 / canvas.width, 1.0, -1.0, - 2.0 / canvas.height);
+                       var id = window.setInterval(function () {
+                           if (Voronoi.y < -1.0) {
+                               window.clearInterval(id);
+                           }
+                           else {
+                               var result = Voronoi.iterate();
+                               shader.lineStrips = []
+                               for (var i = 0; i < Voronoi.edges.length; i++) {
+                                   var d1 = [Voronoi.edges[i].p1, Voronoi.edges[i].p2];
+                                   colorF.fill(d1);
+                                   shader.lineStrips.push(d1);
+                               }
+                               
+
+                               shader.points = result.beachLinePoints;
+                               shader.lineStrips.push([new Point(-1.0, Voronoi.y, new Color(1, 1, 1, 1)), new Point(1, Voronoi.y, new Color(1, 1, 1, 1))])
+                               shader.draw();
+                           }
+                       }, 100)
+                   }
+               }
+               , false)
+
         }
     </script>
 </head>

@@ -22,6 +22,7 @@
     <Content Include="lib\Input.js" />
     <Content Include="lib\Shaders.js" />
     <Content Include="lib\Shapes.js" />
+    <Content Include="lib\VoronoiBeachLines.js" />
     <Content Include="lib\webgl-utils.js" />
     <Content Include="Voronoi.html" />
     <Content Include="web.config" />
