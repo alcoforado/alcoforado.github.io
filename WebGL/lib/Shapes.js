@@ -68,8 +68,51 @@ Rect2D.prototype.writeColors = function () {
 
 
 
-function Point(x,y)
+function Point(x,y,color)
 {
     this.x = x;
     this.y = y;
+    if (color != null)
+        this.color = color;
+}
+
+
+function Color(r, g, b, a) {
+    this.r = r;
+    this.g = g;
+    this.b = b;
+    this.a = a;
+}
+
+
+function ColorFiller(Color) {
+    if (Object.prototype.toString.call(this.color) === '[object Array]') 
+        this.color=Color;
+    else
+    {
+        color=[Color];
+    }
+
+    
+    this.color = Color;
+
+}
+ColorFiller.prototype = function Fill(points) {
+    for (var i = 0; i < points.length; i++) {
+        points[i].color = this.color[i % color.length];
+    }
+}
+
+
+
+
+
+function LineStrip() {
+    this.points = [];
+    
+
+}
+LineStrip.prototype.AddPoint(point)
+{
+    this.points.push(point);
 }

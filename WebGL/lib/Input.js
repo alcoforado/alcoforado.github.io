@@ -24,7 +24,19 @@
             }
             return squares;
 
+        },
+
+        screenPointsAsNormalized: function () {
+            var result = [];
+            for (var i = 0; i < this.points.length; i++) {
+                var p = [2.0 * this.points[i].x / canvas.width - 1.0, 2.0 * (canvas.height - this.points[i].y) / canvas.height - 1.0]
+                result.push(new Point(p[0], p[1]))
+            }
+            return result;
+
         }
+
+
     }
 
         canvas.addEventListener('click', function(event)

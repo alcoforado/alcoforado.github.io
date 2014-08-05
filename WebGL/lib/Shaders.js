@@ -60,6 +60,22 @@
 }
 
 
+function Buffer(gl,program,componentNames)
+{
+    this.VBuffer = gl.createBuffer()
+    this.IBuffer = gl.createBuffer()
+    this.Attributes=[]
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.VBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([]), gl.DYNAMIC_DRAW);
+    
+
+    for(var i=0;i<componentNames.length;i++)
+    {
+        this.Attributes.push(gl.getAttribLocation(program, componentNames[i]));
+    }
+}
+
 
 
 
@@ -69,7 +85,7 @@ ShaderColor2D = function (gl) {
      attribute vec4 a_color;\
      varying vec4 f_color;\
     void main() {\
-        gl_PointSize=10.0;\
+        gl_PointSize=1.0;\
         gl_Position = vec4(a_position, 0, 1);\
         f_color=a_color;\
     }";
@@ -86,25 +102,27 @@ ShaderColor2D = function (gl) {
 
 
 
+
     return {
         program: program,
 
         shapes: [],
 
         points: [],
+        
+        lineStrips: [],
 
-        buffer: gl.createBuffer(),
 
-        iBuffer: gl.createBuffer(),
-
-        pointBuffer: gl.createBuffer(),
+        triaBuffer: new Buffer(gl,program,["a_position","a_color"]),
+        pointBuffer: new Buffer(gl, program, ["a_position", "a_color"]),
+        lineBuffer: new Buffer(gl,program,["a_position", "a_color"]),
 
         draw: function () {
+            gl.clear(gl.COLOR_BUFFER_BIT);
+            gl.flush();
+
             gl.useProgram(program);
 
-            // look up where the vertex data needs to go.
-            var positionLocation = gl.getAttribLocation(program, "a_position");
-            var colorLocation = gl.getAttribLocation(program, "a_color")
 
             
         //    gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
@@ -138,17 +156,18 @@ ShaderColor2D = function (gl) {
                 indices = indices.concat(ind);
 
             }
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.triaBuffer.VBuffer);
+            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.triaBuffer.IBuffer);
+            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW)
+            gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
+            gl.enableVertexAttribArray(this.triaBuffer.Attributes[0]);
+            gl.enableVertexAttribArray(this.triaBuffer.Attributes[1]);
+            gl.vertexAttribPointer(this.triaBuffer.Attributes[0], 2, gl.FLOAT, false, 24, 0);
+            gl.vertexAttribPointer(this.triaBuffer.Attributes[1], 4, gl.FLOAT, false, 24, 2 * 4);
 
-
-       //     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
-        //    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.DYNAMIC_DRAW)
-            gl.enableVertexAttribArray(positionLocation);
-            gl.enableVertexAttribArray(colorLocation)
-       //     gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 24, 0);
-       //     gl.vertexAttribPointer(colorLocation, 4, gl.FLOAT, false, 24, 2 * 4);
 
             // draw
-        //    gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
+            gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
 
 
 
@@ -161,12 +180,53 @@ ShaderColor2D = function (gl) {
                 pointsV.push(1.0);
                 pointsV.push(1.0);
             }
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.pointBuffer);
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.pointBuffer.VBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(pointsV), gl.DYNAMIC_DRAW);
-            gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 24, 0);
-            gl.vertexAttribPointer(colorLocation, 4, gl.FLOAT, false, 24, 2 * 4);
-            gl.clear(gl.COLOR_BUFFER_BIT);
+            gl.enableVertexAttribArray(this.pointBuffer.Attributes[0]);
+            gl.enableVertexAttribArray(this.pointBuffer.Attributes[1]);
+            gl.vertexAttribPointer(this.pointBuffer.Attributes[0], 2, gl.FLOAT, false, 24, 0);
+            gl.vertexAttribPointer(this.pointBuffer.Attributes[1], 4, gl.FLOAT, false, 24, 2 * 4);
             gl.drawArrays(gl.POINTS, 0, this.points.length)
+            gl.flush()
+
+
+
+            linesV = [];
+            if (this.lineStrips.length != 0) {
+                for (var i = 0; i < this.lineStrips.length; i++) {
+                    var lS = this.lineStrips[i];
+
+                    for (var j = 0; j < lS.length - 1 ; j++) {
+                        linesV.push(lS[j].x);
+                        linesV.push(lS[j].y);
+                        linesV.push(lS[j].color.r);
+                        linesV.push(lS[j].color.g);
+                        linesV.push(lS[j].color.b);
+                        linesV.push(lS[j].color.a);
+
+                        linesV.push(lS[j+1].x);
+                        linesV.push(lS[j+1].y);
+                        linesV.push(lS[j+1].color.r);
+                        linesV.push(lS[j+1].color.g);
+                        linesV.push(lS[j+1].color.b);
+                        linesV.push(lS[j+1].color.a);
+
+                    }
+
+                }
+
+
+                gl.bindBuffer(gl.ARRAY_BUFFER, this.lineBuffer.VBuffer);
+                gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(linesV), gl.DYNAMIC_DRAW);
+                gl.enableVertexAttribArray(this.lineBuffer.Attributes[0]);
+                gl.enableVertexAttribArray(this.lineBuffer.Attributes[1]);
+                gl.vertexAttribPointer(this.lineBuffer.Attributes[0], 2, gl.FLOAT, false, 24, 0);
+                gl.vertexAttribPointer(this.lineBuffer.Attributes[1], 4, gl.FLOAT, false, 24, 2 * 4);
+                gl.drawArrays(gl.LINES, 0, linesV.length/6)
+                gl.flush()
+            }
+
+
         }
     }
 }

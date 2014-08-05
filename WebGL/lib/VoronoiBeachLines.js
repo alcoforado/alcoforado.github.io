@@ -13,14 +13,14 @@ VoronoiPoint.prototype.beachLine = function(x,ly)
 
 }
 
-Voronoi = function (pts, x1, x2, dx) {
+CreateVoronoi = function (pts, x1, x2, dx) {
     points = [];
     for (var i=0;i<pts.length;i++)
     {
-        points.push(new VoronoiPoint(pts.x, pts.y));
+        points.push(new VoronoiPoint(pts[i].x, pts[i].y));
 
     }
-    points.sort(function(el1,el2){return ele2.b - ele1.b})
+    points.sort(function(el1,el2){return el2.b - el1.b})
 
     var selectPts = function (ps,ly) {
         for(var i=0;i<ps.length;i++){
@@ -56,4 +56,4 @@ Voronoi = function (pts, x1, x2, dx) {
 
 
 
-}();
+};
