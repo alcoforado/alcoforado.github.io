@@ -11,7 +11,7 @@ import glut = require("glutils");
 import Shaders = require("shaders");
 
 
-class Main {
+export class Main {
 
     canvas:HTMLElement;
 
@@ -19,17 +19,16 @@ class Main {
         var canvas = document.getElementById("canvas");
         var gl = glut.getWebGLContext(canvas);
 
-        alert(glut);
+        
         if (!gl) {
             return;
         }
         gl.clearColor(0, 0, 0, 1);
         gl.clear(gl.COLOR_BUFFER_BIT);
-        shader = new Shaders.ShaderColor2D(gl);
+        var shader = new Shaders.ShaderColor2D(gl);
         shader.shapes = [];
-        shader.points = [new Vector2(0, 0), new Vector2(0, 0.5)];
+        shader.points = [new Shapes.Vector2(0.5, 0.5), new Shapes.Vector2(0, 0)];
         shader.draw();
-
     }
 
 

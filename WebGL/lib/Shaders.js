@@ -95,9 +95,9 @@ ShaderColor2D = function (gl) {
     gl_FragColor = f_color;  \
 }";
 
-    var vertexShader = glUtils.loadShader(gl, verticeShaderSource, gl.VERTEX_SHADER);
+    var vertexShader   = glUtils.loadShader(gl, verticeShaderSource, gl.VERTEX_SHADER);
     var fragmentShader = glUtils.loadShader(gl, pixelShaderSource, gl.FRAGMENT_SHADER);
-    var program = glUtils.createProgram(gl, [vertexShader, fragmentShader]);
+    var program        = glUtils.createProgram(gl, [vertexShader, fragmentShader]);
 
 
 
