@@ -36,7 +36,9 @@
     <Content Include="javascript\jquery.validate.min.js" />
     <Content Include="javascript\jquery.validate.unobtrusive.js" />
     <Content Include="javascript\jquery.validate.unobtrusive.min.js" />
+    <Content Include="javascript\require.js" />
     <Content Include="javascript\respond.js" />
+    <Content Include="typescript\voronoi\main_voronoi.js" />
     <Content Include="voronoi.html" />
     <Content Include="web.config" />
   </ItemGroup>
@@ -48,20 +50,20 @@
       <DependentUpon>web.config</DependentUpon>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="typescript\voronoi\" />
-  </ItemGroup>
-  <ItemGroup>
+    <TypeScriptCompile Include="typescript\app_voronoi.ts" />
     <TypeScriptCompile Include="typescript\defines\backbone.d.ts" />
     <TypeScriptCompile Include="typescript\defines\d3.d.ts" />
     <TypeScriptCompile Include="typescript\defines\jquery.d.ts" />
     <TypeScriptCompile Include="typescript\defines\mustache.d.ts" />
     <TypeScriptCompile Include="typescript\defines\require.d.ts" />
     <TypeScriptCompile Include="typescript\defines\glutils.d.ts" />
-    <TypeScriptCompile Include="typescript\glcontext.ts" />
+    <TypeScriptCompile Include="typescript\defines\webgl.d.ts" />
     <TypeScriptCompile Include="typescript\shapes2d.ts" />
     <TypeScriptCompile Include="typescript\defines\underscore.d.ts" />
     <TypeScriptCompile Include="typescript\shaders.ts" />
+    <TypeScriptCompile Include="typescript\voronoi.ts" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

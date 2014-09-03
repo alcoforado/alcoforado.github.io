@@ -2,7 +2,6 @@
 /// <reference path="defines/jquery.d.ts" />
 /// <reference path="shapes2d.ts" />
 /// <reference path="defines/glutils.d.ts" />
-/// <amd-dependency path='text!../Templates/logdetail.html'/>
 import $ = require("jquery");
 import shapes2d = require("shapes2d");
 import glut = require("glutils");
@@ -33,7 +32,7 @@ export interface GLContext {
 
 
 
-class ShaderColor2D {
+export class ShaderColor2D {
 
     program: number
 

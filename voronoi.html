@@ -4,24 +4,37 @@
 <head>
     <meta charset="utf-8" />
     <title>Voronoi</title>
-    <link rel="stylesheet" href="app.css" type="text/css" />
-    <script src="lib/webgl-utils.js"></script>
-    <script src="lib/shaders.js"></script>
-    <script src="lib/shapes.js"></script>
-    <script src="lib/input.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/pygment_trac.css">
+
+
+
+    <script src="javascript/require.js"></script>
     <script>
         window.onload = main;
-        function main()
-        {
-            var canvas = document.getElementById("canvas");
-            var gl = glUtils.getWebGLContext(canvas);
-            if (!gl) {
-                return;
-            }
-            gl.clearColor(0, 0, 0, 1);
-            gl.clear(gl.COLOR_BUFFER_BIT);
-         
-            shader = ShaderColor2D(gl);
+        function main() {
+            requirejs.config({
+                baseUrl: 'javascript'
+            });
+
+            require(["glutils","shapes2d","shaders","javascript/voronoi.js"], function (glut,Shapes,Shaders,Voronoi) {
+                var canvas = document.getElementById("canvas");
+                var gl = glut.getWebGLContext(canvas);
+
+                alert(glut);
+                if (!gl) {
+                    return;
+                }
+                gl.clearColor(0, 0, 0, 1);
+                gl.clear(gl.COLOR_BUFFER_BIT);
+                shader = new Shaders.ShaderColor2D(gl);
+                shader.shapes = [];
+                shader.points = [new Vector2(0, 0), new Vector2(0, 0.5)];
+                shader.draw();
+            })
+        }
+/*         
+            shader = new ShaderColor2D(gl);
             shader.shapes = [];
 
             shader.points=[new Point(0,0),new Point(0,0.5)]
@@ -37,13 +50,14 @@
                 [0, 0, 0, 1,
                  1, 0, 0, 1,
                  1, 1, 0, 1,
-                 0, 1, 0, 1]));*/
+                 0, 1, 0, 1]));
                 shader.shapes=input.screenPointsAsNormalizedSquares(2, [1, 0, 1, 1]);
                 gl.clear(gl.COLOR_BUFFER_BIT);
                 shader.draw();
             }
         
         }
+        */
     </script>
 </head>
 <body>
