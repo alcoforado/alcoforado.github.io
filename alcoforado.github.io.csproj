@@ -24,7 +24,7 @@
     <Content Include="index.html" />
     <Content Include="javascript\ember.js" />
     <Content Include="javascript\glutils.js" />
-    <Content Include="javascript\handlebars-v2.0.0.js" />
+    <Content Include="javascript\handlebars.js" />
     <Content Include="javascript\jquery-1.11.1.js" />
     <Content Include="javascript\jquery-paginator.js" />
     <Content Include="javascript\jquery-rotate.js" />
@@ -55,6 +55,8 @@
     <TypeScriptCompile Include="typescript\app_voronoi.ts" />
     <TypeScriptCompile Include="typescript\defines\backbone.d.ts" />
     <TypeScriptCompile Include="typescript\defines\d3.d.ts" />
+    <TypeScriptCompile Include="typescript\defines\ember.d.ts" />
+    <TypeScriptCompile Include="typescript\defines\handlebars.d.ts" />
     <TypeScriptCompile Include="typescript\defines\jquery.d.ts" />
     <TypeScriptCompile Include="typescript\defines\mustache.d.ts" />
     <TypeScriptCompile Include="typescript\defines\require.d.ts" />

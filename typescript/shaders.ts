@@ -19,7 +19,6 @@ export interface Attribute extends AttributeDesc {
 }
 
 
-
 export class ArrayBufferContext {
     attributes: Array<Attribute>;
     buffer: WebGLBuffer;

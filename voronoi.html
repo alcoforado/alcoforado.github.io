@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="css/pygment_trac.css">
 
 
-
+    
     <script src="javascript/require.js"></script>
     <script>
         window.onload = main;
@@ -19,7 +19,8 @@
 
             require(["app_voronoi"], function (App) {
                 App = new App.Main();
-                App.Init();
+                //App.initEmber();
+                App.InitScreen();
             })
         }
 /*         
@@ -56,6 +57,12 @@
     <div id="content"></div>
 
     <canvas id="canvas" width="400" height="300"></canvas>
+
+    <script type="text/x-handlebars" data-template-name="points">
+        Hey Ember, I have something for you {{msg}}
+    </script>
+
+
 
 </body>
 </html>

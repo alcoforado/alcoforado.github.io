@@ -2,22 +2,41 @@
 /// <reference path="defines/jquery.d.ts" />
 /// <reference path="shapes2d.ts" />
 /// <reference path="defines/glutils.d.ts" />
+/// <reference path="defines/handlebars.d.ts" />
+/// <reference path="defines/ember.d.ts" />
 /// <reference path="shaders.ts" />
 
 
 import $ = require("jquery");
 import Shapes = require("shapes2d");
-import glut = require("glutils");
 import Shaders = require("shaders");
+import glut = require("glutils");
+//import Handlebars = require("handlebars");
+import Ember = require("ember");
 
 
 export class Main {
+    T: any; 
+    App: any;
+    
+    initEmber() {
+        this.App = Ember.Application.create();
+        this.App.Router.map(function () {
+            this.resource('points', { path: '/' })
+        });
+        this.App.PointsRoute = Ember.Route.extend({
+            model: { msg: "Hello World" }
+        });
+
+
+    }
+    
 
     canvas:HTMLElement;
 
-    Init() {
+    InitScreen() {
         var canvas = document.getElementById("canvas");
-        var gl = glut.getWebGLContext(canvas);
+        var gl = glut.getWebGLContext(canvas,true);
 
         
         if (!gl) {

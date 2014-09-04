@@ -11,7 +11,7 @@
 interface GLUT {
     loadShader(gl: any, source: string, type: number);
     createProgram(gl, shaders: Array<number>): number;
-    getWebGLContext(canvas: HTMLElement): WebGLRenderingContext; 
+    getWebGLContext(canvas: HTMLElement,debug: boolean): WebGLRenderingContext; 
 }
 
 
