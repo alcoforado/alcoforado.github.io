@@ -5,12 +5,14 @@
 /// <reference path="defines/handlebars.d.ts" />
 /// <reference path="defines/ember.d.ts" />
 /// <reference path="shaders.ts" />
+/// <reference path="voronoi.ts" />
 
 
 import $ = require("jquery");
 import Shapes = require("shapes2d");
 import Shaders = require("shaders");
 import glut = require("glutils");
+import Voronoi = require("voronoi");
 //import Handlebars = require("handlebars");
 import Ember = require("ember");
 
@@ -20,14 +22,29 @@ export class Main {
     App: any;
     
     initEmber() {
+
+
+	
         this.App = Ember.Application.create();
         this.App.Router.map(function () {
             this.resource('points', { path: '/' })
         });
         this.App.PointsRoute = Ember.Route.extend({
-            model: { msg: "Hello World" }
+            voronoiInput: Ember.Object.extend({pts:[],scanLinePos:0}),
+	    model: function() { 
+		return this.voronoiInput; 
+	    }
         });
-
+	
+	this.App.PointsController = Ember.ObjectController.extend({
+	    actions: {
+		incrementScanLine: function()
+		{
+		    var model = this.get('model');
+		    model.set('scanLinePos',model.get('scanLinePos')+1);
+		}
+	    }
+	});
 
     }
     

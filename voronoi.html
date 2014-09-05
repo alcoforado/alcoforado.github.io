@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="en">
 <head>
@@ -14,7 +14,14 @@
         window.onload = main;
         function main() {
             requirejs.config({
-                baseUrl: 'javascript'
+                baseUrl: 'javascript',
+	        shim: {
+	            'ember' : {
+	               deps: ['handlebars','jquery'],
+	               exports: 'Ember'
+	            }
+
+	         }
             });
 
             require(["app_voronoi"], function (App) {
