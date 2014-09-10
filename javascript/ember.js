@@ -3,7 +3,7 @@
  * @copyright Copyright 2011-2014 Tilde Inc. and contributors
  *            Portions Copyright 2006-2011 Strobe Inc.
  *            Portions Copyright 2008-2011 Apple Inc. All rights reserved.
- * @license   Licensed under MIT license
+ * @license   Licensed under MIT licenseele
  *            See https://raw.github.com/emberjs/ember.js/master/LICENSE
  * @version   1.7.0
  */

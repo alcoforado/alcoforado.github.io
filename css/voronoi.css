@@ -1,0 +1,42 @@
+﻿body {
+}
+
+
+#ptsDisplay {
+    width:250px;
+    display:inline-block;
+    text-align: center;
+       
+
+}
+
+
+#ptsDisplay tr:hover{
+    background-color: rgb(60,60,60); 
+}
+
+#divcanvas{
+    display:inline-block;
+    margin: 0 auto;
+    
+}
+
+
+#ptsDisplay tr {
+    border: 1px solid;
+
+    border-color:#434343;
+
+
+}
+
+
+#ptsDisplay td {
+    border: 0px;
+    border-color: green;
+}
+
+#ptsDisplay td:only-child {
+    width:250px;
+    
+}

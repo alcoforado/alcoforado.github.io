@@ -61,6 +61,12 @@ export class Rect2D implements IShapes2D{
         this.p1 = p1;
         this.p2 = p2;
     }
+
+    static CreateRectFromPoint(barycenter: Vector2, width: number, length: number):Rect2D {
+        return new Rect2D(new Vector2(barycenter.x - width / 2.0, barycenter.y - length / 2.0),
+                          new Vector2(barycenter.x + width / 2.0, barycenter.y + length / 2.0));
+    }
+
     vertices() {
         return [
             this.p1[0], this.p1[1],

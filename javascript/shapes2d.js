@@ -50,6 +50,10 @@
             this.p1 = p1;
             this.p2 = p2;
         }
+        Rect2D.CreateRectFromPoint = function (barycenter, width, length) {
+            return new Rect2D(new Vector2(barycenter.x - width / 2.0, barycenter.y - length / 2.0), new Vector2(barycenter.x + width / 2.0, barycenter.y + length / 2.0));
+        };
+
         Rect2D.prototype.vertices = function () {
             return [
                 this.p1[0], this.p1[1],

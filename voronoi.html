@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html lang="en">
 <head>
@@ -6,7 +6,8 @@
     <title>Voronoi</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/pygment_trac.css">
-
+    <link rel="stylesheet" href="css/voronoi.css">
+   
 
     
     <script src="javascript/require.js"></script>
@@ -15,7 +16,10 @@
         function main() {
             requirejs.config({
                 baseUrl: 'javascript',
-	        shim: {
+                paths: {
+                    jquery: 'jquery-1.11.1'
+                },
+                shim: {
 	            'ember' : {
 	               deps: ['handlebars','jquery'],
 	               exports: 'Ember'
@@ -26,8 +30,8 @@
 
             require(["app_voronoi"], function (App) {
                 App = new App.Main();
-                //App.initEmber();
-                App.InitScreen();
+                App.initEmber();
+                //App.InitScreen();
             })
         }
 /*         
@@ -62,11 +66,34 @@
     <h1>The Voronoi Diagram (The beach curves)</h1>
     <h2>Mouse left click to select points in the screen. Then press the space bar</h2>
     <div id="content"></div>
+   
 
-    <canvas id="canvas" width="400" height="300"></canvas>
 
     <script type="text/x-handlebars" data-template-name="points">
-        Hey Ember, I have something for you {{msg}}
+
+        <div id="divcanvas">
+            <canvas id="canvas" width="400" height="300"></canvas>
+        </div>
+
+        <div id="ptsDisplay">
+            <table>
+                <th colspan="2" style="text-align:center">Voronoi Points</th>
+                <tbody>
+                    {{#each pts}}
+                    <tr><td>x: {{x}}</td><td>y: {{y}}</td></tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+        <br />
+       
+        <button {{action 'reset' }}>Reset</button>
+        <button {{action 'play' }}>Play</button>
+        <button {{action 'pause' }}>Pause</button>
+
+        {{#if isPaused}}
+        <button {{action 'incrementScanLine' }}>Next</button>
+        {{/if}}
     </script>
 
 

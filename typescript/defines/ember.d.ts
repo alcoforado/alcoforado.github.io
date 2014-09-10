@@ -1530,6 +1530,7 @@ declare module Ember {
         parentBuffer: RenderBuffer;
     }
     class Route extends Object {
+        static extend(T: any): Route;
         static detect(obj: any): boolean;
         static detectInstance(obj: any): boolean;
         /**
@@ -1565,6 +1566,7 @@ declare module Ember {
         actions: ActionsHash;
     }
     class Router extends Object {
+       
         static detect(obj: any): boolean;
         static detectInstance(obj: any): boolean;
         /**
@@ -1912,6 +1914,15 @@ declare module Ember {
         onEvent: string;
     }
     var VERSION: string;
+
+    interface IView {
+        classNames?: string;
+        templateName?: string;
+
+
+    }
+
+
     class View extends CoreView {
         static detect(obj: any): boolean;
         static detectInstance(obj: any): boolean;
@@ -1924,9 +1935,11 @@ declare module Ember {
         Returns the original hash that was passed to meta().
         @param key property name
         **/
+        static extend(view: IView);
         static metaForProperty(key: string): {};
         static isClass: boolean;
         static isMethod: boolean;
+        static create(view:IView);
         $(): JQuery;
         append(): View;
         // ReSharper disable InconsistentNaming

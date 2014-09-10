@@ -21,6 +21,7 @@
     <Content Include="css\normalize.css" />
     <Content Include="css\pygment_trac.css" />
     <Content Include="css\styles.css" />
+    <Content Include="css\voronoi.css" />
     <Content Include="index.html" />
     <Content Include="javascript\ember.js" />
     <Content Include="javascript\glutils.js" />
