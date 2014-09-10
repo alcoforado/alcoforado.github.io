@@ -48,7 +48,6 @@ define(["require", "exports", "shapes2d", "shaders", "glutils", "ember"], functi
 
             this.App = Ember.Application.create();
             this.App.ready = function () {
-                alert("Hellossss");
                 that.App.ControllerInstance = that.App.__container__.lookup('controller:Points');
             };
 
@@ -107,12 +106,16 @@ define(["require", "exports", "shapes2d", "shaders", "glutils", "ember"], functi
 
             //wiring app  add points on click
             this.canvas.addEventListener('click', function (event) {
-                var cont = that.App.__container__.lookup('controller:Points');
-
-                if (cont.get('canInputPoints') == true) {
+                var cont = that.App.__container__.lookup('controller:points');
+                if (cont.get('canInputPoints')) {
                     //Get point convert to opengl coordinates, add it to shader
                     var point = new Shapes.Vector2(event.offsetX, event.offsetY);
                     var pt = glut.convertScreenCoordinatesToNormalized(this.canvas, point);
+
+                    var ptsTable = cont.get('pts');
+                    ptsTable.push(pt);
+                    cont.set('pts', ptsTable);
+
                     that.shader.points.push(pt);
                     that.clearScreen();
                     that.shader.draw();
