@@ -1,4 +1,8 @@
 ﻿
+var precision = function (x: number, p: number):number {
+    return parseFloat(x.toPrecision(p));
+}
+
 export class Vector2 {
     x: number;
     y: number;
@@ -8,6 +12,10 @@ export class Vector2 {
     {
         this.x = x;
         this.y = y;
+    }
+
+    toPrecision(p: number):Vector2 {
+        return new Vector2(precision(this.x, p), precision(this.y, p));
     }
 } 
 

@@ -1051,6 +1051,7 @@ define(function () {
         if (!context) {
             showLink(OTHER_PROBLEM);
         }
+        context.viewport(0,0,canvas.clientWidth,canvas.clientHeight)
         return context;
     };
 
@@ -1240,12 +1241,23 @@ define(function () {
                window.clearTimeout;
     })();
 
-    return {
-        webglDebugContext:WebGLDebugUtils, 
-        createProgram: loadProgram,
-        createShaderFromScriptElement: createShaderFromScript,
-        getWebGLContext: getWebGLContext,
-        updateCSSIfInIFrame: updateCSSIfInIFrame,
-        loadShader: loadShader,
+
+
+ 
+
+
+        return {
+            webglDebugContext:WebGLDebugUtils, 
+            createProgram: loadProgram,
+            createShaderFromScriptElement: createShaderFromScript,
+            getWebGLContext: getWebGLContext,
+            updateCSSIfInIFrame: updateCSSIfInIFrame,
+            loadShader: loadShader,
+            convertScreenCoordinatesToNormalized: function(canvas,pt)    {
+                return {
+                    x: 2.0 *  pt.x / canvas.width - 1.0, 
+                    y: 2.0 * (canvas.height - pt.y) / canvas.height - 1.0
+                }
+            }
     }
 });

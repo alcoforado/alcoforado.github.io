@@ -40,6 +40,7 @@ declare module EmberTesting {
 
 }
 
+
 interface Function {
     observes(...args: string[]): Function;
     observesBefore(...args: string[]): Function;
@@ -237,6 +238,7 @@ interface ModifyObserver {
     (obj: any, path: string, target: any, method?: string);
     (obj: any, path: string, func: Function, method?: Function);
     (obj: any, path: string, func: Function, method?: string);
+    (path: string, func: Function);
 }
 
 declare module Ember {
@@ -252,6 +254,10 @@ declare module Ember {
     that Ember.EXTEND_PROTOTYPES will be true.
     **/
     function A(arr?: any[]): NativeArray;
+    
+    
+    function copy<T>(dd:T[])
+    
     /**
     An instance of Ember.Application is the starting point for every Ember application. It helps to
     instantiate, initialize and coordinate the many objects that make up your app.
@@ -1916,9 +1922,9 @@ declare module Ember {
     var VERSION: string;
 
     interface IView {
-        classNames?: string;
+        classNames?: string[];
         templateName?: string;
-
+        tagName?: string;
 
     }
 

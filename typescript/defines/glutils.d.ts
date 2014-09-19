@@ -16,7 +16,8 @@ interface GLUT {
     loadShader(gl: any, source: string, type: number);
     createProgram(gl, shaders: Array<number>): number;
     getWebGLContext(canvas: HTMLElement, debug: boolean): WebGLRenderingContext;
-    convertScreenCoordinatesToNormalized(canvas: HTMLCanvasElement, pt:Vector2): any;
+    convertScreenCoordinatesToNormalized(canvas: HTMLCanvasElement, pt: Vector2): any;
+   
 }
 
 

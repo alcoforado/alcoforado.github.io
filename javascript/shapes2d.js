@@ -1,4 +1,8 @@
 ﻿define(["require", "exports"], function(require, exports) {
+    var precision = function (x, p) {
+        return parseFloat(x.toPrecision(p));
+    };
+
     var Vector2 = (function () {
         function Vector2(x, y) {
             this.x = x;
@@ -6,6 +10,10 @@
         }
         Vector2.prototype.toArray = function () {
             return [this.x, this.y];
+        };
+
+        Vector2.prototype.toPrecision = function (p) {
+            return new Vector2(precision(this.x, p), precision(this.y, p));
         };
         return Vector2;
     })();

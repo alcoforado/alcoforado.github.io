@@ -2,8 +2,37 @@
 }
 
 
+#TextContainer h1 {
+    text-align: center;
+}
+
+#TextContainer  {
+    width: 800px;
+    margin: 0 auto;
+}
+
+
+
+
+#screen {
+    display:inline-block;
+    vertical-align:top;
+    
+}
+
+#content {
+    text-align: center;
+   
+}
+
+#screen_header {
+    background-color: darkorange;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    
+}
+
 #ptsDisplay {
-    width:250px;
     display:inline-block;
     text-align: center;
        
@@ -18,9 +47,20 @@
 #divcanvas{
     display:inline-block;
     margin: 0 auto;
+    vertical-align:top;
     
 }
 
+.opengl_canvas{
+    display:block;
+
+
+}
+
+#ptsDisplay th {
+    background-color: darkorange;
+    color: white;
+}
 
 #ptsDisplay tr {
     border: 1px solid;
@@ -34,9 +74,6 @@
 #ptsDisplay td {
     border: 0px;
     border-color: green;
+    font-size:10px;
 }
 
-#ptsDisplay td:only-child {
-    width:250px;
-    
-}
