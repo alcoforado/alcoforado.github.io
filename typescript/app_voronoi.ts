@@ -17,62 +17,109 @@ import Voronoi = require("voronoi");
 import Ember = require("ember");
 
 
-class PointsInput {
-    private screenPoints: Array<Shapes.Vector2>;
-    detach: boolean;
+
+
+class GLApp {
+    gl: WebGLRenderingContext;
+    voronoi: Voronoi.Voronoi;
+    shader: Shaders.ShaderColor2D;
     canvas: HTMLCanvasElement;
-    onAddPoint: (pt: Shapes.Vector2) => void;
+   
+    normalizedDX(): number {
+        return 2.0 / this.canvas.width;
+    }
 
+    normalizedDY(): number {
+        return 2.0 / this.canvas.height;
+    }
 
-    constructor(canvas: HTMLCanvasElement) {
-        this.detach = false;
+    InitScreen(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
-        var that = this;
-        canvas.addEventListener('click', function (event) {
-            if (that.detach)
-                return;
-            var point = new Shapes.Vector2(event.offsetX, event.offsetY);
-            that.screenPoints.push(point);
-            that.onAddPoint(point);
-        })
-    }
+        var gl = glut.getWebGLContext(this.canvas, true);
+        this.gl = gl;
 
-
-
-
-    getNormalizedPointsAsRectangles(w:number,l:number):Shapes.Rect2D[] {
-        var result:Shapes.Rect2D[] = [];
-        for (var i = 0; i < this.screenPoints.length; i++) {
-            var p = new Shapes.Vector2(2.0 * this.screenPoints[i].x / this.canvas.width - 1.0, 2.0 * (this.canvas.height - this.screenPoints[i].y) / this.canvas.height - 1.0);
-            result.push(Shapes.Rect2D.CreateRectFromPoint(p, w, l));
+        if (!gl) {
+            return;
         }
-        return result;
+        gl.clearColor(0, 0, 0, 1);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        this.shader = new Shaders.ShaderColor2D(gl);
+        this.voronoi = null;
+        this.draw();
+
+    }
+    clearScreen() {
+        this.gl.clearColor(0, 0, 0, 1);
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+        this.gl.flush();
     }
 
-    getNormalizedPoints(): Shapes.Vector2[] {
-        var result: Shapes.Vector2[] = [];
-        for (var i = 0; i < this.screenPoints.length; i++) {
-            var p = [2.0 * this.screenPoints[i].x / this.canvas.width - 1.0, 2.0 * (this.canvas.height - this.screenPoints[i].y) / this.canvas.height - 1.0]
-                result.push(new Shapes.Vector2(p[0], p[1]))
-            }
-        return result;
+    iterate(loop:boolean) {
+        if (this.voronoi == null) {
+            throw "voronoi.iterate: call startVoronoi first"
+        }
+        if (this.voronoi.isVoronoiCompleted() && loop) {
+            this.voronoi = new Voronoi.Voronoi(this.voronoi.vPoints, -1, 1, this.normalizedDX(), -1, 1, this.voronoi.dy);
+        }
+        if (this.voronoi.isVoronoiCompleted() && !loop)
+            return;
+
+        this.voronoi.iterate();
+        this.voronoiToPrimitives();
+       
+
     }
-}
+    voronoiToPrimitives() {
+        this.shader.lines = [];
+        var cl = new Shapes.CyclicColorArray([new Shapes.Vector4(1, 1, 1, 1)]);
+        var clRed = new Shapes.CyclicColorArray([new Shapes.Vector4(1, 0, 0, 1)]);
+
+        this.shader.addShape(new Shapes.Line2D(
+            new Shapes.Vector2(-1, this.voronoi.cY),
+            new Shapes.Vector2(1, this.voronoi.cY)),
+            cl);
+
+        this.shader.points = this.voronoi.bPoints;
+
+        for (var i = 0; i < this.voronoi.iEdges.length; i++)
+        {
+            var iEdge = this.voronoi.iEdges[i];
+            var line = new Shapes.Line2D(iEdge.origin, iEdge.pI);
+            this.shader.addShape(line, clRed);
+        }
+    }
 
 
-class OpenGLContext {
-    
+    draw() {
+        this.clearScreen();
+        this.shader.draw();
+    }
+
+    resetApp() {
+        this.shader.points = [];
+        this.shader.shapes = [];
+        this.shader.lines = [];
+        this.gl.clearColor(0, 0, 0, 1);
+        this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+        this.voronoi = null;
+    }
+
+    startVoronoi(pts:Shapes.Vector2[],dy:number) {
+        this.voronoi = new Voronoi.Voronoi(pts, -1, 1, this.normalizedDX(),  -1, 1, dy);
+    }
+
+
+
+
 }
 
 
 export class Main {
     T: any; 
     App: any;
-    gl: WebGLRenderingContext;
-    shader: Shaders.ShaderColor2D;
-    canvas: HTMLCanvasElement;
-    model: any;
-    private input: PointsInput;
+  
+   
+   
     initEmber() {
 
         var that = this;
@@ -88,51 +135,144 @@ export class Main {
         });
         this.App.PointsRoute = Ember.Route.extend({
             model: function () {
-                return { pts: [{ x: 0, y: 2 }, { x: 0, y: 0 }, { x: 0.5, y: 0.5 }, { x: -0.5, y: -0.5 }], scanLinePos: 0, loop: true, isPaused: true, canInputPoints: true };
+                return { pts: [], scanLinePos: 0, loop: false, isPaused: true, canInputPoints: true, dyFactor:true };
             }
         });
 
         this.App.PointsController = Ember.ObjectController.extend({
             needs: ['view:Opengl'],
-            test: "hello",
+            cannotInputPoints: Ember.computed.not('canInputPoints'),
             actions: {
-                incrementScanLine: function () {
-                    var scanLinePos = this.get('scanLinePos');
-                    this.set('scanLinePos', scanLinePos + 1);
+                init_canvas: function (canvas: HTMLCanvasElement) {
+                    var glApp:GLApp = new GLApp();
+                    glApp.InitScreen(canvas);
+                    this.set('glApp', glApp);
+                    this.set('canInputPoints', true);
+                    this.set('dy', glApp.normalizedDY().toPrecision(4));
+                    this.set('dyFactor', 1);
+                    this.set('scanLinePos', 1);
+                    this.updateControllerModel(glApp);
+                    /*
+                    glApp.shader.shapes = [];
+                    glApp.shader.shapes.push(
+                        new Shapes.Shape2D(
+                            new Shapes.Rect2D(new Shapes.Vector2(-0.5, -0.5), new Shapes.Vector2(0.9, 0.9)),
+                            new Shapes.CyclicColorArray([new Shapes.Vector4(0, 1.0, 0, 1)])));*/
+
+
+                    
+                    //Add observer on list of pts to include such list in the canvas shader.
+                    this.addObserver('pts', this.ptsChanged);
+                    this.addObserver('dyFactor', function () {
+                        this.set('dy', (glApp.normalizedDY() / this.get('dyFactor')).toFixed(6));
+                    });
+
+
+                },
+                next: function () {
+                    var glApp: GLApp  = this.get('glApp');
+                    var loop: boolean = this.get('loop');     
+                    glApp.iterate(loop);
+                    glApp.draw();
+                    this.updateControllerModel(glApp);
                 },
                 play: function () {
+                    if (!(this.get('isPaused') || this.get('canInputPoints')))
+                        return;
+
+                    var b2 = this.get('isPaused');
+                    var bb = this.get('canInputPoints');
+
+                    var glApp: GLApp = this.get('glApp');
                     this.set('isPaused', false);
-                    this.set('canInputPoints', false);
+                   
+                    if (this.get('canInputPoints')) {
+                        this.set('canInputPoints', false);
+                        var pts: Shapes.Vector2[] = this.get('pts');
+                        var dy: number = this.get('dy');
+                        glApp.startVoronoi(pts,dy);
+            
+                    }
+                    var controller = this;
+                    var loop:boolean = this.get('loop');                               
+                    this.playInterval = setInterval(function () {
+                        glApp.iterate(loop);
+                        glApp.draw();
+                        controller.updateControllerModel(glApp);
+                    },100/this.get('dyFactor'))
+
                 },
                 pause: function () {
+                    clearInterval(this.playInterval);
                     this.set('isPaused', true);
                 },
                 reset: function () {
-                    that.resetApp();
+                    var glApp:GLApp = this.get('glApp');
+                    clearInterval(this.playInterval);
+                    this.set('canInputPoints', true);
+                    this.set('isPaused', true);
+                    this.set('pts', []);
+                    glApp.resetApp();
+                },
+                add_points: function () {
+                    var pts = this.get('pts'); 
+                    this.send('reset');
+                    this.set('pts', pts);
+                    
                 },
                 opengl_canvas_click: function (pt: Shapes.Vector2) {
+                    if (!this.get('canInputPoints'))
+                        return;
                     var pts: Shapes.Vector2[] = this.get('pts');
-                    var tt = new Shapes.Vector2(2, 2);
                     pts.pushObject(pt.toPrecision(5));
                     this.propertyDidChange('pts');
                 },
-                apply_dimensions: function () {
+                resize_canvas: function () {
                     this.set("canvasX", this.form_X);
                     this.set("canvasY", this.form_Y);
-                    
+                    var glApp = this.get("glApp");
                     setTimeout(function () {
-                        that.gl.viewport(0, 0, that.canvas.width, that.canvas.height);
-                        that.draw();
-                    }, 500);
+                        glApp.gl.viewport(0, 0, glApp.canvas.width, glApp.canvas.height);
+                        glApp.draw();
+                    }, 100);
                 }
+            },
+            updateControllerModel: function () {
+                var glApp:GLApp = this.get('glApp');
+                if (glApp.voronoi != null) {
+                    this.set('scanLinePos', glApp.voronoi.cY.toFixed(4));
+                    this.set('dy', glApp.voronoi.dy.toFixed(5));
+                }
+                else {
 
+                    this.set('scanLinePos', 1);
+                }
 
 
             },
             canvasX: 600,
             canvasY: 300,
             form_X: 600,
-            form_Y: 300
+            form_Y: 300,
+          
+            //Observers Section
+            ptsChanged: function () {
+                var glApp: GLApp = this.get('glApp');
+                var pts: Shapes.Vector2[] = this.get('pts');
+                var dx:  Shapes.Vector2 = new Shapes.Vector2(glApp.normalizedDX(), glApp.normalizedDY());
+
+                dx = dx.scale(2);
+
+                glApp.shader.shapes = [];
+
+                var cl: Shapes.CyclicColorArray = new Shapes.CyclicColorArray([new Shapes.Vector4(0, 0, 1, 1)]);
+                pts.forEach(function (pt: Shapes.Vector2) {
+                    var rect: Shapes.Rect2D = new Shapes.Rect2D(pt.minus(dx), pt.plus(dx));
+                    glApp.shader.addShape(rect, cl);
+                });
+                glApp.clearScreen();
+                glApp.shader.draw();
+            }
             
 
         });
@@ -150,106 +290,15 @@ export class Main {
             click: function (e: MouseEvent) {
                 var x:number = e.offsetX == undefined ? e.layerX : e.offsetX;
                 var y:number = e.offsetY == undefined ? e.layerY : e.offsetY;
-                var point = glut.convertScreenCoordinatesToNormalized(that.canvas, new Shapes.Vector2(x,y));
+                var point = glut.convertScreenCoordinatesToNormalized(this.canvas, new Shapes.Vector2(x,y));
                 this.get('controller').send('opengl_canvas_click', new Shapes.Vector2(point.x,point.y));
-
             },
             didInsertElement: function () {
                 var canvas = document.getElementsByClassName("opengl_canvas")[0];
-             
-                that.canvas = <HTMLCanvasElement> canvas;
-                that.gl = glut.getWebGLContext(that.canvas, true);
-                that.gl.clearColor(0, 0, 0, 1);
-                that.gl.clear(that.gl.COLOR_BUFFER_BIT);
-                that.shader = new Shaders.ShaderColor2D(that.gl);
-                that.shader.shapes = [];
-                that.shader.points = this.get('controller.pts');
-                that.shader.draw();
-                this.set('glContext', that);
-
-                var cont:Ember.ObjectController = this.get('controller');
-                cont.addObserver('pts', function () {
-                    that.shader.points = cont.get('pts');
-                    that.clearScreen();
-                    that.shader.draw();
-                });
-            }
-           
-           
-        });
-        
-
-    }
-    
-    
-
-    InitScreen() {
-        var that = this;
-        var canvas = document.getElementsByClassName("opengl_canvas")[0];
-        this.canvas= <HTMLCanvasElement> canvas;
-        var gl = glut.getWebGLContext(this.canvas, true);
-        this.gl = gl;
-        
-        if (!gl) {
-            return;
-        }
-        gl.clearColor(0, 0, 0, 1);
-        gl.clear(gl.COLOR_BUFFER_BIT);
-        this.shader = new Shaders.ShaderColor2D(gl);
-        this.shader.shapes = [];
-        this.shader.points = [new Shapes.Vector2(0.5, 0.5), new Shapes.Vector2(0, 0)];
-        this.shader.draw();
-        /*
-        that.canvas.onresize=function() {
-            that.gl.viewport(0, 0, that.canvas.width, that.canvas.height);
-            that.clearScreen();
-            that.shader.draw();
-        };*/
-
-
-
-        /*
-        //wiring app  add points on click
-        this.canvas.addEventListener('click', function (event) {
-            var cont = that.App.__container__.lookup('controller:points');
-            if (cont.get('canInputPoints')) {
-                //Get point convert to opengl coordinates, add it to shader
-                var point = new Shapes.Vector2(event.offsetX, event.offsetY);
-                var pt = glut.convertScreenCoordinatesToNormalized(this.canvas, point);
-
-                var ptsTable = cont.get('pts');
-                ptsTable.push(pt);
-                cont.set('pts', ptsTable);
-
-                that.shader.points.push(pt);
-                that.clearScreen();
-                that.shader.draw();
+                this.canvas = canvas;
+                var cont: any = this.get('controller');
+                cont.send('init_canvas', canvas);
             }
         });
-*/
-        
     }
-
-    clearScreen() {
-        this.gl.clearColor(0, 0, 0, 1);
-        this.gl.clear(this.gl.COLOR_BUFFER_BIT);
-        this.gl.flush();
-    }
-
-    draw() {
-        this.clearScreen();
-        this.shader.draw();
-    }
-
-    resetApp() {
-        this.shader.points = [];
-        this.gl.clearColor(0, 0, 0, 1);
-        this.gl.clear(this.gl.COLOR_BUFFER_BIT);
-
-    }
-    
-
-
-
-
 }

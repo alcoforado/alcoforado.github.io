@@ -45,12 +45,12 @@ define(["require", "exports", "shapes2d"], function(require, exports, shapes) {
     exports.Edge = Edge;
 
     var Voronoi = (function () {
-        function Voronoi(pts, x1, x2, dx, y1, y2, dy) {
+        function Voronoi(pts, x1, x2, dx, yMin, yMax, dy) {
             this.x1 = x1;
             this.x2 = x2;
             this.dx = dx;
-            this.y1 = y1;
-            this.y2 = y2;
+            this.yMin = yMin;
+            this.yMax = yMax;
             this.dy = dy;
             this.vPoints = [];
             this.bPoints = [];
@@ -58,23 +58,25 @@ define(["require", "exports", "shapes2d"], function(require, exports, shapes) {
             this.x1 = x1;
             this.x2 = x2;
             this.dx = dx;
-            this.y1 = y1;
-            this.y2 = y2;
+            this.yMin = yMin;
+            this.yMax = yMax;
             this.dy = dy;
-            this.tol = dx / 4.0;
+            this.tol = Math.min(dx, dy) / 4.0;
             this.vPoints = [];
-            this.cY = y1 - dy / 2.0;
+            this.cY = yMax + dy / 2.0;
             var i = 0;
 
-            for (var pt in pts) {
-                this.vPoints.push(new VoronoiPoint(i++, pt.x, pt.y));
+            for (var i = 0; i < pts.length; i++) {
+                var pt = pts[i];
+                this.vPoints.push(new VoronoiPoint(i, pt.x, pt.y));
             }
 
             for (var x = x1 + dx / 2; x < x2 + this.tol; x += dx)
                 this.bPoints.push(new BeachLinePoints(x, Number.MAX_VALUE, -1));
         }
         Voronoi.prototype.findEdge = function (i, j) {
-            for (var ed in this.iEdges) {
+            for (var k = 0; k < this.iEdges.length; k++) {
+                var ed = this.iEdges[k];
                 if (ed.i == i && ed.j == j)
                     return ed;
             }
@@ -99,10 +101,18 @@ define(["require", "exports", "shapes2d"], function(require, exports, shapes) {
         }
         }
         */
+        Voronoi.prototype.isVoronoiCompleted = function () {
+            return this.cY < this.yMin && !this.bExistIntersectionPointInTheCanvas;
+        };
+
         Voronoi.prototype.iterate = function () {
+            this.bExistIntersectionPointInTheCanvas = false;
             var iCurr = -1;
+            this.cY -= this.dy;
+
             for (var iX = 0; iX < this.bPoints.length; iX++) {
                 var bP = this.bPoints[iX];
+                var iCurr = this.bPoints[iX].voronoiPointOwner;
                 var ymin = Number.MAX_VALUE;
                 for (var i = 0; i < this.vPoints.length; i++) {
                     var vPt = this.vPoints[i];
@@ -115,30 +125,47 @@ define(["require", "exports", "shapes2d"], function(require, exports, shapes) {
                     }
                 }
                 bP.y = ymin;
-                if (bP.voronoiPointOwner != iCurr) {
-                    var ed = this.findEdge(bP.voronoiPointOwner, iCurr);
-                    if (ed != null) {
-                        ed.pI.y = bP.y;
-                        ed.pI.x = bP.x;
-                    }
-                    bP.voronoiPointOwner = iCurr;
-                }
+                bP.voronoiPointOwner = iCurr;
 
-                for (var i = 0; i < this.vPoints.length; i++) {
-                    var vPt = this.vPoints[i];
-                    if (!vPt.aboveScanLine && Math.abs(vPt.y - this.cY) < this.tol) {
-                        vPt.aboveScanLine = true;
+                if (iX != 0) {
+                    var bPp = this.bPoints[iX - 1];
+                    if (bPp.voronoiPointOwner != bP.voronoiPointOwner) {
+                        if (bP.y > this.yMin)
+                            this.bExistIntersectionPointInTheCanvas = true;
+                        var ed = this.findEdge(bPp.voronoiPointOwner, bP.voronoiPointOwner);
+                        if (ed == null)
+                            this.iEdges.push(new Edge(new shapes.Vector2(bP.x, bP.y), new shapes.Vector2(bP.x, bP.y), bPp.voronoiPointOwner, bP.voronoiPointOwner, true));
 
-                        //find the X
-                        var iX = Math.floor(vPt.x / this.dx);
-                        var bPt = this.bPoints[iX];
-                        if (bPt.y != Number.MAX_VALUE) {
-                            this.iEdges.push(new Edge(new shapes.Vector2(bPt.x, bPt.y), new shapes.Vector2(bPt.x, bPt.y), bPt.voronoiPointOwner, vPt.index, true));
-                            this.iEdges.push(new Edge(new shapes.Vector2(bPt.x, bPt.y), new shapes.Vector2(bPt.x, bPt.y), vPt.index, bPt.voronoiPointOwner, true));
+                        if (ed != null) {
+                            ed.pI.y = bP.y;
+                            ed.pI.x = bP.x;
                         }
                     }
                 }
-                this.cY += this.dy;
+                /*            if (bP.voronoiPointOwner != iCurr) {
+                var ed = this.findEdge(bP.voronoiPointOwner, iCurr)
+                if (ed != null) {
+                ed.pI.y = bP.y;
+                ed.pI.x = bP.x;
+                }
+                bP.voronoiPointOwner = iCurr;
+                }
+                */
+            }
+
+            for (var i = 0; i < this.vPoints.length; i++) {
+                var vPt = this.vPoints[i];
+                if (!vPt.aboveScanLine && vPt.y > this.cY) {
+                    vPt.aboveScanLine = true;
+
+                    //find the X
+                    var iX = Math.floor((vPt.x + 1) / this.dx);
+                    var bPt = this.bPoints[iX];
+                    if (bPt.y != Number.MAX_VALUE) {
+                        this.iEdges.push(new Edge(new shapes.Vector2(bPt.x, bPt.y), new shapes.Vector2(bPt.x, bPt.y), bPt.voronoiPointOwner, vPt.index, true));
+                        this.iEdges.push(new Edge(new shapes.Vector2(bPt.x, bPt.y), new shapes.Vector2(bPt.x, bPt.y), vPt.index, bPt.voronoiPointOwner, true));
+                    }
+                }
             }
         };
         return Voronoi;

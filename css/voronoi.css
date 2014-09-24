@@ -2,13 +2,14 @@
 }
 
 
-#TextContainer h1 {
+.TextContainer h1 {
     text-align: center;
 }
 
-#TextContainer  {
+.TextContainer  {
     width: 800px;
     margin: 0 auto;
+    
 }
 
 
@@ -35,6 +36,7 @@
 #ptsDisplay {
     display:inline-block;
     text-align: center;
+    width:260px;
        
 
 }

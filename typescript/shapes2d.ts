@@ -14,9 +14,23 @@ export class Vector2 {
         this.y = y;
     }
 
+    neg(): Vector2 {
+        return new Vector2(-this.x, -this.y);
+    }
+    plus(p:Vector2): Vector2 {
+        return new Vector2(this.x + p.x, this.y + p.y);
+    }
+    minus(p: Vector2): Vector2 {
+        return new Vector2(this.x - p.x, this.y - p.y);
+    }
+
     toPrecision(p: number):Vector2 {
         return new Vector2(precision(this.x, p), precision(this.y, p));
     }
+
+    scale(c: number): Vector2 {
+        return new Vector2(this.x * c, this.y * c);
+    } 
 } 
 
 
@@ -33,35 +47,112 @@ export class Vector4 {
     z: number;
     w: number;
     toArray() { return [this.x, this.y, this.z, this.w]; }
+
+    constructor(x: number, y: number, z: number, w: number) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.w = w;
+    }
 }
 
 
 
 //The colors renders
 export interface ColorRender {
-    getColor(i:number);
+    getColor(i:number):Vector4;
 }
 
 export class CyclicColorArray implements ColorRender {
     colors: Array<Vector4>
 
-    getColor(i: number) {
+    constructor(cls: Array<Vector4>) {
+        this.colors = cls;
+    }
+
+    getColor(i: number):Vector4 {
         return this.colors[i%this.colors.length]
     }
 }
 
 
+export class Shape2D {
+    topology:ITopology2D;
+    colorizer:ColorRender;
+
+    constructor(top: ITopology2D, colorizer: ColorRender) {
+        this.topology = top;
+        this.colorizer = colorizer;
+    }
 
 
-
-//Shapes
-export interface IShapes2D {
-    vertices()
-    indices() 
+    vertices():number[] {
+        return this.topology.vertices();
+    }
+    indices():number[] {
+        return this.topology.indices();
+    }
+    colors(): number[]{
+        var size = this.topology.n_vertices();
+        var result:number[] = [];
+        for (var i = 0; i < size; i++) {
+            var color: Vector4 = this.colorizer.getColor(i);
+            result.push(color.x, color.y, color.z, color.w);
+        }
+        return result;
+    }
+    topology_type() {
+        return this.topology.topology_type();
+    }
 }
 
 
-export class Rect2D implements IShapes2D{
+//Shapes
+export enum TopologyType { INDEXED_TRIANGLES, LINES }
+
+export interface ITopology2D {
+    vertices()
+    indices()
+    n_vertices(): number
+    topology_type():TopologyType
+}
+
+
+export class Line2D implements ITopology2D {
+    p1: Vector2;
+    p2: Vector2;
+
+    constructor(p1: Vector2, p2: Vector2) {
+        this.p1 = p1;
+        this.p2 = p2;
+    }
+
+    indices() {
+        throw "not Implemented"
+    }
+
+    topology_type() {
+        return TopologyType.LINES
+    }
+
+    n_vertices() {
+        return 2;
+    }
+
+    vertices() {
+        return [
+            this.p1.x,
+            this.p1.y,
+            this.p2.x,
+            this.p2.y
+        ];
+    }
+
+
+}
+
+
+export class Rect2D implements ITopology2D{
 
     p1: Vector2;
     p2: Vector2;
@@ -70,17 +161,25 @@ export class Rect2D implements IShapes2D{
         this.p2 = p2;
     }
 
-    static CreateRectFromPoint(barycenter: Vector2, width: number, length: number):Rect2D {
+    topology_type() { return TopologyType.INDEXED_TRIANGLES; }
+
+    static createRectFromPoint(barycenter: Vector2, width: number, length: number):Rect2D {
         return new Rect2D(new Vector2(barycenter.x - width / 2.0, barycenter.y - length / 2.0),
                           new Vector2(barycenter.x + width / 2.0, barycenter.y + length / 2.0));
     }
 
+    n_vertices() {
+        return 4;
+    }
+
+
+
     vertices() {
         return [
-            this.p1[0], this.p1[1],
-            this.p2[0], this.p1[1],
-            this.p2[0], this.p2[1],
-            this.p1[0], this.p2[1]];
+            this.p1.x, this.p1.y,
+            this.p2.x, this.p1.y,
+            this.p2.x, this.p2.y,
+            this.p1.x, this.p2.y];
     }
     indices() {
         return [

@@ -1,3 +1,21 @@
+.AppPanel {
+    text-align: center;
+    border: thin solid #434343;
+    padding: 5px;
+    border-radius: 10px;
+    background-color: #535353;
+    display: inline-block;
+    color:#f0e7d5
+}
+
+.AppPanel:hover {
+ 
+    background-color: #636363;
+    
+}
+
+
+
 @font-face {
   font-family: 'OpenSansLight';
   src: url("../fonts/OpenSans-Light-webfont.eot");

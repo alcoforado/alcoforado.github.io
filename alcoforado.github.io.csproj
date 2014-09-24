@@ -22,6 +22,10 @@
     <Content Include="css\pygment_trac.css" />
     <Content Include="css\styles.css" />
     <Content Include="css\voronoi.css" />
+    <Content Include="images\bullet.png" />
+    <Content Include="images\hr.gif" />
+    <Content Include="images\nav-bg.gif" />
+    <Content Include="images\voronoi_screenshot.png" />
     <Content Include="index.html" />
     <Content Include="javascript\ember.js" />
     <Content Include="javascript\glutils.js" />
@@ -51,7 +55,9 @@
       <DependentUpon>web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="NewFolder1\" />
+  </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="typescript\app_voronoi.ts" />
     <TypeScriptCompile Include="typescript\defines\backbone.d.ts" />
@@ -85,7 +91,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>56219</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:56219/</IISUrl>
+          <IISUrl>http://localhost:56219</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

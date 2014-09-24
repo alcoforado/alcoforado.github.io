@@ -1255,8 +1255,8 @@ define(function () {
             loadShader: loadShader,
             convertScreenCoordinatesToNormalized: function(canvas,pt)    {
                 return {
-                    x: 2.0 *  pt.x / canvas.width - 1.0, 
-                    y: 2.0 * (canvas.height - pt.y) / canvas.height - 1.0
+                    x: 2.0 *  (pt.x + 0.5) / canvas.width - 1.0, 
+                    y: 2.0 * (canvas.height - pt.y - 0.5) / canvas.height - 1.0
                 }
             }
     }

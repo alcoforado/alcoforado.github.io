@@ -72,7 +72,7 @@
         </script>
 
 
-    <div id="TextContainer">
+    <div class="TextContainer">
         <h1> The voronoi diagram </h1>
 
 
@@ -82,31 +82,41 @@
             to X is the voronoi point associated with that cell.
         </p>
 
-        <p> To create this diagram We use the incredible awesome Fortuna Alghorithm. One of the most important achievments in Computational Geometry. This little application illustrates the main 
-        ideas behind the alghorithm. Also check the book Berg, Mark, Computation Geometry: Algorithms and Applications </p>
+        <p> To create this diagram We use the incredible awesome Fortuna Alghorithm. This alghorithm is based on an auxiliary function called 
+        beach curves. This little application illustrates how the voronoi diagram is originated through this curve. Please note that the diagram generated is not entirely
+        connected due to discretization errors. You can get better results by increasing the  Vertical Scan Line Factor. </p>
+        
+        <p>To use the application click in the screen to select points, then press the play button. </p>
+
+        <p>Have Fun!! </p>
+
+        
 
     </div>
     <script type="text/x-handlebars" data-template-name="points">
 
         <div id="content">
-           
 
-           
-          
+
+
+
 
             <div id="screen">
                 <div id="screen_header">
                     Voronoi Diagram
                 </div>
-            <div id="divcanvas">
-                {{view "Main.App.OpenglView"}}
-                <button {{action 'reset' }}>Reset</button>
-                <button {{action 'play' }}>Play</button>
-                <button {{action 'pause' }}>Pause</button>
-                {{#if isPaused}}
-                <button {{action 'incrementScanLine' }}>Next</button>
-                {{/if}}
-            </div>
+                <div id="divcanvas">
+                    {{view "Main.App.OpenglView"}}
+                    <button {{action 'add_points'}}> Add Points</button>
+                    <button {{action 'reset' }}>Reset</button>
+                    <button {{action 'play' }}>Play</button>
+                    <button {{action 'pause' }}>Pause</button>
+                    {{#if isPaused }}
+                    {{#unless canInputPoints}}
+                    <button {{action 'next' }}>Next</button>
+                    {{/unless}}
+                    {{/if}}
+                </div>
             </div>
 
 
@@ -118,9 +128,18 @@
                 <table>
                     <th colspan="3">Screen Dimensions</th>
                     <tbody>
-                        <tr><td>X: {{input type="number" min="0" max="3000" value=form_X }} </td> <td>Y:  {{input type="number"  min="0" max="3000" value=form_Y }} </td> <td><button {{action 'apply_dimensions' }}>Apply</button></td></tr>
+                        <tr><td>X: {{input type="number" min="0" max="3000" value=form_X }} </td> <td>Y:  {{input type="number"  min="0" max="3000" value=form_Y }} </td> <td><button {{action 'resize_canvas' }}>Apply</button></td></tr>
                     </tbody>
                 </table>
+
+                <table>
+                    <th colspan="3">Vertical Scan Line</th>
+                    <tbody>
+                        <tr><td>Pos: {{scanLinePos}} </td> <td> Factor:  {{input type="number"  disabled=cannotInputPoints min="1" max="9999" value=dyFactor}} </td> <td>dy: {{dy}}</td></tr>
+                    </tbody>
+                </table>
+
+
 
 
                 <table>
@@ -134,9 +153,20 @@
             </div>
             <br />
         </div>
-
+        
+        <div class="TextContainer">
+            <br />
+            <br />
+            <p> References: </p>
+            
+            <ul>
+            <li>Berg, Mark, Computation Geometry: Algorithms and Applications</li>
+            </ul> 
+        </div>
     </script>
 
+
+  
   
 
 </body>
