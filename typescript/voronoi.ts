@@ -34,6 +34,9 @@ export class Edge {
 }
 
 
+export interface IVoronoi {
+
+}
 
 export class Voronoi {
     vPoints: VoronoiPoint[] = [];
