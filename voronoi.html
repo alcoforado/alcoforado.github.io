@@ -3,23 +3,35 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>Voronoi</title>
+   <title></title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/pygment_trac.css">
+    <link rel="stylesheet" href="css/voronoi.css">
+   
 
-
-
+    
     <script src="javascript/require.js"></script>
     <script>
         window.onload = main;
         function main() {
             requirejs.config({
-                baseUrl: 'javascript'
+                baseUrl: 'javascript',
+                paths: {
+                    jquery: 'jquery-1.11.1'
+                },
+                shim: {
+	            'ember' : {
+	               deps: ['handlebars','jquery'],
+	               exports: 'Ember'
+	            }
+
+	         }
             });
 
             require(["app_voronoi"], function (App) {
-                App = new App.Main();
-                App.Init();
+                Main = new App.Main();
+                Main.initEmber();
+                //App.InitScreen();
             })
         }
 /*         
@@ -50,12 +62,112 @@
     </script>
 </head>
 <body>
-    
-    <h1>The Voronoi Diagram (The beach curves)</h1>
-    <h2>Mouse left click to select points in the screen. Then press the space bar</h2>
-    <div id="content"></div>
 
-    <canvas id="canvas" width="400" height="300"></canvas>
+   
+   
+
+
+        <script type="text/x-handlebars" data-template-name="opengl">
+            <canvas class="opengl_canvas" {{bind-attr height=canvasY}} {{bind-attr width=canvasX}}></canvas>
+        </script>
+
+
+    <div class="TextContainer">
+        <h1> The voronoi diagram </h1>
+
+
+        <p>
+            Given a set of points  V  called Voronoi Points in a 2D region, the  Voronoi diagram is a decomposition of that region in cells
+            where each cell contains exactly one  Voronoi point. For every point X in the cell, the closest voronoi point
+            to X is the voronoi point associated with that cell.
+        </p>
+
+        <p> To create this diagram We use the incredible awesome Fortuna Alghorithm. This alghorithm is based on an auxiliary function called 
+        beach curves. This little application illustrates how the voronoi diagram is originated through this curve. Please note that the diagram generated is not entirely
+        connected due to discretization errors. You can get better results by increasing the  Vertical Scan Line Factor. </p>
+        
+        <p>To use the application click in the screen to select points, then press the play button. </p>
+
+        <p>Have Fun!! </p>
+
+        
+
+    </div>
+    <script type="text/x-handlebars" data-template-name="points">
+
+        <div id="content">
+
+
+
+
+
+            <div id="screen">
+                <div id="screen_header">
+                    Voronoi Diagram
+                </div>
+                <div id="divcanvas">
+                    {{view "Main.App.OpenglView"}}
+                    <button {{action 'add_points'}}> Add Points</button>
+                    <button {{action 'reset' }}>Reset</button>
+                    <button {{action 'play' }}>Play</button>
+                    <button {{action 'pause' }}>Pause</button>
+                    {{#if isPaused }}
+                    {{#unless canInputPoints}}
+                    <button {{action 'next' }}>Next</button>
+                    {{/unless}}
+                    {{/if}}
+                </div>
+            </div>
+
+
+            <div id="ptsDisplay">
+
+
+
+
+                <table>
+                    <th colspan="3">Screen Dimensions</th>
+                    <tbody>
+                        <tr><td>X: {{input type="number" min="0" max="3000" value=form_X }} </td> <td>Y:  {{input type="number"  min="0" max="3000" value=form_Y }} </td> <td><button {{action 'resize_canvas' }}>Apply</button></td></tr>
+                    </tbody>
+                </table>
+
+                <table>
+                    <th colspan="3">Vertical Scan Line</th>
+                    <tbody>
+                        <tr><td>Pos: {{scanLinePos}} </td> <td> Factor:  {{input type="number"  disabled=cannotInputPoints min="1" max="9999" value=dyFactor}} </td> <td>dy: {{dy}}</td></tr>
+                    </tbody>
+                </table>
+
+
+
+
+                <table>
+                    <th colspan="2" style="text-align:center">Voronoi Points</th>
+                    <tbody>
+                        {{#each pts}}
+                        <tr><td>x: {{x}}</td><td>y: {{y}}</td></tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+            <br />
+        </div>
+        
+        <div class="TextContainer">
+            <br />
+            <br />
+            <p> References: </p>
+            
+            <ul>
+            <li>Berg, Mark, Computation Geometry: Algorithms and Applications</li>
+            </ul> 
+        </div>
+    </script>
+
+
+  
+  
 
 </body>
 </html>

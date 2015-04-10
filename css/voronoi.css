@@ -1,0 +1,81 @@
+﻿body {
+}
+
+
+.TextContainer h1 {
+    text-align: center;
+}
+
+.TextContainer  {
+    width: 800px;
+    margin: 0 auto;
+    
+}
+
+
+
+
+#screen {
+    display:inline-block;
+    vertical-align:top;
+    
+}
+
+#content {
+    text-align: center;
+   
+}
+
+#screen_header {
+    background-color: darkorange;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    
+}
+
+#ptsDisplay {
+    display:inline-block;
+    text-align: center;
+    width:260px;
+       
+
+}
+
+
+#ptsDisplay tr:hover{
+    background-color: rgb(60,60,60); 
+}
+
+#divcanvas{
+    display:inline-block;
+    margin: 0 auto;
+    vertical-align:top;
+    
+}
+
+.opengl_canvas{
+    display:block;
+
+
+}
+
+#ptsDisplay th {
+    background-color: darkorange;
+    color: white;
+}
+
+#ptsDisplay tr {
+    border: 1px solid;
+
+    border-color:#434343;
+
+
+}
+
+
+#ptsDisplay td {
+    border: 0px;
+    border-color: green;
+    font-size:10px;
+}
+

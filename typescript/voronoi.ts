@@ -34,37 +34,44 @@ export class Edge {
 }
 
 
+export interface IVoronoi {
+
+}
 
 export class Voronoi {
     vPoints: VoronoiPoint[] = [];
-    bPoints: BeachLinePoints[] = [];
+    bPoints: BeachLinePoints[] = []; //beach points
     iEdges: Edge[] = [];
     cY: number;
     tol: number;
+    bExistIntersectionPointInTheCanvas: boolean;
+
 
     findEdge(i: number, j: number): Edge {
-        for (var ed in this.iEdges) {
+        for (var k = 0; k < this.iEdges.length;k++) {
+            var ed: Edge = this.iEdges[k];
             if (ed.i == i && ed.j == j)
                 return ed;
         }
         return null;
     }
 
-    constructor(pts: shapes.Vector2[], public x1: number, public x2: number, public dx: number, public y1: number, public y2: number, public dy: number) {
+    constructor(pts: shapes.Vector2[], public x1: number, public x2: number, public dx: number, public yMin: number, public yMax: number, public dy: number) {
         this.x1 = x1;
         this.x2 = x2;
         this.dx = dx;
-        this.y1 = y1;
-        this.y2 = y2;
+        this.yMin = yMin;
+        this.yMax = yMax;
         this.dy = dy;
-        this.tol = dx / 4.0;
+        this.tol = Math.min(dx,dy) / 4.0;
         this.vPoints = [];
-        this.cY = y1 - dy / 2.0;
+        this.cY = yMax + dy / 2.0;
         var i = 0;
 
         //Initialize the voronoi points.
-        for (var pt in pts) {
-            this.vPoints.push(new VoronoiPoint(i++, pt.x, pt.y));
+        for (var i = 0; i < pts.length;i++) {
+            var pt = pts[i];
+            this.vPoints.push(new VoronoiPoint(i, pt.x, pt.y));
         }
         //Initialized the beach curves points;
         for (var x = x1 + dx / 2; x < x2 + this.tol; x += dx)
@@ -92,11 +99,21 @@ export class Voronoi {
             }
         }
     */
+
+    isVoronoiCompleted() {
+        return this.cY < this.yMin && !this.bExistIntersectionPointInTheCanvas;
+    }
+    
     iterate(): void {
+        this.bExistIntersectionPointInTheCanvas = false;
         var iCurr: number = -1;
+        this.cY -= this.dy;
+        
         for (var iX = 0; iX < this.bPoints.length; iX++) {
-            var bP = this.bPoints[iX];
-            var ymin = Number.MAX_VALUE;
+            
+            var bP    = this.bPoints[iX];
+            var iCurr = this.bPoints[iX].voronoiPointOwner;
+            var ymin  = Number.MAX_VALUE;
             for (var i = 0; i < this.vPoints.length; i++) {
                 var vPt = this.vPoints[i];
                 if (vPt.aboveScanLine) {
@@ -108,7 +125,26 @@ export class Voronoi {
                 }
             }
             bP.y = ymin;
-            if (bP.voronoiPointOwner != iCurr) {
+            bP.voronoiPointOwner = iCurr;
+
+            if (iX != 0) {
+                var bPp = this.bPoints[iX - 1];
+                if (bPp.voronoiPointOwner != bP.voronoiPointOwner) {
+                    if (bP.y > this.yMin)
+                        this.bExistIntersectionPointInTheCanvas = true; 
+                    var ed = this.findEdge(bPp.voronoiPointOwner, bP.voronoiPointOwner)
+                    if (ed == null)
+                        this.iEdges.push(new Edge(new shapes.Vector2(bP.x, bP.y), new shapes.Vector2(bP.x, bP.y), bPp.voronoiPointOwner, bP.voronoiPointOwner, true));
+
+                    if (ed != null) {
+                        ed.pI.y = bP.y;
+                        ed.pI.x = bP.x;
+                    }
+                }
+
+            }
+
+/*            if (bP.voronoiPointOwner != iCurr) {
                 var ed = this.findEdge(bP.voronoiPointOwner, iCurr)
                 if (ed != null) {
                     ed.pI.y = bP.y;
@@ -116,23 +152,24 @@ export class Voronoi {
                 }
                 bP.voronoiPointOwner = iCurr;
             }
+*/
+        }
+        //Check for voronoiPoints emerging from the horizon  (scan line)
+        for (var i = 0; i < this.vPoints.length; i++) {
+            var vPt = this.vPoints[i];
+            if (!vPt.aboveScanLine && vPt.y > this.cY ) {
+                vPt.aboveScanLine = true;
 
-            //Check for voronoiPoints emerging from the horizon  (scan line)
-            for (var i = 0; i < this.vPoints.length; i++) {
-                var vPt = this.vPoints[i];
-                if (!vPt.aboveScanLine && Math.abs(vPt.y - this.cY) < this.tol) {
-                    vPt.aboveScanLine = true;
-
-                    //find the X
-                    var iX = Math.floor(vPt.x / this.dx);
-                    var bPt = this.bPoints[iX];
-                    if (bPt.y != Number.MAX_VALUE) {
-                        this.iEdges.push(new Edge(new shapes.Vector2(bPt.x, bPt.y), new shapes.Vector2(bPt.x, bPt.y), bPt.voronoiPointOwner, vPt.index, true));
-                        this.iEdges.push(new Edge(new shapes.Vector2(bPt.x, bPt.y), new shapes.Vector2(bPt.x, bPt.y), vPt.index, bPt.voronoiPointOwner, true));
-                    }
+                //find the X
+                var iX = Math.floor((vPt.x+1) / this.dx);
+                var bPt = this.bPoints[iX];
+                if (bPt.y != Number.MAX_VALUE) {
+                    this.iEdges.push(new Edge(new shapes.Vector2(bPt.x, bPt.y), new shapes.Vector2(bPt.x, bPt.y), bPt.voronoiPointOwner, vPt.index, true));
+                    this.iEdges.push(new Edge(new shapes.Vector2(bPt.x, bPt.y), new shapes.Vector2(bPt.x, bPt.y), vPt.index, bPt.voronoiPointOwner, true));
                 }
             }
-            this.cY += this.dy;
         }
+
+
     }
 }

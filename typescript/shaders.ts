@@ -19,7 +19,6 @@ export interface Attribute extends AttributeDesc {
 }
 
 
-
 export class ArrayBufferContext {
     attributes: Array<Attribute>;
     buffer: WebGLBuffer;
@@ -87,19 +86,28 @@ export class ShaderColor2D {
 
     program: WebGLProgram
 
-    shapes: Array<shapes2d.IShapes2D>
+    shapes: Array<shapes2d.Shape2D>
+
+    lines: Array<shapes2d.Shape2D>
 
     points: Array<shapes2d.Vector2>
 
-    buffer: WebGLBuffer
     iBuffer: WebGLBuffer
 
-    pointBuffer: ArrayBufferContext
-
-
+    pointBuffer:  ArrayBufferContext
+    shapesBuffer: ArrayBufferContext
+    linesBuffer:  ArrayBufferContext
 
     gl: WebGLRenderingContext;
-    
+
+    addShape(top:shapes2d.ITopology2D,cl:shapes2d.ColorRender) {
+        if (top.topology_type() == shapes2d.TopologyType.LINES)
+            this.lines.push(new shapes2d.Shape2D(top, cl));
+        else
+            this.shapes.push(new shapes2d.Shape2D(top, cl));
+    }
+
+
 
     constructor(gl: WebGLRenderingContext) {
         var verticeShaderSource = "\
@@ -107,7 +115,7 @@ export class ShaderColor2D {
      attribute vec4 a_color;\
      varying vec4 f_color;\
     void main() {\
-        gl_PointSize=5.0;\
+        gl_PointSize=1.0;\
         gl_Position = vec4(a_position, 0, 1);\
         f_color=a_color;\
     }";
@@ -120,39 +128,47 @@ export class ShaderColor2D {
         var vertexShader = glut.loadShader(gl, verticeShaderSource, gl.VERTEX_SHADER);
         var fragmentShader = glut.loadShader(gl, pixelShaderSource, gl.FRAGMENT_SHADER);
         this.program = glut.createProgram(gl, [vertexShader, fragmentShader]);
-        this.buffer      = gl.createBuffer();
+        this.shapesBuffer = new ArrayBufferContext(gl, this.program,
+            [{ name: "a_position", nComponents: 2, componentType: gl.FLOAT },
+             { name: "a_color", nComponents: 4, componentType: gl.FLOAT }]
+            );
         this.iBuffer     = gl.createBuffer();
         this.pointBuffer = new ArrayBufferContext(gl, this.program, 
             [{ name: "a_position", nComponents: 2, componentType: gl.FLOAT },
              { name: "a_color"   , nComponents: 4, componentType: gl.FLOAT }]
             );
-
+        this.linesBuffer = new ArrayBufferContext(gl, this.program,
+            [{ name: "a_position", nComponents: 2, componentType: gl.FLOAT },
+                { name: "a_color", nComponents: 4, componentType: gl.FLOAT }]
+            );
+        this.shapes = [];
+        this.points = [];
+        this.lines = [];
     }
 
 
     nComponents: number;
     componentType: number;
 
+    draw_lines(): void {
+
+
+    }
+
+
     draw(): void {
         var gl: WebGLRenderingContext = this.gl;
         gl.useProgram(this.program);
-        // look up where the vertex data needs to go.
-
-        /*
-        var positionLocation = gl.getAttribLocation(this.program, "a_position");
-        var colorLocation = gl.getAttribLocation(this.program, "a_color")
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
-
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.iBuffer)
+        
+   
 
 
-            var vertices = [];
+        var vertices = [];
         var indices = [];
         var off = 0;
         for (var i = 0; i < this.shapes.length; i++) {
             var points = this.shapes[i].vertices();
-            var colors = this.shapes[i].indices();
+            var colors = this.shapes[i].colors();
             if (points.length / 2 != colors.length / 4)
                 throw "Colors must be set for all points";
             var j = 0;
@@ -175,18 +191,42 @@ export class ShaderColor2D {
         }
 
 
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.DYNAMIC_DRAW)
-        gl.enableVertexAttribArray(positionLocation);
-        gl.enableVertexAttribArray(colorLocation)
-        gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 24, 0);
-        gl.vertexAttribPointer(colorLocation, 4, gl.FLOAT, false, 24, 2 * 4);
+        this.shapesBuffer.bind();
+        this.shapesBuffer.bufferData(new Float32Array(vertices), gl.DYNAMIC_DRAW); 
 
-        // draw
+
+        //indices
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.iBuffer)
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.DYNAMIC_DRAW)
+      
+     
         gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
 
-*/
+        ////////////// LINES ///////////////////////////////////////
+        var vertices_lines = [];
+        for (var i = 0; i < this.lines.length; i++) {
+            var ln: shapes2d.Shape2D = this.lines[i];
+            var local_lines_vertices:number[] = ln.vertices();
+            var local_lines_color: number[] = ln.colors();
 
+            var j = 0;
+            var k = 0;
+            while (j < local_lines_vertices.length) {
+                vertices_lines.push(local_lines_vertices[j++]);
+                vertices_lines.push(local_lines_vertices[j++]);
+                vertices_lines.push(local_lines_color[k++]);
+                vertices_lines.push(local_lines_color[k++]);
+                vertices_lines.push(local_lines_color[k++]);
+                vertices_lines.push(local_lines_color[k++]);
+            }
+        }
+        this.linesBuffer.bind();
+        this.linesBuffer.bufferData(new Float32Array(vertices_lines), gl.DYNAMIC_DRAW); 
+        gl.drawArrays(gl.LINES, 0, vertices_lines.length / 6);
+
+
+
+        //draw points
         var pointsV: number[] = [];
         for (var i = 0; i < this.points.length; i++) {
             pointsV.push(this.points[i].x);

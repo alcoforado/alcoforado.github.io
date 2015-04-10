@@ -25,7 +25,7 @@ class GLApp {
     voronoi: Voronoi.Voronoi;
     shader: Shaders.ShaderColor2D;
     canvas: HTMLCanvasElement;
-   
+
     normalizedDX(): number {
         return 2.0 / this.canvas.width;
     }
@@ -55,7 +55,7 @@ class GLApp {
         this.gl.flush();
     }
 
-    iterate(loop:boolean) {
+    iterate(loop: boolean) {
         if (this.voronoi == null) {
             throw "voronoi.iterate: call startVoronoi first"
         }
@@ -67,7 +67,7 @@ class GLApp {
 
         this.voronoi.iterate();
         this.voronoiToPrimitives();
-       
+
 
     }
     voronoiToPrimitives() {
@@ -82,8 +82,7 @@ class GLApp {
 
         this.shader.points = this.voronoi.bPoints;
 
-        for (var i = 0; i < this.voronoi.iEdges.length; i++)
-        {
+        for (var i = 0; i < this.voronoi.iEdges.length; i++) {
             var iEdge = this.voronoi.iEdges[i];
             var line = new Shapes.Line2D(iEdge.origin, iEdge.pI);
             this.shader.addShape(line, clRed);
@@ -105,8 +104,8 @@ class GLApp {
         this.voronoi = null;
     }
 
-    startVoronoi(pts:Shapes.Vector2[],dy:number) {
-        this.voronoi = new Voronoi.Voronoi(pts, -1, 1, this.normalizedDX(),  -1, 1, dy);
+    startVoronoi(pts: Shapes.Vector2[], dy: number) {
+        this.voronoi = new Voronoi.Voronoi(pts, -1, 1, this.normalizedDX(), -1, 1, dy);
     }
 
 
@@ -116,27 +115,26 @@ class GLApp {
 
 
 export class Main {
-    T: any; 
+    T: any;
     App: any;
-  
-   
-   
+
+
+
     initEmber() {
 
         var that = this;
 
         this.App = Ember.Application.create();
-        this.App.ready = function ()
-        {
+        this.App.ready = function () {
             that.App.ControllerInstance = that.App.__container__.lookup('controller:Points');
         }
-    
+
         this.App.Router.map(function () {
             this.resource('points', { path: '/' })
         });
         this.App.PointsRoute = Ember.Route.extend({
             model: function () {
-                return { pts: [], scanLinePos: 0, loop: false, isPaused: true, canInputPoints: true, dyFactor:true };
+                return { pts: [], scanLinePos: 0, loop: false, isPaused: true, canInputPoints: true, dyFactor: true };
             }
         });
 
@@ -145,7 +143,7 @@ export class Main {
             cannotInputPoints: Ember.computed.not('canInputPoints'),
             actions: {
                 init_canvas: function (canvas: HTMLCanvasElement) {
-                    var glApp:GLApp = new GLApp();
+                    var glApp: GLApp = new GLApp();
                     glApp.InitScreen(canvas);
                     this.set('glApp', glApp);
                     this.set('canInputPoints', true);
@@ -159,14 +157,14 @@ export class Main {
                     //Add observer on list of pts to include such list in the canvas shader.
                     this.addObserver('pts', this.ptsChanged);
                     this.addObserver('dyFactor', function () {
-                        this.set('dy', (glApp.normalizedDY() / this.get('dyFactor')).toFixed(6));
+                        this.set('dy',(glApp.normalizedDY() / this.get('dyFactor')).toFixed(6));
                     });
 
 
                 },
                 next: function () {
-                    var glApp: GLApp  = this.get('glApp');
-                    var loop: boolean = this.get('loop');     
+                    var glApp: GLApp = this.get('glApp');
+                    var loop: boolean = this.get('loop');
                     glApp.iterate(loop);
                     glApp.draw();
                     this.updateControllerModel(glApp);
@@ -180,21 +178,21 @@ export class Main {
 
                     var glApp: GLApp = this.get('glApp');
                     this.set('isPaused', false);
-                   
+
                     if (this.get('canInputPoints')) {
                         this.set('canInputPoints', false);
                         var pts: Shapes.Vector2[] = this.get('pts');
                         var dy: number = this.get('dy');
-                        glApp.startVoronoi(pts,dy);
-            
+                        glApp.startVoronoi(pts, dy);
+
                     }
                     var controller = this;
-                    var loop:boolean = this.get('loop');                               
+                    var loop: boolean = this.get('loop');
                     this.playInterval = setInterval(function () {
                         glApp.iterate(loop);
                         glApp.draw();
                         controller.updateControllerModel(glApp);
-                    },100/this.get('dyFactor'))
+                    }, 100 / this.get('dyFactor'))
 
                 },
                 pause: function () {
@@ -202,7 +200,7 @@ export class Main {
                     this.set('isPaused', true);
                 },
                 reset: function () {
-                    var glApp:GLApp = this.get('glApp');
+                    var glApp: GLApp = this.get('glApp');
                     clearInterval(this.playInterval);
                     this.set('canInputPoints', true);
                     this.set('isPaused', true);
@@ -210,10 +208,10 @@ export class Main {
                     glApp.resetApp();
                 },
                 add_points: function () {
-                    var pts = this.get('pts'); 
+                    var pts = this.get('pts');
                     this.send('reset');
                     this.set('pts', pts);
-                    
+
                 },
                 opengl_canvas_click: function (pt: Shapes.Vector2) {
                     if (!this.get('canInputPoints'))
@@ -233,7 +231,7 @@ export class Main {
                 }
             },
             updateControllerModel: function () {
-                var glApp:GLApp = this.get('glApp');
+                var glApp: GLApp = this.get('glApp');
                 if (glApp.voronoi != null) {
                     this.set('scanLinePos', glApp.voronoi.cY.toFixed(4));
                     this.set('dy', glApp.voronoi.dy.toFixed(5));
@@ -254,7 +252,7 @@ export class Main {
             ptsChanged: function () {
                 var glApp: GLApp = this.get('glApp');
                 var pts: Shapes.Vector2[] = this.get('pts');
-                var dx:  Shapes.Vector2 = new Shapes.Vector2(glApp.normalizedDX(), glApp.normalizedDY());
+                var dx: Shapes.Vector2 = new Shapes.Vector2(glApp.normalizedDX(), glApp.normalizedDY());
 
                 dx = dx.scale(2);
 
@@ -268,10 +266,10 @@ export class Main {
                 glApp.clearScreen();
                 glApp.shader.draw();
             }
-            
+
 
         });
-        
+
         this.App.PointsView = Ember.View.extend({
             classNames: ['main_view'],
             didInsertElement: function () {
@@ -283,10 +281,10 @@ export class Main {
             templateName: 'opengl',
             tagName: 'div',
             click: function (e: MouseEvent) {
-                var x:number = e.offsetX == undefined ? e.layerX : e.offsetX;
-                var y:number = e.offsetY == undefined ? e.layerY : e.offsetY;
-                var point = glut.convertScreenCoordinatesToNormalized(this.canvas, new Shapes.Vector2(x,y));
-                this.get('controller').send('opengl_canvas_click', new Shapes.Vector2(point.x,point.y));
+                var x: number = e.offsetX == undefined ? e.layerX : e.offsetX;
+                var y: number = e.offsetY == undefined ? e.layerY : e.offsetY;
+                var point = glut.convertScreenCoordinatesToNormalized(this.canvas, new Shapes.Vector2(x, y));
+                this.get('controller').send('opengl_canvas_click', new Shapes.Vector2(point.x, point.y));
             },
             didInsertElement: function () {
                 var canvas = document.getElementsByClassName("opengl_canvas")[0];
