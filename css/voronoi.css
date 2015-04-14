@@ -42,7 +42,7 @@
 }
 
 
-#ptsDisplay tr:hover{
+.simDisplay tr:hover{
     background-color: rgb(60,60,60); 
 }
 
@@ -59,12 +59,12 @@
 
 }
 
-#ptsDisplay th {
+.simDisplay th {
     background-color: darkorange;
     color: white;
 }
 
-#ptsDisplay tr {
+.simDisplay tr {
     border: 1px solid;
 
     border-color:#434343;
@@ -73,7 +73,7 @@
 }
 
 
-#ptsDisplay td {
+.simDisplay td {
     border: 0px;
     border-color: green;
     font-size:10px;

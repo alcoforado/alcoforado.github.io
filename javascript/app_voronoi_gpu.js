@@ -170,16 +170,6 @@ define(["require", "exports", "shapes2d", "shaders", "glutils", "voronoi", "embe
                         this.set('pts', []);
                         glApp.resetApp();
                     },
-                    restart: function () {
-                        var glApp = this.get('glApp');
-                        clearInterval(this.playInterval);
-                        this.set('canInputPoints', true);
-                        this.set('isPaused', true);
-                        var shapes = glApp.shader.shapes;
-                        glApp.resetApp();
-                        glApp.shader.shapes = shapes;
-                        this.send('play');
-                    },
                     add_points: function () {
                         var pts = this.get('pts');
                         this.send('reset');
@@ -263,4 +253,4 @@ define(["require", "exports", "shapes2d", "shaders", "glutils", "voronoi", "embe
     })();
     exports.Main = Main;
 });
-//# sourceMappingURL=app_voronoi.js.map
+//# sourceMappingURL=app_voronoi_gpu.js.map

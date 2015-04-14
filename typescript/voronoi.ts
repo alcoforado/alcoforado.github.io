@@ -161,7 +161,7 @@ export class Voronoi {
                 vPt.aboveScanLine = true;
 
                 //find the X
-                var iX = Math.floor((vPt.x+1) / this.dx);
+                var iX = Math.floor((vPt.x +1.0)/ this.dx);
                 var bPt = this.bPoints[iX];
                 if (bPt.y != Number.MAX_VALUE) {
                     this.iEdges.push(new Edge(new shapes.Vector2(bPt.x, bPt.y), new shapes.Vector2(bPt.x, bPt.y), bPt.voronoiPointOwner, vPt.index, true));

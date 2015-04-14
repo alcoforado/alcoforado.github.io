@@ -111,6 +111,7 @@
                     <button {{action 'reset' }}>Reset</button>
                     <button {{action 'play' }}>Play</button>
                     <button {{action 'pause' }}>Pause</button>
+                    <button {{action 'restart' }}>Restart</button>
                     {{#if isPaused }}
                     {{#unless canInputPoints}}
                     <button {{action 'next' }}>Next</button>
@@ -120,7 +121,7 @@
             </div>
 
 
-            <div id="ptsDisplay">
+            <div id="ptsDisplay" class="simDisplay">
 
 
 
@@ -150,6 +151,16 @@
                         {{/each}}
                     </tbody>
                 </table>
+
+                <!--<table>
+                    <th colspan="2" style="text-align:center">Edge Set</th>
+                    <tbody>
+                        {{#each edges}}
+                        <tr><td>x: {{x}}</td><td>y: {{y}}</td></tr>
+                        {{/each}}
+                    </tbody>
+                </table>-->
+
             </div>
             <br />
         </div>

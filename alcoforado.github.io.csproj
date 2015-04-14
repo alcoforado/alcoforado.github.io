@@ -36,6 +36,7 @@
     <Content Include="javascript\jquery-ui-1.11.1.js" />
     <Content Include="javascript\jquery.datetimeentry.js" />
     <Content Include="javascript\jquery.ui.timepicker.js" />
+    <Content Include="glsl\voronoi.glsl" />
     <None Include="javascript\jquery.validate-vsdoc.js" />
     <Content Include="javascript\jquery.validate.js" />
     <Content Include="javascript\jquery.validate.min.js" />
@@ -43,7 +44,6 @@
     <Content Include="javascript\jquery.validate.unobtrusive.min.js" />
     <Content Include="javascript\require.js" />
     <Content Include="javascript\respond.js" />
-    <Content Include="typescript\voronoi\main_voronoi.js" />
     <Content Include="voronoi.html" />
     <Content Include="web.config" />
   </ItemGroup>
@@ -56,10 +56,11 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="NewFolder1\" />
+    <Folder Include="typescript\voronoi\" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="typescript\app_voronoi.ts" />
+    <TypeScriptCompile Include="typescript\app_voronoi_gpu.ts" />
     <TypeScriptCompile Include="typescript\defines\backbone.d.ts" />
     <TypeScriptCompile Include="typescript\defines\d3.d.ts" />
     <TypeScriptCompile Include="typescript\defines\ember.d.ts" />

@@ -209,6 +209,16 @@ export class Main {
                     this.set('pts', []);
                     glApp.resetApp();
                 },
+                restart: function () {
+                    var glApp: GLApp = this.get('glApp');
+                    clearInterval(this.playInterval);
+                    this.set('canInputPoints', true);
+                    this.set('isPaused', true);
+                    var shapes = glApp.shader.shapes;
+                    glApp.resetApp();
+                    glApp.shader.shapes = shapes;
+                    this.send('play');
+                },
                 add_points: function () {
                     var pts = this.get('pts'); 
                     this.send('reset');
