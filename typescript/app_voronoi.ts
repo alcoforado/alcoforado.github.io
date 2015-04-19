@@ -16,7 +16,7 @@ import glut = require("glutils");
 import Voronoi = require("voronoi");
 //import Handlebars = require("handlebars");
 import Ember = require("ember");
-
+import LA = require("linearalgebra")
 
 
 
@@ -25,7 +25,9 @@ class GLApp {
     voronoi: Voronoi.Voronoi;
     shader: Shaders.ShaderColor2D;
     canvas: HTMLCanvasElement;
-   
+    glTransform: LA.GLScreenMapping;
+
+
     normalizedDX(): number {
         return 2.0 / this.canvas.width;
     }
@@ -235,9 +237,10 @@ export class Main {
                 resize_canvas: function () {
                     this.set("canvasX", this.form_X);
                     this.set("canvasY", this.form_Y);
-                    var glApp = this.get("glApp");
+                    var glApp = <GLApp>  this.get("glApp");
                     setTimeout(function () {
                         glApp.gl.viewport(0, 0, glApp.canvas.width, glApp.canvas.height);
+                        glApp.glTransform = new LA.GLScreenMapping([-1, 1], [this.form_X, this.form_Y], true);
                         glApp.draw();
                     }, 100);
                 }
