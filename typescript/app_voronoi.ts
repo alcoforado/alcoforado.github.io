@@ -227,17 +227,19 @@ export class Main {
                     this.set('pts', pts);
                     
                 },
-                opengl_canvas_click: function (pt: Shapes.Vector2) {
+                opengl_canvas_click: function (pt: LA.Vec2) {
                     if (!this.get('canInputPoints'))
                         return;
                     var pts: Shapes.Vector2[] = this.get('pts');
+                    var glApp = <GLApp>  this.get("glApp");
+                    pt=glApp.glTransform.MapToGL(pt);
                     pts.pushObject(pt.toPrecision(5));
                     this.propertyDidChange('pts');
                 },
                 resize_canvas: function () {
                     this.set("canvasX", this.form_X);
                     this.set("canvasY", this.form_Y);
-                    var glApp = <GLApp>  this.get("glApp");
+                    var glApp = <GLApp> this.get("glApp");
                     setTimeout(function () {
                         glApp.gl.viewport(0, 0, glApp.canvas.width, glApp.canvas.height);
                         glApp.glTransform = new LA.GLScreenMapping([-1, 1], [this.form_X, this.form_Y], true);
@@ -298,8 +300,7 @@ export class Main {
             click: function (e: MouseEvent) {
                 var x:number = e.offsetX == undefined ? e.layerX : e.offsetX;
                 var y:number = e.offsetY == undefined ? e.layerY : e.offsetY;
-                var point = glut.convertScreenCoordinatesToNormalized(this.canvas, new Shapes.Vector2(x,y));
-                this.get('controller').send('opengl_canvas_click', new Shapes.Vector2(point.x,point.y));
+                this.get('controller').send('opengl_canvas_click', new LA.Vec2([x,y]));
             },
             didInsertElement: function () {
                 var canvas = document.getElementsByClassName("opengl_canvas")[0];
