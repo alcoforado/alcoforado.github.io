@@ -18,18 +18,26 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="css\ie.css" />
+    <Content Include="css\jasmine.css" />
     <Content Include="css\normalize.css" />
     <Content Include="css\pygment_trac.css" />
     <Content Include="css\styles.css" />
     <Content Include="css\voronoi.css" />
     <Content Include="images\bullet.png" />
     <Content Include="images\hr.gif" />
+    <Content Include="images\icon-ok.svg" />
+    <Content Include="images\jasmine-horizontal.svg" />
+    <Content Include="images\jasmine_favicon.png" />
     <Content Include="images\nav-bg.gif" />
+    <Content Include="images\red-round-error.svg" />
     <Content Include="images\voronoi_screenshot.png" />
     <Content Include="index.html" />
+    <Content Include="javascript\boot.js" />
     <Content Include="javascript\ember.js" />
     <Content Include="javascript\glutils.js" />
     <Content Include="javascript\handlebars.js" />
+    <Content Include="javascript\jasmine-html.js" />
+    <Content Include="javascript\jasmine.js" />
     <Content Include="javascript\jquery-1.11.1.js" />
     <Content Include="javascript\jquery-paginator.js" />
     <Content Include="javascript\jquery-rotate.js" />
@@ -44,6 +52,8 @@
     <Content Include="javascript\jquery.validate.unobtrusive.min.js" />
     <Content Include="javascript\require.js" />
     <Content Include="javascript\respond.js" />
+    <Content Include="javascript\require_specrunner.js" />
+    <Content Include="SpecRunner.html" />
     <Content Include="voronoi.html" />
     <Content Include="web.config" />
   </ItemGroup>
@@ -65,6 +75,7 @@
     <TypeScriptCompile Include="typescript\defines\d3.d.ts" />
     <TypeScriptCompile Include="typescript\defines\ember.d.ts" />
     <TypeScriptCompile Include="typescript\defines\handlebars.d.ts" />
+    <TypeScriptCompile Include="typescript\defines\jasmine.d.ts" />
     <TypeScriptCompile Include="typescript\defines\jquery.d.ts" />
     <TypeScriptCompile Include="typescript\defines\mustache.d.ts" />
     <TypeScriptCompile Include="typescript\defines\require.d.ts" />
@@ -74,6 +85,7 @@
     <TypeScriptCompile Include="typescript\shapes2d.ts" />
     <TypeScriptCompile Include="typescript\defines\underscore.d.ts" />
     <TypeScriptCompile Include="typescript\shaders.ts" />
+    <TypeScriptCompile Include="typescript\specs.ts" />
     <TypeScriptCompile Include="typescript\voronoi.ts" />
   </ItemGroup>
   <PropertyGroup>
@@ -107,7 +119,7 @@
     <TypeScriptTarget>ES5</TypeScriptTarget>
     <TypeScriptRemoveComments>false</TypeScriptRemoveComments>
     <TypeScriptSourceMap>true</TypeScriptSourceMap>
-    <TypeScriptModuleKind>AMD</TypeScriptModuleKind>
+    <TypeScriptModuleKind>amd</TypeScriptModuleKind>
     <TypeScriptOutDir>$(MSBuildProjectDirectory)\javascript</TypeScriptOutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">

@@ -1,4 +1,4 @@
-﻿/// <reference path="shaders.ts" />
+/// <reference path="shaders.ts" />
 /// <reference path="shapes2d.ts" />
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -6,7 +6,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", "shapes2d"], function(require, exports, shapes) {
+define(["require", "exports", "shapes2d"], function (require, exports, shapes) {
     var VoronoiPoint = (function (_super) {
         __extends(VoronoiPoint, _super);
         function VoronoiPoint(index, x, y) {
@@ -21,7 +21,6 @@ define(["require", "exports", "shapes2d"], function(require, exports, shapes) {
         return VoronoiPoint;
     })(shapes.Vector2);
     exports.VoronoiPoint = VoronoiPoint;
-
     var BeachLinePoints = (function (_super) {
         __extends(BeachLinePoints, _super);
         function BeachLinePoints(x, y, voronoiPointOwner) {
@@ -31,7 +30,6 @@ define(["require", "exports", "shapes2d"], function(require, exports, shapes) {
         return BeachLinePoints;
     })(shapes.Vector2);
     exports.BeachLinePoints = BeachLinePoints;
-
     var Edge = (function () {
         function Edge(origin, pI, i, j, exists) {
             this.origin = origin;
@@ -43,7 +41,6 @@ define(["require", "exports", "shapes2d"], function(require, exports, shapes) {
         return Edge;
     })();
     exports.Edge = Edge;
-
     var Voronoi = (function () {
         function Voronoi(pts, x1, x2, dx, yMin, yMax, dy) {
             this.x1 = x1;
@@ -53,7 +50,7 @@ define(["require", "exports", "shapes2d"], function(require, exports, shapes) {
             this.yMax = yMax;
             this.dy = dy;
             this.vPoints = [];
-            this.bPoints = [];
+            this.bPoints = []; //beach points
             this.iEdges = [];
             this.x1 = x1;
             this.x2 = x2;
@@ -65,12 +62,10 @@ define(["require", "exports", "shapes2d"], function(require, exports, shapes) {
             this.vPoints = [];
             this.cY = yMax + dy / 2.0;
             var i = 0;
-
             for (var i = 0; i < pts.length; i++) {
                 var pt = pts[i];
                 this.vPoints.push(new VoronoiPoint(i, pt.x, pt.y));
             }
-
             for (var x = x1 + dx / 2; x < x2 + this.tol; x += dx)
                 this.bPoints.push(new BeachLinePoints(x, Number.MAX_VALUE, -1));
         }
@@ -82,34 +77,31 @@ define(["require", "exports", "shapes2d"], function(require, exports, shapes) {
             }
             return null;
         };
-
         /*
-        GetActiveVoronoiPointsForScanLine(y:number):VoronoiPoint[] {
-        var result: VoronoiPoint[] = [];
-        for (var i = 0; i < this.vPoints.length; i++) {
-        var vPt = this.vPoints[i];
-        if (vPt.y > y) {
-        result.push(vPt);
-        if (!vPt.justAppearedOnHorizon())
-        vPt.justAppearedOnHorizon = true;
-        //Event horizon happened
-        //Create two ed
-        
-        }
-        
-        
-        }
-        }
+            GetActiveVoronoiPointsForScanLine(y:number):VoronoiPoint[] {
+                var result: VoronoiPoint[] = [];
+                for (var i = 0; i < this.vPoints.length; i++) {
+                    var vPt = this.vPoints[i];
+                    if (vPt.y > y) {
+                        result.push(vPt);
+                        if (!vPt.justAppearedOnHorizon())
+                            vPt.justAppearedOnHorizon = true;
+                        //Event horizon happened
+                        //Create two ed
+    
+                    }
+    
+    
+                }
+            }
         */
         Voronoi.prototype.isVoronoiCompleted = function () {
             return this.cY < this.yMin && !this.bExistIntersectionPointInTheCanvas;
         };
-
         Voronoi.prototype.iterate = function () {
             this.bExistIntersectionPointInTheCanvas = false;
             var iCurr = -1;
             this.cY -= this.dy;
-
             for (var iX = 0; iX < this.bPoints.length; iX++) {
                 var bP = this.bPoints[iX];
                 var iCurr = this.bPoints[iX].voronoiPointOwner;
@@ -126,7 +118,6 @@ define(["require", "exports", "shapes2d"], function(require, exports, shapes) {
                 }
                 bP.y = ymin;
                 bP.voronoiPointOwner = iCurr;
-
                 if (iX != 0) {
                     var bPp = this.bPoints[iX - 1];
                     if (bPp.voronoiPointOwner != bP.voronoiPointOwner) {
@@ -135,29 +126,17 @@ define(["require", "exports", "shapes2d"], function(require, exports, shapes) {
                         var ed = this.findEdge(bPp.voronoiPointOwner, bP.voronoiPointOwner);
                         if (ed == null)
                             this.iEdges.push(new Edge(new shapes.Vector2(bP.x, bP.y), new shapes.Vector2(bP.x, bP.y), bPp.voronoiPointOwner, bP.voronoiPointOwner, true));
-
                         if (ed != null) {
                             ed.pI.y = bP.y;
                             ed.pI.x = bP.x;
                         }
                     }
                 }
-                /*            if (bP.voronoiPointOwner != iCurr) {
-                var ed = this.findEdge(bP.voronoiPointOwner, iCurr)
-                if (ed != null) {
-                ed.pI.y = bP.y;
-                ed.pI.x = bP.x;
-                }
-                bP.voronoiPointOwner = iCurr;
-                }
-                */
             }
-
             for (var i = 0; i < this.vPoints.length; i++) {
                 var vPt = this.vPoints[i];
                 if (!vPt.aboveScanLine && vPt.y > this.cY) {
                     vPt.aboveScanLine = true;
-
                     //find the X
                     var iX = Math.floor((vPt.x + 1.0) / this.dx);
                     var bPt = this.bPoints[iX];

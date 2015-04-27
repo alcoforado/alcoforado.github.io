@@ -1,81 +1,148 @@
 ﻿export class Vec2 {
-    data:Float32Array
+    0: number;
+    1: number;
 
-    constructor(arr: number[]) 
+
+    constructor(arr: number[]=null) 
     {
-        this.data = new Float32Array(2);
         if (arr != null) {
-            this.data[0] = arr[0];
-            this.data[1] = arr[1];
+            this[0] = arr[0];
+            this[1] = arr[1];
         }
     }
     x(): number {
-        return this.data[0];
+        return this[0];
     }
 
     y(): number {
-        return this.data[1];
+        return this[1];
     }
 
     toPrecision(p: number): Vec2 {
         var a = [1.0, 1.0];
-        return new Vec2([parseFloat(this.data[0].toPrecision(p)), parseFloat(this.data[1].toPrecision(p))]);
+        return new Vec2([parseFloat(this[0].toPrecision(p)), parseFloat(this[1].toPrecision(p))]);
     }
 
-
+    toVec3(extraComponentValue: number) {
+        return new Vec3([this[0], this[1], extraComponentValue]);
+    }
 
     toNumberArray(): number[]{
-        return [this.data[0], this.data[1]];
+        return [this[0], this[1]];
     }
 
     clone(): Vec2 {
-        return new Vec2([this.data[0], this.data[1]]);
+        return new Vec2([this[0], this[1]]);
 
     }
 
     fdec(v:Vec2): Vec2 {
-        this.data[0] -= v.data[0];
-        this.data[1] -= v.data[1];
+        this[0] -= v[0];
+        this[1] -= v[1];
         return this;
     }
 
     finc(v: Vec2): Vec2 {
-        this.data[0] += v.data[0];
-        this.data[1] += v.data[1];
+        this[0] += v[0];
+        this[1] += v[1];
         return this;
     }
 
     fvscale(sc: Vec2): Vec2 {
-        this.data[0] *= sc.data[0];
-        this.data[1] *= sc.data[1];
+        this[0] *= sc[0];
+        this[1] *= sc[1];
         return this;
 
     }
+    
+    add(x: Vec2): Vec2 {
+        var result = new Vec2();
+        result[0] = this[0] + x[0];
+        result[1] = this[1] + x[1];
+        return result;
+    }
+
+    sub(x: Vec2): Vec2 {
+        var result = new Vec2();
+        result[0] = this[0] - x[0];
+        result[1] = this[1] - x[1];
+        return result;
+    }
+
 
     fvscale_a(sc: number[]): Vec2 {
-        this.data[0] *= sc[0];
-        this.data[1] *= sc[1];
+        this[0] *= sc[0];
+        this[1] *= sc[1];
         return this;
 
     }
 
+    fsscale(s: number): Vec2 {
+        this[0] *= s;
+        this[1] *= s;
+        return this;
+    }
    
 
 
 }
 
+export function ToRad(degree: number): number {
+    return degree*Math.PI/180.0
+}
 
 export class Vec3 {
-    data: Float32Array
 
-    constructor(arr: Float32Array=null) {
-        this.data = new Float32Array(3);
+    constructor(arr: number[]=null) {
         if (arr != null) {
-            this.data[0] = arr[0];
-            this.data[1] = arr[1];
-            this.data[2] = arr[2];
+            this[0] = arr[0];
+            this[1] = arr[1];
+            this[2] = arr[2];
+        }
+        else {
+            this[0] = 0.0;
+            this[1] = 0.0;
+            this[2] = 0.0;
         }
     }
+
+    clone(): Vec3 {
+        return new Vec3([this[0], this[1],this[2]]);
+
+    }
+    dot_product(v:Vec3): number {
+
+        return this[0] * v[0] + this[1] * v[1] + this[2] * v[2];
+
+    }
+
+    norm(): number {
+        var v = this;
+        return Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+    }
+
+    norm2(): number {
+        var v = this;
+        return v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
+    }
+
+    diff(v: Vec3): Vec3 {
+        var result = new Vec3();
+        result[0] = this[0] - v[0];
+        result[1] = this[1] - v[1];
+        result[2] = this[2] - v[2];
+        return result;
+    }
+
+    toVec2(coordinate1: number, coordinate2: number):Vec2 {
+        return new Vec2([this[coordinate1], this[coordinate2]]);
+    }
+
+    xy():Vec2 {
+        return new Vec2([this[0], this[1]]);
+    }
+
+
 }
 
 
@@ -263,29 +330,57 @@ export class Mat3 {
         return matrix;
     }
 
-    MulV(v: Vec3): Vec3 {
+    TransformV(v: Vec3): void {
 
         var matrix: Mat3 = new Mat3();
         var out = matrix.data;
         var v0 = v[0], v1 = v[1], v2 = v[2];
 
         var a = this.data;
-
         v[0] = a[0] * v0 + a[1] * v1 + a[2] * v2;
         v[1] = a[3] * v0 + a[4] * v1 + a[5] * v2;
         v[2] = a[6] * v0 + a[7] * v1 + a[8] * v2;
-
-        return v;
+       
     }
- 
+
+    MulV(v: Vec3): Vec3 {
+
+        var matrix: Mat3 = new Mat3();
+        var out = matrix.data;
+        var v0 = v[0], v1 = v[1], v2 = v[2];
+        var result = new Vec3();
+
+        var a = this.data;
+        result[0] = a[0] * v0 + a[1] * v1 + a[2] * v2;
+        result[1] = a[3] * v0 + a[4] * v1 + a[5] * v2;
+        result[2] = a[6] * v0 + a[7] * v1 + a[8] * v2;
+        return result;
+    }
+
+
+
+    
+    RotateXY(rad: number) {
+        var out = this.data;
+        out[0] = Math.cos(rad);
+        out[1] = -Math.sin(rad);
+        out[2] = 0;
+        out[3] = Math.sin(rad);
+        out[4] = Math.cos(rad);
+        out[5] = 0;
+        out[6] = 0;
+        out[7] = 0;
+        out[8] = 1;
+
+    }
 
 
 };
 
 export var gl_tol: number = 0.0000001; 
-export function gl_equal(a: number, b: number)
+export function gl_equal(a: number, b: number):boolean
 {
-    Math.abs(a - b) < gl_tol;
+    return Math.abs(a - b) < gl_tol;
 }
 
 
@@ -297,13 +392,10 @@ export class SegmentIntersection {
     static NO_POINT: string = "NO_POINT"
     static ALL_POINTS: string = "ALL_POINTS"
     
-    Point: Vec2
-    Type: string
-    constructor(Point: Vec2,Type: string) { }
+    constructor(public Point: Vec2,public Type: string) { }
 
     
 }
-
 
 export class Segment2D {
     private a: number[];
@@ -311,14 +403,31 @@ export class Segment2D {
     f: (x: number) => number;
 
     constructor(a: Vec2, b: Vec2) {
-        this.a = a.toNumberArray();
-        this.b = b.toNumberArray();
+
+        if (a[0] < b[0]) {
+            this.a = a.toNumberArray();
+            this.b = b.toNumberArray();
+        }
+        else {
+            this.a = b.toNumberArray();
+            this.b = a.toNumberArray();
+        }
+
 
         if (gl_equal(a[0], b[0]) && gl_equal(a[1], b[1]))
                 throw "Invalid Segment";
            
 
     }
+
+    firstPoint():Vec2 {
+        return new Vec2(this.a); 
+    }
+
+    secondPoint(): Vec2 {
+        return new Vec2(this.b);
+    }
+
 
     GetTg():number {
         var a = this.a;
@@ -361,7 +470,7 @@ export class Segment2D {
     x(m-m') = a0m-a0'm' +a1'-
     
     */
-    FindIntersection(s: Segment2D): SegmentIntersection {
+    FindProlongationIntersection(s: Segment2D): SegmentIntersection {
         var b = this.b;
         var a = this.a;
         var _a = s.a;
@@ -390,10 +499,10 @@ export class Segment2D {
         }
 
         if (gl_equal(m, _m)) {
-            if (gl_equal(a[0], _a[0]))
-                return new SegmentIntersection(null, SegmentIntersection.ALL_POINTS);
+            if (gl_equal(a[0], _a[0]) && gl_equal(a[1], _a[1]) || gl_equal((a[1]-_a[1])/(a[0]-_a[0]),m))
+               return new SegmentIntersection(null, SegmentIntersection.ALL_POINTS);
             else
-                return new SegmentIntersection(null, SegmentIntersection.NO_POINT);
+               return new SegmentIntersection(null, SegmentIntersection.NO_POINT);
         }
 
     /*
@@ -410,11 +519,25 @@ export class Segment2D {
 
     }
 
+
+    FindMediatrix(): Segment2D {
+        var vA = new Vec2(this.a);
+        var vB = new Vec2(this.b);
+
+        var vD:Vec3 = vB.fdec(vA).fsscale(0.5).toVec3(0.0);
+
+        var M = new Mat3();
+        M.RotateXY(ToRad(90));
+        var vS = M.MulV(vD).xy();
+
+        var vM = this.midpoint();
+        return new Segment2D(vM.add(vS), vM.sub(vS));
+
+
+
+    }
+
 }
-
-
-
-
 
 export class GLScreenMapping {
     origin: Vec2;

@@ -1,4 +1,4 @@
-﻿/// <reference path="defines/require.d.ts" />
+/// <reference path="defines/require.d.ts" />
 /// <reference path="defines/jquery.d.ts" />
 /// <reference path="shapes2d.ts" />
 /// <reference path="defines/glutils.d.ts" />
@@ -6,23 +6,20 @@
 /// <reference path="defines/ember.d.ts" />
 /// <reference path="shaders.ts" />
 /// <reference path="voronoi.ts" />
-define(["require", "exports", "shapes2d", "shaders", "glutils", "voronoi", "ember"], function(require, exports, Shapes, Shaders, glut, Voronoi, Ember) {
+define(["require", "exports", "shapes2d", "shaders", "glutils", "voronoi", "ember", "linearalgebra"], function (require, exports, Shapes, Shaders, glut, Voronoi, Ember, LA) {
     var GLApp = (function () {
         function GLApp() {
         }
         GLApp.prototype.normalizedDX = function () {
             return 2.0 / this.canvas.width;
         };
-
         GLApp.prototype.normalizedDY = function () {
             return 2.0 / this.canvas.height;
         };
-
         GLApp.prototype.InitScreen = function (canvas) {
             this.canvas = canvas;
             var gl = glut.getWebGLContext(this.canvas, true);
             this.gl = gl;
-
             if (!gl) {
                 return;
             }
@@ -37,7 +34,6 @@ define(["require", "exports", "shapes2d", "shaders", "glutils", "voronoi", "embe
             this.gl.clear(this.gl.COLOR_BUFFER_BIT);
             this.gl.flush();
         };
-
         GLApp.prototype.iterate = function (loop) {
             if (this.voronoi == null) {
                 throw "voronoi.iterate: call startVoronoi first";
@@ -47,7 +43,6 @@ define(["require", "exports", "shapes2d", "shaders", "glutils", "voronoi", "embe
             }
             if (this.voronoi.isVoronoiCompleted() && !loop)
                 return;
-
             this.voronoi.iterate();
             this.voronoiToPrimitives();
         };
@@ -55,23 +50,18 @@ define(["require", "exports", "shapes2d", "shaders", "glutils", "voronoi", "embe
             this.shader.lines = [];
             var cl = new Shapes.CyclicColorArray([new Shapes.Vector4(1, 1, 1, 1)]);
             var clRed = new Shapes.CyclicColorArray([new Shapes.Vector4(1, 0, 0, 1)]);
-
             this.shader.addShape(new Shapes.Line2D(new Shapes.Vector2(-1, this.voronoi.cY), new Shapes.Vector2(1, this.voronoi.cY)), cl);
-
             this.shader.points = this.voronoi.bPoints;
-
             for (var i = 0; i < this.voronoi.iEdges.length; i++) {
                 var iEdge = this.voronoi.iEdges[i];
                 var line = new Shapes.Line2D(iEdge.origin, iEdge.pI);
                 this.shader.addShape(line, clRed);
             }
         };
-
         GLApp.prototype.draw = function () {
             this.clearScreen();
             this.shader.draw();
         };
-
         GLApp.prototype.resetApp = function () {
             this.shader.points = [];
             this.shader.shapes = [];
@@ -80,24 +70,20 @@ define(["require", "exports", "shapes2d", "shaders", "glutils", "voronoi", "embe
             this.gl.clear(this.gl.COLOR_BUFFER_BIT);
             this.voronoi = null;
         };
-
         GLApp.prototype.startVoronoi = function (pts, dy) {
             this.voronoi = new Voronoi.Voronoi(pts, -1, 1, this.normalizedDX(), -1, 1, dy);
         };
         return GLApp;
     })();
-
     var Main = (function () {
         function Main() {
         }
         Main.prototype.initEmber = function () {
             var that = this;
-
             this.App = Ember.Application.create();
             this.App.ready = function () {
                 that.App.ControllerInstance = that.App.__container__.lookup('controller:Points');
             };
-
             this.App.Router.map(function () {
                 this.resource('points', { path: '/' });
             });
@@ -106,7 +92,6 @@ define(["require", "exports", "shapes2d", "shaders", "glutils", "voronoi", "embe
                     return { pts: [], scanLinePos: 0, loop: false, isPaused: true, canInputPoints: true, dyFactor: true };
                 }
             });
-
             this.App.PointsController = Ember.ObjectController.extend({
                 needs: ['view:Opengl'],
                 cannotInputPoints: Ember.computed.not('canInputPoints'),
@@ -120,7 +105,6 @@ define(["require", "exports", "shapes2d", "shaders", "glutils", "voronoi", "embe
                         this.set('dyFactor', 1);
                         this.set('scanLinePos', 1);
                         this.updateControllerModel(glApp);
-
                         //Add observer on list of pts to include such list in the canvas shader.
                         this.addObserver('pts', this.ptsChanged);
                         this.addObserver('dyFactor', function () {
@@ -137,13 +121,10 @@ define(["require", "exports", "shapes2d", "shaders", "glutils", "voronoi", "embe
                     play: function () {
                         if (!(this.get('isPaused') || this.get('canInputPoints')))
                             return;
-
                         var b2 = this.get('isPaused');
                         var bb = this.get('canInputPoints');
-
                         var glApp = this.get('glApp');
                         this.set('isPaused', false);
-
                         if (this.get('canInputPoints')) {
                             this.set('canInputPoints', false);
                             var pts = this.get('pts');
@@ -189,6 +170,8 @@ define(["require", "exports", "shapes2d", "shaders", "glutils", "voronoi", "embe
                         if (!this.get('canInputPoints'))
                             return;
                         var pts = this.get('pts');
+                        var glApp = this.get("glApp");
+                        pt = glApp.glTransform.MapToGL(pt);
                         pts.pushObject(pt.toPrecision(5));
                         this.propertyDidChange('pts');
                     },
@@ -198,6 +181,7 @@ define(["require", "exports", "shapes2d", "shaders", "glutils", "voronoi", "embe
                         var glApp = this.get("glApp");
                         setTimeout(function () {
                             glApp.gl.viewport(0, 0, glApp.canvas.width, glApp.canvas.height);
+                            glApp.glTransform = new LA.GLScreenMapping([-1, 1], [this.form_X, this.form_Y], true);
                             glApp.draw();
                         }, 100);
                     }
@@ -207,7 +191,8 @@ define(["require", "exports", "shapes2d", "shaders", "glutils", "voronoi", "embe
                     if (glApp.voronoi != null) {
                         this.set('scanLinePos', glApp.voronoi.cY.toFixed(4));
                         this.set('dy', glApp.voronoi.dy.toFixed(5));
-                    } else {
+                    }
+                    else {
                         this.set('scanLinePos', 1);
                     }
                 },
@@ -220,11 +205,8 @@ define(["require", "exports", "shapes2d", "shaders", "glutils", "voronoi", "embe
                     var glApp = this.get('glApp');
                     var pts = this.get('pts');
                     var dx = new Shapes.Vector2(glApp.normalizedDX(), glApp.normalizedDY());
-
                     dx = dx.scale(2);
-
                     glApp.shader.shapes = [];
-
                     var cl = new Shapes.CyclicColorArray([new Shapes.Vector4(0, 0, 1, 1)]);
                     pts.forEach(function (pt) {
                         var rect = new Shapes.Rect2D(pt.minus(dx), pt.plus(dx));
@@ -234,22 +216,19 @@ define(["require", "exports", "shapes2d", "shaders", "glutils", "voronoi", "embe
                     glApp.shader.draw();
                 }
             });
-
             this.App.PointsView = Ember.View.extend({
                 classNames: ['main_view'],
                 didInsertElement: function () {
                     //Ember.run.next(that,that.InitScreen);
                 }
             });
-
             this.App.OpenglView = Ember.View.extend({
                 templateName: 'opengl',
                 tagName: 'div',
                 click: function (e) {
                     var x = e.offsetX == undefined ? e.layerX : e.offsetX;
                     var y = e.offsetY == undefined ? e.layerY : e.offsetY;
-                    var point = glut.convertScreenCoordinatesToNormalized(this.canvas, new Shapes.Vector2(x, y));
-                    this.get('controller').send('opengl_canvas_click', new Shapes.Vector2(point.x, point.y));
+                    this.get('controller').send('opengl_canvas_click', new LA.Vec2([x, y]));
                 },
                 didInsertElement: function () {
                     var canvas = document.getElementsByClassName("opengl_canvas")[0];
