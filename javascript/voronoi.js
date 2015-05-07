@@ -37,7 +37,26 @@ define(["require", "exports", "shapes2d", "linearalgebra"], function (require, e
             this.i = i;
             this.j = j;
             this.state = state;
+            if (i > j) {
+                var aux = j;
+                j = i;
+                i = aux;
+            }
+            this.i = i;
+            this.j = j;
         }
+        Edge.prototype.setPointsByProximity = function (p) {
+            var ddo = p.sub(this.origin.toVec2()).absNorm();
+            var ddp = p.sub(this.pI.toVec2()).absNorm();
+            if (ddo > ddp) {
+                this.pI.x = p[0];
+                this.pI.y = p[1];
+            }
+            else {
+                this.origin.x = p[0];
+                this.origin.y = p[1];
+            }
+        };
         Edge.prototype.hasCommonVoronoiPoint = function (edge) {
             return (this.i == edge.i || this.j == edge.i || this.i == edge.j || this.j == edge.j);
         };
@@ -81,6 +100,11 @@ define(["require", "exports", "shapes2d", "linearalgebra"], function (require, e
                 this.bPoints.push(new BeachLinePoints(x, Number.MAX_VALUE, -1));
         }
         Voronoi.prototype.findEdge = function (i, j) {
+            if (i > j) {
+                var aux = j;
+                j = i;
+                i = aux;
+            }
             for (var k = 0; k < this.iEdges.length; k++) {
                 var ed = this.iEdges[k];
                 if (ed.i == i && ed.j == j)

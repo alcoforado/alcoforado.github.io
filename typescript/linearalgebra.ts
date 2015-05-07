@@ -83,7 +83,9 @@
         return this;
     }
    
-
+    absNorm(): number {
+        return Math.abs(this[0]) + Math.abs(this[1]);
+    }
 
 }
 

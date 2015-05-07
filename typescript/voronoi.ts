@@ -34,7 +34,30 @@ export class Edge {
     static IsCompleted: number = 2;
     static IsStopped: number =3
 
-    constructor(public origin: shapes.Vector2, public pI: shapes.Vector2, public i: number, public j: number, public state: number) { }
+    constructor(public origin: shapes.Vector2, public pI: shapes.Vector2, public i: number, public j: number, public state: number)
+    {
+        if (i > j) {
+            var aux = j;
+            j = i;
+            i = aux;  
+        }
+        this.i = i;
+        this.j = j;
+    }
+
+    setPointByProximity(p: la.Vec2) {
+        var ddo: number = p.sub(this.origin.toVec2()).absNorm();
+        var ddp: number = p.sub(this.pI.toVec2()).absNorm();
+        if (ddo > ddp) {
+            this.pI.x = p[0];
+            this.pI.y = p[1];
+        }
+        else {
+            this.origin.x = p[0];
+            this.origin.y = p[1];
+
+        }
+    }
 
     hasCommonVoronoiPoint(edge: Edge): boolean {
         return (
@@ -69,6 +92,13 @@ export class Voronoi {
 
 
     findEdge(i: number, j: number): Edge {
+        if (i > j) {
+            var aux = j;
+            j = i;
+            i = aux;
+        }
+
+
         for (var k = 0; k < this.iEdges.length;k++) {
             var ed: Edge = this.iEdges[k];
             if (ed.i == i && ed.j == j)

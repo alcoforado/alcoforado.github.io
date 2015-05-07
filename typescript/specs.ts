@@ -17,6 +17,16 @@ describe("Float comparison with tolerance", function () {
         expect(LA.gl_equal(1.0, 1.01)).toBe(false);
     })
 
+    it("Numbers are not passed by reference", function () {
+        var f = function (a: number) {
+            a = 5;
+        }
+        var b: number = 1;
+        f(b);
+        expect(b).toBe(1);
+
+    })
+
 });
     
     
