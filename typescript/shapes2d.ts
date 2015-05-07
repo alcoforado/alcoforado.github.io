@@ -1,4 +1,7 @@
 ﻿
+import la = require("linearalgebra");
+
+
 var precision = function (x: number, p: number):number {
     return parseFloat(x.toPrecision(p));
 }
@@ -12,6 +15,10 @@ export class Vector2 {
     {
         this.x = x;
         this.y = y;
+    }
+
+    toVec2():la.Vec2 {
+        return new la.Vec2([this.x, this.y]);
     }
 
     neg(): Vector2 {

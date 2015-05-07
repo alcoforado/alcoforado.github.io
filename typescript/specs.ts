@@ -63,13 +63,24 @@ describe("Segment 2D", function () {
 
         var r1 = e1.FindMediatrix();
 
-        expect(r1.firstPoint()[0]).toBeCloseTo(0.5, 8);
-        expect(r1.firstPoint()[1]).toBeCloseTo(0.5, 8);
-
-
+        expect(r1.A()[0]).toBeCloseTo(0.5, 8);
+        expect(r1.A()[1]).toBeCloseTo(-0.5, 8);
+        expect(r1.B()[0]).toBeCloseTo(0.5, 8);
+        expect(r1.B()[1]).toBeCloseTo(0.5, 8);
 
     });
 
+    it("Find Mediatrix of the unit vector e2 should have correct answer", function () {
+        var e2 = new LA.Segment2D(new LA.Vec2([0.0, 0.0]), new LA.Vec2([0, 1]));
+
+        var r1 = e2.FindMediatrix();
+
+        expect(r1.A()[0]).toBeCloseTo(-0.5, 8);
+        expect(r1.A()[1]).toBeCloseTo(0.5, 8);
+
+        expect(r1.B()[0]).toBeCloseTo(0.5, 8);
+        expect(r1.B()[1]).toBeCloseTo(0.5, 8);
+    });
 
 
 });
@@ -231,7 +242,16 @@ describe("Matrix", function () {
         expect(M2.MulV(x4).diff(_e1).norm()).toBeCloseTo(0, 7);
     });
 
+    it("Matrix Identity Multiplication should not change a vector",  function () {
+        var v = new LA.Vec3([1, 2, 3]);
+        var M1 = new LA.Mat3();
+        M1.toIdentity();
 
+        var r = M1.MulV(v);
 
+        expect(r.sub(v).norm()).toBeCloseTo(0, 7);
+    });
+    
+    
 
 });

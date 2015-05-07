@@ -41,6 +41,12 @@
 
 }
 
+#edgesDisplay {
+    display: inline-block;
+    vertical-align:top;
+    width:260px;
+}
+
 
 .simDisplay tr:hover{
     background-color: rgb(60,60,60); 

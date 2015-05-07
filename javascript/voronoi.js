@@ -6,7 +6,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", "shapes2d"], function (require, exports, shapes) {
+define(["require", "exports", "shapes2d", "linearalgebra"], function (require, exports, shapes, la) {
     var VoronoiPoint = (function (_super) {
         __extends(VoronoiPoint, _super);
         function VoronoiPoint(index, x, y) {
@@ -31,13 +31,22 @@ define(["require", "exports", "shapes2d"], function (require, exports, shapes) {
     })(shapes.Vector2);
     exports.BeachLinePoints = BeachLinePoints;
     var Edge = (function () {
-        function Edge(origin, pI, i, j, exists) {
+        function Edge(origin, pI, i, j, state) {
             this.origin = origin;
             this.pI = pI;
             this.i = i;
             this.j = j;
-            this.exists = exists;
+            this.state = state;
         }
+        Edge.prototype.hasCommonVoronoiPoint = function (edge) {
+            return (this.i == edge.i || this.j == edge.i || this.i == edge.j || this.j == edge.j);
+        };
+        Edge.prototype.toSegment2D = function () {
+            return new la.Segment2D(new la.Vec2([this.origin.x, this.origin.y]), new la.Vec2([this.pI.x, this.pI.y]));
+        };
+        Edge.IsActive = 1;
+        Edge.IsCompleted = 2;
+        Edge.IsStopped = 3;
         return Edge;
     })();
     exports.Edge = Edge;
@@ -52,6 +61,7 @@ define(["require", "exports", "shapes2d"], function (require, exports, shapes) {
             this.vPoints = [];
             this.bPoints = []; //beach points
             this.iEdges = [];
+            this.UnlinkedEdges = [];
             this.x1 = x1;
             this.x2 = x2;
             this.dx = dx;
@@ -60,6 +70,7 @@ define(["require", "exports", "shapes2d"], function (require, exports, shapes) {
             this.dy = dy;
             this.tol = Math.min(dx, dy) / 4.0;
             this.vPoints = [];
+            this.UnlinkedEdges = [];
             this.cY = yMax + dy / 2.0;
             var i = 0;
             for (var i = 0; i < pts.length; i++) {
@@ -76,6 +87,39 @@ define(["require", "exports", "shapes2d"], function (require, exports, shapes) {
                     return ed;
             }
             return null;
+        };
+        Voronoi.prototype.setAllEdgesStateAs = function (state) {
+            for (var k = 0; k < this.iEdges.length; k++) {
+                this.iEdges[k].state = state;
+            }
+        };
+        Voronoi.prototype.setActiveEdgesStateAsStopped = function () {
+            for (var k = 0; k < this.iEdges.length; k++) {
+                if (this.iEdges[k].state == Edge.IsActive)
+                    this.iEdges[k].state = Edge.IsStopped;
+            }
+        };
+        Voronoi.prototype.getEdgesWithState = function (state) {
+            var array = [];
+            for (var k = 0; k < this.iEdges.length; k++) {
+                if (this.iEdges[k].state == state) {
+                    array.addObject(this.iEdges[k]);
+                }
+            }
+            return array;
+        };
+        Voronoi.prototype.connectEdges = function (edge1, edge2) {
+            var seg1 = new la.Segment2D(this.vPoints[edge1.i].toVec2(), this.vPoints[edge1.j].toVec2());
+            var mseg1 = seg1.FindMediatrix();
+            var seg2 = new la.Segment2D(this.vPoints[edge2.i].toVec2(), this.vPoints[edge2.j].toVec2());
+            var mseg2 = seg2.FindMediatrix();
+            var intersection = mseg1.FindProlongationIntersection(mseg2);
+            if (intersection.Type != la.SegmentIntersection.ONE_POINT)
+                throw "Intersection not found";
+            edge1.pI.x = intersection.Point[0];
+            edge1.pI.y = intersection.Point[1];
+            edge2.pI.x = intersection.Point[0];
+            edge2.pI.y = intersection.Point[1];
         };
         /*
             GetActiveVoronoiPointsForScanLine(y:number):VoronoiPoint[] {
@@ -95,6 +139,10 @@ define(["require", "exports", "shapes2d"], function (require, exports, shapes) {
                 }
             }
         */
+        Voronoi.prototype.isPointOutOfScreen = function (p) {
+            return;
+            Math.abs(p[0] - this.x1) < this.dx || Math.abs(this.x2 - p[0]) < this.dx || p[1] <= this.yMin;
+        };
         Voronoi.prototype.isVoronoiCompleted = function () {
             return this.cY < this.yMin && !this.bExistIntersectionPointInTheCanvas;
         };
@@ -102,6 +150,7 @@ define(["require", "exports", "shapes2d"], function (require, exports, shapes) {
             this.bExistIntersectionPointInTheCanvas = false;
             var iCurr = -1;
             this.cY -= this.dy;
+            this.setActiveEdgesStateAsStopped();
             for (var iX = 0; iX < this.bPoints.length; iX++) {
                 var bP = this.bPoints[iX];
                 var iCurr = this.bPoints[iX].voronoiPointOwner;
@@ -124,9 +173,13 @@ define(["require", "exports", "shapes2d"], function (require, exports, shapes) {
                         if (bP.y > this.yMin)
                             this.bExistIntersectionPointInTheCanvas = true;
                         var ed = this.findEdge(bPp.voronoiPointOwner, bP.voronoiPointOwner);
-                        if (ed == null)
-                            this.iEdges.push(new Edge(new shapes.Vector2(bP.x, bP.y), new shapes.Vector2(bP.x, bP.y), bPp.voronoiPointOwner, bP.voronoiPointOwner, true));
+                        if (ed == null) {
+                            var edge = new Edge(new shapes.Vector2(bP.x, bP.y), new shapes.Vector2(bP.x, bP.y), bPp.voronoiPointOwner, bP.voronoiPointOwner, Edge.IsActive);
+                            this.iEdges.push(edge);
+                            this.UnlinkedEdges.push(edge);
+                        }
                         if (ed != null) {
+                            ed.state = Edge.IsActive;
                             ed.pI.y = bP.y;
                             ed.pI.x = bP.x;
                         }
@@ -141,11 +194,32 @@ define(["require", "exports", "shapes2d"], function (require, exports, shapes) {
                     var iX = Math.floor((vPt.x + 1.0) / this.dx);
                     var bPt = this.bPoints[iX];
                     if (bPt.y != Number.MAX_VALUE) {
-                        this.iEdges.push(new Edge(new shapes.Vector2(bPt.x, bPt.y), new shapes.Vector2(bPt.x, bPt.y), bPt.voronoiPointOwner, vPt.index, true));
-                        this.iEdges.push(new Edge(new shapes.Vector2(bPt.x, bPt.y), new shapes.Vector2(bPt.x, bPt.y), vPt.index, bPt.voronoiPointOwner, true));
+                        this.iEdges.push(new Edge(new shapes.Vector2(bPt.x, bPt.y), new shapes.Vector2(bPt.x, bPt.y), bPt.voronoiPointOwner, vPt.index, Edge.IsActive));
+                        this.iEdges.push(new Edge(new shapes.Vector2(bPt.x, bPt.y), new shapes.Vector2(bPt.x, bPt.y), vPt.index, bPt.voronoiPointOwner, Edge.IsActive));
                     }
                 }
             }
+            //Intersect the stopped edges
+            var stoppedEdges = this.getEdgesWithState(Edge.IsStopped);
+            for (var i = 0; i < stoppedEdges.length; i++) {
+                var edge1 = stoppedEdges[i];
+                if (this.isPointOutOfScreen(new la.Vec2([edge1.pI.x, edge1.pI.y]))) {
+                    edge1.state = Edge.IsCompleted;
+                    stoppedEdges.removeAt(i, 1);
+                }
+            }
+            /*
+            //Now connected stopped edges
+            for (var i = 0; i < stoppedEdges.length; i++) {
+                var edge1 = stoppedEdges[i];
+                for (var k = i+1; k < stoppedEdges.length; k++) {
+                    var edge2 = stoppedEdges[k];
+                    if (edge1.hasCommonVoronoiPoint(edge2)) {
+                        this.connectEdges(edge1,edge2);
+                    }
+                }
+            }
+            */
         };
         return Voronoi;
     })();

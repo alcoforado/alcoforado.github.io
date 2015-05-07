@@ -104,6 +104,7 @@ define(["require", "exports", "shapes2d", "shaders", "glutils", "voronoi", "embe
                         this.set('dy', glApp.normalizedDY().toPrecision(4));
                         this.set('dyFactor', 1);
                         this.set('scanLinePos', 1);
+                        this.set('edges', []);
                         this.updateControllerModel(glApp);
                         //Add observer on list of pts to include such list in the canvas shader.
                         this.addObserver('pts', this.ptsChanged);
@@ -128,7 +129,7 @@ define(["require", "exports", "shapes2d", "shaders", "glutils", "voronoi", "embe
                         if (this.get('canInputPoints')) {
                             this.set('canInputPoints', false);
                             var pts = this.get('pts');
-                            var dy = this.get('dy');
+                            var dy = Number(this.get('dy'));
                             glApp.startVoronoi(pts, dy);
                         }
                         var controller = this;
@@ -170,8 +171,6 @@ define(["require", "exports", "shapes2d", "shaders", "glutils", "voronoi", "embe
                         if (!this.get('canInputPoints'))
                             return;
                         var pts = this.get('pts');
-                        var glApp = this.get("glApp");
-                        pt = glApp.glTransform.MapToGL(pt);
                         pts.pushObject(pt.toPrecision(5));
                         this.propertyDidChange('pts');
                     },
@@ -194,6 +193,7 @@ define(["require", "exports", "shapes2d", "shaders", "glutils", "voronoi", "embe
                     }
                     else {
                         this.set('scanLinePos', 1);
+                        this.set('edges', []);
                     }
                 },
                 canvasX: 600,
@@ -228,7 +228,8 @@ define(["require", "exports", "shapes2d", "shaders", "glutils", "voronoi", "embe
                 click: function (e) {
                     var x = e.offsetX == undefined ? e.layerX : e.offsetX;
                     var y = e.offsetY == undefined ? e.layerY : e.offsetY;
-                    this.get('controller').send('opengl_canvas_click', new LA.Vec2([x, y]));
+                    var point = glut.convertScreenCoordinatesToNormalized(this.canvas, new Shapes.Vector2(x, y));
+                    this.get('controller').send('opengl_canvas_click', new Shapes.Vector2(point.x, point.y));
                 },
                 didInsertElement: function () {
                     var canvas = document.getElementsByClassName("opengl_canvas")[0];

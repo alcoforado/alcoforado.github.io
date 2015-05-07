@@ -1,4 +1,4 @@
-define(["require", "exports"], function (require, exports) {
+define(["require", "exports", "linearalgebra"], function (require, exports, la) {
     var precision = function (x, p) {
         return parseFloat(x.toPrecision(p));
     };
@@ -9,6 +9,9 @@ define(["require", "exports"], function (require, exports) {
         }
         Vector2.prototype.toArray = function () {
             return [this.x, this.y];
+        };
+        Vector2.prototype.toVec2 = function () {
+            return new la.Vec2([this.x, this.y]);
         };
         Vector2.prototype.neg = function () {
             return new Vector2(-this.x, -this.y);

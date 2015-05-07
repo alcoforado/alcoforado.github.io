@@ -142,7 +142,13 @@ export class Vec3 {
         return new Vec2([this[0], this[1]]);
     }
 
-
+    sub(x: Vec3): Vec3 {
+        var result = new Vec3();
+        result[0] = this[0] - x[0];
+        result[1] = this[1] - x[1];
+        result[2] = this[2] - x[2];
+        return result;
+    }
 }
 
 
@@ -420,11 +426,11 @@ export class Segment2D {
 
     }
 
-    firstPoint():Vec2 {
+    A():Vec2 {
         return new Vec2(this.a); 
     }
 
-    secondPoint(): Vec2 {
+    B(): Vec2 {
         return new Vec2(this.b);
     }
 
