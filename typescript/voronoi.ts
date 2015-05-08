@@ -26,7 +26,20 @@ export class BeachLinePoints extends shapes.Vector2 {
 }
 
 
+export class BeachPoint {
+    pt: la.Vec2;
+    state: number;
+    leftVP: number;
+    rightVP: number;
 
+    static IsActive: number = 1;
+    static IsCompleted: number = 2;
+    static IsStopped: number = 3;
+
+
+    
+
+}
 
 
 export class Edge {
@@ -142,13 +155,9 @@ export class Voronoi {
         if (intersection.Type != la.SegmentIntersection.ONE_POINT)
             throw "Intersection not found"
         
-        edge1.pI.x = intersection.Point[0];
-        edge1.pI.y = intersection.Point[1];
+        edge1.setPointByProximity(intersection.Point);
+        edge2.setPointByProximity(intersection.Point);
 
-        edge2.pI.x = intersection.Point[0];
-        edge2.pI.y = intersection.Point[1];
-
-        
 
     }
 
@@ -170,6 +179,12 @@ export class Voronoi {
             var pt = pts[i];
             this.vPoints.push(new VoronoiPoint(i, pt.x, pt.y));
         }
+        //sort by x component
+        this.vPoints.sort(function (a: VoronoiPoint, b: VoronoiPoint) {
+            return a.x - b.x;
+        });
+
+
         //Initialized the beach curves points;
         for (var x = x1 + dx / 2; x < x2 + this.tol; x += dx)
             this.bPoints.push(new BeachLinePoints(x, Number.MAX_VALUE, -1));
@@ -245,23 +260,13 @@ export class Voronoi {
                     }
                     if (ed != null) {
                         ed.state = Edge.IsActive;
-                        ed.pI.y = bP.y;
-                        ed.pI.x = bP.x;
+                        ed.setPointByProximity(bP.toVec2());
                     }
                 }
 
             }
-
-/*            if (bP.voronoiPointOwner != iCurr) {
-                var ed = this.findEdge(bP.voronoiPointOwner, iCurr)
-                if (ed != null) {
-                    ed.pI.y = bP.y;
-                    ed.pI.x = bP.x;
-                }
-                bP.voronoiPointOwner = iCurr;
-            }
-*/
         }
+        
         //Check for voronoiPoints emerging from the horizon  (scan line)
         for (var i = 0; i < this.vPoints.length; i++) {
             var vPt = this.vPoints[i];
@@ -273,28 +278,20 @@ export class Voronoi {
                 var bPt = this.bPoints[iX];
                 if (bPt.y != Number.MAX_VALUE) {
                     this.iEdges.push(new Edge(new shapes.Vector2(bPt.x, bPt.y), new shapes.Vector2(bPt.x, bPt.y), bPt.voronoiPointOwner, vPt.index, Edge.IsActive));
-                    this.iEdges.push(new Edge(new shapes.Vector2(bPt.x, bPt.y), new shapes.Vector2(bPt.x, bPt.y), vPt.index, bPt.voronoiPointOwner, Edge.IsActive));
                 }
             }
         }
         //Intersect the stopped edges
         var stoppedEdges = this.getEdgesWithState(Edge.IsStopped);
-        //Elliminate the stopped edges that reached the boundary.
-        for (var i = 0; i < stoppedEdges.length; i++) {
-            var edge1 = stoppedEdges[i];
-            if (this.isPointOutOfScreen(new la.Vec2([edge1.pI.x, edge1.pI.y]))) {
-                edge1.state = Edge.IsCompleted;
-                stoppedEdges.removeAt(i, 1);
-            }
-        }
-        /*
-        //Now connected stopped edges
+        
+        /*Now connected stopped edges
         for (var i = 0; i < stoppedEdges.length; i++) {
             var edge1 = stoppedEdges[i];
             for (var k = i+1; k < stoppedEdges.length; k++) {
                 var edge2 = stoppedEdges[k];
                 if (edge1.hasCommonVoronoiPoint(edge2)) {
                     this.connectEdges(edge1,edge2);
+                    edge1.state = Edge.IsCompleted;
                 }
             }
         }

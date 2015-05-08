@@ -30,6 +30,15 @@ define(["require", "exports", "shapes2d", "linearalgebra"], function (require, e
         return BeachLinePoints;
     })(shapes.Vector2);
     exports.BeachLinePoints = BeachLinePoints;
+    var BeachPoint = (function () {
+        function BeachPoint() {
+        }
+        BeachPoint.IsActive = 1;
+        BeachPoint.IsCompleted = 2;
+        BeachPoint.IsStopped = 3;
+        return BeachPoint;
+    })();
+    exports.BeachPoint = BeachPoint;
     var Edge = (function () {
         function Edge(origin, pI, i, j, state) {
             this.origin = origin;
@@ -45,7 +54,7 @@ define(["require", "exports", "shapes2d", "linearalgebra"], function (require, e
             this.i = i;
             this.j = j;
         }
-        Edge.prototype.setPointsByProximity = function (p) {
+        Edge.prototype.setPointByProximity = function (p) {
             var ddo = p.sub(this.origin.toVec2()).absNorm();
             var ddp = p.sub(this.pI.toVec2()).absNorm();
             if (ddo > ddp) {
@@ -96,6 +105,10 @@ define(["require", "exports", "shapes2d", "linearalgebra"], function (require, e
                 var pt = pts[i];
                 this.vPoints.push(new VoronoiPoint(i, pt.x, pt.y));
             }
+            //sort by x component
+            this.vPoints.sort(function (a, b) {
+                return a.x - b.x;
+            });
             for (var x = x1 + dx / 2; x < x2 + this.tol; x += dx)
                 this.bPoints.push(new BeachLinePoints(x, Number.MAX_VALUE, -1));
         }
@@ -140,10 +153,8 @@ define(["require", "exports", "shapes2d", "linearalgebra"], function (require, e
             var intersection = mseg1.FindProlongationIntersection(mseg2);
             if (intersection.Type != la.SegmentIntersection.ONE_POINT)
                 throw "Intersection not found";
-            edge1.pI.x = intersection.Point[0];
-            edge1.pI.y = intersection.Point[1];
-            edge2.pI.x = intersection.Point[0];
-            edge2.pI.y = intersection.Point[1];
+            edge1.setPointByProximity(intersection.Point);
+            edge2.setPointByProximity(intersection.Point);
         };
         /*
             GetActiveVoronoiPointsForScanLine(y:number):VoronoiPoint[] {
@@ -204,8 +215,7 @@ define(["require", "exports", "shapes2d", "linearalgebra"], function (require, e
                         }
                         if (ed != null) {
                             ed.state = Edge.IsActive;
-                            ed.pI.y = bP.y;
-                            ed.pI.x = bP.x;
+                            ed.setPointByProximity(bP.toVec2());
                         }
                     }
                 }
@@ -219,27 +229,19 @@ define(["require", "exports", "shapes2d", "linearalgebra"], function (require, e
                     var bPt = this.bPoints[iX];
                     if (bPt.y != Number.MAX_VALUE) {
                         this.iEdges.push(new Edge(new shapes.Vector2(bPt.x, bPt.y), new shapes.Vector2(bPt.x, bPt.y), bPt.voronoiPointOwner, vPt.index, Edge.IsActive));
-                        this.iEdges.push(new Edge(new shapes.Vector2(bPt.x, bPt.y), new shapes.Vector2(bPt.x, bPt.y), vPt.index, bPt.voronoiPointOwner, Edge.IsActive));
                     }
                 }
             }
             //Intersect the stopped edges
             var stoppedEdges = this.getEdgesWithState(Edge.IsStopped);
-            for (var i = 0; i < stoppedEdges.length; i++) {
-                var edge1 = stoppedEdges[i];
-                if (this.isPointOutOfScreen(new la.Vec2([edge1.pI.x, edge1.pI.y]))) {
-                    edge1.state = Edge.IsCompleted;
-                    stoppedEdges.removeAt(i, 1);
-                }
-            }
-            /*
-            //Now connected stopped edges
+            /*Now connected stopped edges
             for (var i = 0; i < stoppedEdges.length; i++) {
                 var edge1 = stoppedEdges[i];
                 for (var k = i+1; k < stoppedEdges.length; k++) {
                     var edge2 = stoppedEdges[k];
                     if (edge1.hasCommonVoronoiPoint(edge2)) {
                         this.connectEdges(edge1,edge2);
+                        edge1.state = Edge.IsCompleted;
                     }
                 }
             }

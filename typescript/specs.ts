@@ -2,6 +2,106 @@
 /// <reference path="defines/jasmine.d.ts" />
 
 import LA = require("linearalgebra")
+import alghorithms = require("alghorithms");
+describe("Javascript language tests", function () {
+    it("Numbers are not passed by reference", function () {
+        var f = function (a: number) {
+            a = 5;
+        }
+        var b: number = 1;
+        f(b);
+        expect(b).toBe(1);
+
+    })
+
+    it("Access invalid element returns undefined", function () {
+        var a = [2, 4, 5];
+        expect(a[4]).toBeUndefined();
+    })
+
+
+
+
+});
+
+
+describe("alghorithms tests", function () {
+    it("Array Insert Sort should work for empty arrays", function () {
+        var a = [];
+        alghorithms.insertSort(a, 1, function (e1, e2) {
+            return e1 < e2;
+        });
+
+        expect(a.length).toBe(1);
+        expect(a[0]).toBe(1);
+    });
+
+    it("Array Insert Sort should work for arrays with one element", function () {
+        var a = [2];
+        alghorithms.insertSort(a, 1, function (e1, e2) {
+            return e1 < e2;
+        });
+
+        expect(a.length).toBe(2);
+        expect(a[0]).toBe(1);
+        expect(a[1]).toBe(2);
+
+    });
+
+
+    it("Array Insert Sort should work for arrays with 3 elements", function () {
+        var a = [2,3];
+        alghorithms.insertSort(a, 1, function (e1, e2) {
+            return e1 < e2;
+        });
+
+        expect(a.length).toBe(3);
+        expect(a[0]).toBe(1);
+        expect(a[1]).toBe(2);
+        expect(a[2]).toBe(3);
+
+    });
+
+
+    it("IsSorted Array  should return true for empty arrays", function () {
+        var a = [];
+        var result:boolean = alghorithms.isSorted(a, 1, function (e1, e2) {
+            return e1 < e2;
+        });
+
+        expect(result).toBe(true);
+    });
+
+    it("IsSorted Array  should return true for one element arrays", function () {
+        var a = [1];
+        var result: boolean = alghorithms.isSorted(a, 1, function (e1, e2) {
+            return e1 < e2;
+        });
+
+        expect(result).toBe(true);
+    });
+
+
+    it("IsSorted Array  should return true for [368]", function () {
+        var a = [3,6,8];
+        var result: boolean = alghorithms.isSorted(a, 1, function (e1, e2) {
+            return e1 < e2;
+        });
+        expect(result).toBe(true);
+    });
+
+
+    it("IsSorted Array  should return false for [638]", function () {
+        var a = [6, 3, 8];
+        var result: boolean = alghorithms.isSorted(a, 1, function (e1, e2) {
+            return e1 < e2;
+        });
+        expect(result).toBe(false);
+    });
+
+
+});
+
 
 describe("Float comparison with tolerance", function () {
     it("Two exact numbers should be considered equal", function () {
@@ -17,15 +117,7 @@ describe("Float comparison with tolerance", function () {
         expect(LA.gl_equal(1.0, 1.01)).toBe(false);
     })
 
-    it("Numbers are not passed by reference", function () {
-        var f = function (a: number) {
-            a = 5;
-        }
-        var b: number = 1;
-        f(b);
-        expect(b).toBe(1);
-
-    })
+    
 
 });
     

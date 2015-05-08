@@ -69,6 +69,7 @@
     <Folder Include="typescript\voronoi\" />
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="typescript\alghorithms.ts" />
     <TypeScriptCompile Include="typescript\app_voronoi.ts" />
     <TypeScriptCompile Include="typescript\app_voronoi_gpu.ts" />
     <TypeScriptCompile Include="typescript\defines\backbone.d.ts" />
