@@ -213,6 +213,17 @@ describe("Vec2", function () {
 
     });
 
+    it("Midpoint should return the medium point", function () {
+        var v1 = new LA.Vec2([1, 2]);
+        var v2 = new LA.Vec2([5, 8]); 
+        var v3 = v1.midpoint(v2);
+
+        expect(v3[0]).toBeCloseTo(3.0,7);
+        expect(v3[1]).toBeCloseTo(5.0,7);
+
+
+    });
+
     it("Scale Of Vectors Should Scale Vectors", function () {
         var v1 = new LA.Vec2([1, 5]);
 

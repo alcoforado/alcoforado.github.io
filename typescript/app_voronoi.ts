@@ -87,7 +87,9 @@ class GLApp {
         for (var i = 0; i < this.voronoi.iEdges.length; i++)
         {
             var iEdge = this.voronoi.iEdges[i];
-            var line = new Shapes.Line2D(iEdge.origin, iEdge.pI);
+            var line = new Shapes.Line2D(
+                new Shapes.Vector2(iEdge.p1.pt[0], iEdge.p1.pt[1]),
+                new Shapes.Vector2(iEdge.p2.pt[0], iEdge.p2.pt[1]))
             this.shader.addShape(line, clRed);
         }
     }

@@ -86,7 +86,13 @@
     absNorm(): number {
         return Math.abs(this[0]) + Math.abs(this[1]);
     }
+    abs_dist(v: Vec2): number {
+        return Math.abs(this[0] - v[0]) + Math.abs(this[1] - v[1]);
+    }
 
+    midpoint(v: Vec2): Vec2 {
+        return new Vec2([(v[0] + this[0]) / 2.0, (v[1] + this[1]) / 2.0]);
+    }
 }
 
 export function ToRad(degree: number): number {

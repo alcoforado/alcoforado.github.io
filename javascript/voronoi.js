@@ -6,7 +6,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-define(["require", "exports", "shapes2d", "linearalgebra"], function (require, exports, shapes, la) {
+define(["require", "exports", "shapes2d", "linearalgebra", "alghorithms"], function (require, exports, shapes, la, alghorithms) {
     var VoronoiPoint = (function (_super) {
         __extends(VoronoiPoint, _super);
         function VoronoiPoint(index, x, y) {
@@ -30,51 +30,42 @@ define(["require", "exports", "shapes2d", "linearalgebra"], function (require, e
         return BeachLinePoints;
     })(shapes.Vector2);
     exports.BeachLinePoints = BeachLinePoints;
-    var BeachPoint = (function () {
-        function BeachPoint() {
-        }
-        BeachPoint.IsActive = 1;
-        BeachPoint.IsCompleted = 2;
-        BeachPoint.IsStopped = 3;
-        return BeachPoint;
-    })();
-    exports.BeachPoint = BeachPoint;
-    var Edge = (function () {
-        function Edge(origin, pI, i, j, state) {
-            this.origin = origin;
-            this.pI = pI;
-            this.i = i;
-            this.j = j;
+    var BeachIntersection = (function () {
+        function BeachIntersection(pt, lVPI, rVPI, state) {
+            this.pt = pt;
+            this.lVPI = lVPI;
+            this.rVPI = rVPI;
             this.state = state;
-            if (i > j) {
-                var aux = j;
-                j = i;
-                i = aux;
-            }
-            this.i = i;
-            this.j = j;
+        }
+        BeachIntersection.prototype.hasCommonVoronoiPoint = function (pt) {
+            return (this.lVPI == pt.rVPI || this.lVPI == pt.lVPI || this.rVPI == pt.rVPI || this.rVPI == pt.lVPI);
+        };
+        BeachIntersection.IsActive = 1;
+        BeachIntersection.IsCompleted = 2;
+        BeachIntersection.IsStopped = 3;
+        return BeachIntersection;
+    })();
+    exports.BeachIntersection = BeachIntersection;
+    var Edge = (function () {
+        function Edge(p1, p2) {
+            this.p1 = p1;
+            this.p2 = p2;
         }
         Edge.prototype.setPointByProximity = function (p) {
-            var ddo = p.sub(this.origin.toVec2()).absNorm();
-            var ddp = p.sub(this.pI.toVec2()).absNorm();
+            var ddo = p.sub(this.p1.pt).absNorm();
+            var ddp = p.sub(this.p2.pt).absNorm();
             if (ddo > ddp) {
-                this.pI.x = p[0];
-                this.pI.y = p[1];
+                this.p2.pt[0] = p[0];
+                this.p2.pt[1] = p[1];
             }
             else {
-                this.origin.x = p[0];
-                this.origin.y = p[1];
+                this.p1.pt[0] = p[0];
+                this.p1.pt[1] = p[1];
             }
         };
-        Edge.prototype.hasCommonVoronoiPoint = function (edge) {
-            return (this.i == edge.i || this.j == edge.i || this.i == edge.j || this.j == edge.j);
-        };
         Edge.prototype.toSegment2D = function () {
-            return new la.Segment2D(new la.Vec2([this.origin.x, this.origin.y]), new la.Vec2([this.pI.x, this.pI.y]));
+            return new la.Segment2D(this.p1.pt, this.p2.pt);
         };
-        Edge.IsActive = 1;
-        Edge.IsCompleted = 2;
-        Edge.IsStopped = 3;
         return Edge;
     })();
     exports.Edge = Edge;
@@ -89,7 +80,7 @@ define(["require", "exports", "shapes2d", "linearalgebra"], function (require, e
             this.vPoints = [];
             this.bPoints = []; //beach points
             this.iEdges = [];
-            this.UnlinkedEdges = [];
+            this.bJoints = [];
             this.x1 = x1;
             this.x2 = x2;
             this.dx = dx;
@@ -98,7 +89,6 @@ define(["require", "exports", "shapes2d", "linearalgebra"], function (require, e
             this.dy = dy;
             this.tol = Math.min(dx, dy) / 4.0;
             this.vPoints = [];
-            this.UnlinkedEdges = [];
             this.cY = yMax + dy / 2.0;
             var i = 0;
             for (var i = 0; i < pts.length; i++) {
@@ -109,41 +99,64 @@ define(["require", "exports", "shapes2d", "linearalgebra"], function (require, e
             this.vPoints.sort(function (a, b) {
                 return a.x - b.x;
             });
+            for (var i = 0; i < this.vPoints.length; i++) {
+                this.vPoints[i].index = i;
+            }
             for (var x = x1 + dx / 2; x < x2 + this.tol; x += dx)
                 this.bPoints.push(new BeachLinePoints(x, Number.MAX_VALUE, -1));
         }
-        Voronoi.prototype.findEdge = function (i, j) {
-            if (i > j) {
-                var aux = j;
-                j = i;
-                i = aux;
-            }
-            for (var k = 0; k < this.iEdges.length; k++) {
-                var ed = this.iEdges[k];
-                if (ed.i == i && ed.j == j)
-                    return ed;
+        Voronoi.prototype.findIntersection = function (leftVoronoiIndex, rightVoronoiIndex) {
+            for (var k = 0; k < this.bJoints.length; k++) {
+                var bp = this.bJoints[k];
+                if (bp.lVPI == leftVoronoiIndex && bp.rVPI == rightVoronoiIndex)
+                    return bp;
             }
             return null;
         };
-        Voronoi.prototype.setAllEdgesStateAs = function (state) {
-            for (var k = 0; k < this.iEdges.length; k++) {
-                this.iEdges[k].state = state;
+        Voronoi.prototype.addJoint = function (bj) {
+            this.bJoints.push(bj);
+            /*alghorithms.insertSort(this.bJoints, bj, function (e1: any, e2: any): boolean {
+                return e1.pt[0] < e2.pt[0];
+            });*/
+        };
+        Voronoi.prototype.setActiveJointsAsStopped = function () {
+            for (var k = 0; k < this.bJoints.length; k++) {
+                if (this.bJoints[k].state == BeachIntersection.IsActive)
+                    this.bJoints[k].state = BeachIntersection.IsStopped;
             }
         };
-        Voronoi.prototype.setActiveEdgesStateAsStopped = function () {
-            for (var k = 0; k < this.iEdges.length; k++) {
-                if (this.iEdges[k].state == Edge.IsActive)
-                    this.iEdges[k].state = Edge.IsStopped;
-            }
-        };
-        Voronoi.prototype.getEdgesWithState = function (state) {
+        Voronoi.prototype.getJointsWithState = function (state) {
             var array = [];
-            for (var k = 0; k < this.iEdges.length; k++) {
-                if (this.iEdges[k].state == state) {
-                    array.addObject(this.iEdges[k]);
+            for (var k = 0; k < this.bJoints.length; k++) {
+                if (this.bJoints[k].state == state) {
+                    array.addObject(this.bJoints[k]);
                 }
             }
             return array;
+        };
+        Voronoi.prototype.connectJoints = function (j1, j2) {
+            if (la.gl_equal(j1.pt.abs_dist(j2.pt), 0))
+                ;
+            {
+                var midpoint = j2.pt.midpoint(j1.pt);
+                j2.pt = midpoint.clone();
+                j1.pt = midpoint.clone();
+                return;
+            }
+            var seg1 = new la.Segment2D(this.vPoints[j1.lVPI].toVec2(), this.vPoints[j1.rVPI].toVec2());
+            var mseg1 = seg1.FindMediatrix();
+            var seg2 = new la.Segment2D(this.vPoints[j2.lVPI].toVec2(), this.vPoints[j2.rVPI].toVec2());
+            var mseg2 = seg2.FindMediatrix();
+            var intersection = mseg1.FindProlongationIntersection(mseg2);
+            if (intersection.Type == la.SegmentIntersection.ONE_POINT) {
+                j1.pt = intersection.Point.clone();
+                j2.pt = intersection.Point.clone();
+            }
+            if (intersection.Type == la.SegmentIntersection.ALL_POINTS) {
+                var pt = j1.pt.midpoint(j2.pt);
+                j1.pt = pt.clone();
+                j2.pt = pt.clone();
+            }
         };
         Voronoi.prototype.connectEdges = function (edge1, edge2) {
             var seg1 = new la.Segment2D(this.vPoints[edge1.i].toVec2(), this.vPoints[edge1.j].toVec2());
@@ -185,7 +198,8 @@ define(["require", "exports", "shapes2d", "linearalgebra"], function (require, e
             this.bExistIntersectionPointInTheCanvas = false;
             var iCurr = -1;
             this.cY -= this.dy;
-            this.setActiveEdgesStateAsStopped();
+            var orphans = [];
+            this.setActiveJointsAsStopped();
             for (var iX = 0; iX < this.bPoints.length; iX++) {
                 var bP = this.bPoints[iX];
                 var iCurr = this.bPoints[iX].voronoiPointOwner;
@@ -207,15 +221,16 @@ define(["require", "exports", "shapes2d", "linearalgebra"], function (require, e
                     if (bPp.voronoiPointOwner != bP.voronoiPointOwner) {
                         if (bP.y > this.yMin)
                             this.bExistIntersectionPointInTheCanvas = true;
-                        var ed = this.findEdge(bPp.voronoiPointOwner, bP.voronoiPointOwner);
-                        if (ed == null) {
-                            var edge = new Edge(new shapes.Vector2(bP.x, bP.y), new shapes.Vector2(bP.x, bP.y), bPp.voronoiPointOwner, bP.voronoiPointOwner, Edge.IsActive);
-                            this.iEdges.push(edge);
-                            this.UnlinkedEdges.push(edge);
+                        var beachJoint = this.findIntersection(bPp.voronoiPointOwner, bP.voronoiPointOwner);
+                        if (beachJoint == null) {
+                            beachJoint = new BeachIntersection(bP.toVec2(), bPp.voronoiPointOwner, bP.voronoiPointOwner, BeachIntersection.IsActive);
+                            orphans.push(beachJoint);
+                            this.addJoint(beachJoint);
                         }
-                        if (ed != null) {
-                            ed.state = Edge.IsActive;
-                            ed.setPointByProximity(bP.toVec2());
+                        else {
+                            beachJoint.pt[0] = bP.x;
+                            beachJoint.pt[1] = bP.y;
+                            beachJoint.state = BeachIntersection.IsActive;
                         }
                     }
                 }
@@ -228,24 +243,38 @@ define(["require", "exports", "shapes2d", "linearalgebra"], function (require, e
                     var iX = Math.floor((vPt.x + 1.0) / this.dx);
                     var bPt = this.bPoints[iX];
                     if (bPt.y != Number.MAX_VALUE) {
-                        this.iEdges.push(new Edge(new shapes.Vector2(bPt.x, bPt.y), new shapes.Vector2(bPt.x, bPt.y), bPt.voronoiPointOwner, vPt.index, Edge.IsActive));
+                        //Create Joint points
+                        var vJl = new BeachIntersection(bPt.toVec2(), bPt.voronoiPointOwner, vPt.index, BeachIntersection.IsActive);
+                        var vJr = new BeachIntersection(bPt.toVec2(), vPt.index, bPt.voronoiPointOwner, BeachIntersection.IsActive);
+                        this.addJoint(vJl);
+                        this.addJoint(vJr);
+                        //create edge
+                        this.iEdges.push(new Edge(vJl, vJr));
                     }
                 }
             }
-            //Intersect the stopped edges
-            var stoppedEdges = this.getEdgesWithState(Edge.IsStopped);
-            /*Now connected stopped edges
-            for (var i = 0; i < stoppedEdges.length; i++) {
-                var edge1 = stoppedEdges[i];
-                for (var k = i+1; k < stoppedEdges.length; k++) {
-                    var edge2 = stoppedEdges[k];
-                    if (edge1.hasCommonVoronoiPoint(edge2)) {
-                        this.connectEdges(edge1,edge2);
-                        edge1.state = Edge.IsCompleted;
+            //get stoppped joints 
+            var stoppedJoints = this.getJointsWithState(BeachIntersection.IsStopped);
+            var connectedJoints = [];
+            for (var i = 0; i < stoppedJoints.length; i++) {
+                var joint1 = stoppedJoints[i];
+                for (var k = i + 1; k < stoppedJoints.length; k++) {
+                    var joint2 = stoppedJoints[k];
+                    if (joint1.hasCommonVoronoiPoint(joint2)) {
+                        this.connectJoints(joint1, joint2);
                     }
                 }
+                joint1.state = BeachIntersection.IsCompleted;
+                connectedJoints.push(joint1);
             }
-            */
+            //Check for orphan edges
+            var that = this;
+            orphans.forEach(function (orphan) {
+                var closestJoint = alghorithms.minElem(connectedJoints, function (elem) {
+                    return elem.pt.abs_dist(orphan.pt);
+                });
+                that.iEdges.push(new Edge(orphan, closestJoint));
+            });
         };
         return Voronoi;
     })();
