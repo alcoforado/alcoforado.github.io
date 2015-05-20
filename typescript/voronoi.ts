@@ -42,7 +42,7 @@ export class BeachIntersection {
     }
 
     constructor(public pt: la.Vec2, public lVPI: number, public rVPI: number, public state: number) {
-
+        this.pt = pt.clone();
     }
 
 

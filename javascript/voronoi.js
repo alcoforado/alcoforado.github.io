@@ -36,6 +36,7 @@ define(["require", "exports", "shapes2d", "linearalgebra", "alghorithms"], funct
             this.lVPI = lVPI;
             this.rVPI = rVPI;
             this.state = state;
+            this.pt = pt.clone();
         }
         BeachIntersection.prototype.hasCommonVoronoiPoint = function (pt) {
             return (this.lVPI == pt.rVPI || this.lVPI == pt.lVPI || this.rVPI == pt.rVPI || this.rVPI == pt.lVPI);
