@@ -24,11 +24,11 @@ define(["require", "exports", "shapes2d", "linearalgebra", "alghorithms"], funct
     var BeachLinePoints = (function (_super) {
         __extends(BeachLinePoints, _super);
         function BeachLinePoints(x, y, voronoiPointOwner) {
-            _super.call(this, x, y);
+            _super.call(this, [x, y]);
             this.voronoiPointOwner = voronoiPointOwner;
         }
         return BeachLinePoints;
-    })(shapes.Vector2);
+    })(la.Vec2);
     exports.BeachLinePoints = BeachLinePoints;
     var BeachIntersection = (function () {
         function BeachIntersection(pt, lVPI, rVPI, state) {
@@ -70,6 +70,25 @@ define(["require", "exports", "shapes2d", "linearalgebra", "alghorithms"], funct
     })();
     exports.Edge = Edge;
     var Voronoi = (function () {
+        /*
+        connectEdges(edge1: Edge, edge2: Edge) {
+            var seg1 = new la.Segment2D(this.vPoints[edge1.i].toVec2(), this.vPoints[edge1.j].toVec2());
+            var mseg1 = seg1.FindMediatrix();
+    
+            var seg2 = new la.Segment2D(this.vPoints[edge2.i].toVec2(), this.vPoints[edge2.j].toVec2());
+            var mseg2 = seg2.FindMediatrix();
+    
+            var intersection = mseg1.FindProlongationIntersection(mseg2);
+    
+            if (intersection.Type != la.SegmentIntersection.ONE_POINT)
+                throw "Intersection not found"
+    
+            edge1.setPointByProximity(intersection.Point);
+            edge2.setPointByProximity(intersection.Point);
+    
+    
+        }
+        */
         function Voronoi(pts, x1, x2, dx, yMin, yMax, dy) {
             this.x1 = x1;
             this.x2 = x2;
@@ -158,17 +177,6 @@ define(["require", "exports", "shapes2d", "linearalgebra", "alghorithms"], funct
                 j2.pt = pt.clone();
             }
         };
-        Voronoi.prototype.connectEdges = function (edge1, edge2) {
-            var seg1 = new la.Segment2D(this.vPoints[edge1.i].toVec2(), this.vPoints[edge1.j].toVec2());
-            var mseg1 = seg1.FindMediatrix();
-            var seg2 = new la.Segment2D(this.vPoints[edge2.i].toVec2(), this.vPoints[edge2.j].toVec2());
-            var mseg2 = seg2.FindMediatrix();
-            var intersection = mseg1.FindProlongationIntersection(mseg2);
-            if (intersection.Type != la.SegmentIntersection.ONE_POINT)
-                throw "Intersection not found";
-            edge1.setPointByProximity(intersection.Point);
-            edge2.setPointByProximity(intersection.Point);
-        };
         /*
             GetActiveVoronoiPointsForScanLine(y:number):VoronoiPoint[] {
                 var result: VoronoiPoint[] = [];
@@ -207,29 +215,29 @@ define(["require", "exports", "shapes2d", "linearalgebra", "alghorithms"], funct
                 for (var i = 0; i < this.vPoints.length; i++) {
                     var vPt = this.vPoints[i];
                     if (vPt.aboveScanLine) {
-                        var y = vPt.beachLine(bP.x, this.cY);
+                        var y = vPt.beachLine(bP[0], this.cY);
                         if (y < ymin) {
                             ymin = y;
                             iCurr = i;
                         }
                     }
                 }
-                bP.y = ymin;
+                bP[1] = ymin;
                 bP.voronoiPointOwner = iCurr;
                 if (iX != 0) {
                     var bPp = this.bPoints[iX - 1];
                     if (bPp.voronoiPointOwner != bP.voronoiPointOwner) {
-                        if (bP.y > this.yMin)
+                        if (bP[1] > this.yMin)
                             this.bExistIntersectionPointInTheCanvas = true;
                         var beachJoint = this.findIntersection(bPp.voronoiPointOwner, bP.voronoiPointOwner);
                         if (beachJoint == null) {
-                            beachJoint = new BeachIntersection(bP.toVec2(), bPp.voronoiPointOwner, bP.voronoiPointOwner, BeachIntersection.IsActive);
+                            beachJoint = new BeachIntersection(bP, bPp.voronoiPointOwner, bP.voronoiPointOwner, BeachIntersection.IsActive);
                             orphans.push(beachJoint);
                             this.addJoint(beachJoint);
                         }
                         else {
-                            beachJoint.pt[0] = bP.x;
-                            beachJoint.pt[1] = bP.y;
+                            beachJoint.pt[0] = bP[0];
+                            beachJoint.pt[1] = bP[1];
                             beachJoint.state = BeachIntersection.IsActive;
                         }
                     }
@@ -240,12 +248,12 @@ define(["require", "exports", "shapes2d", "linearalgebra", "alghorithms"], funct
                 if (!vPt.aboveScanLine && vPt.y > this.cY) {
                     vPt.aboveScanLine = true;
                     //find the X
-                    var iX = Math.floor((vPt.x + 1.0) / this.dx);
+                    var iX = Math.floor((vPt.x - this.x1) / this.dx);
                     var bPt = this.bPoints[iX];
-                    if (bPt.y != Number.MAX_VALUE) {
+                    if (bPt[1] != Number.MAX_VALUE) {
                         //Create Joint points
-                        var vJl = new BeachIntersection(bPt.toVec2(), bPt.voronoiPointOwner, vPt.index, BeachIntersection.IsActive);
-                        var vJr = new BeachIntersection(bPt.toVec2(), vPt.index, bPt.voronoiPointOwner, BeachIntersection.IsActive);
+                        var vJl = new BeachIntersection(bPt, bPt.voronoiPointOwner, vPt.index, BeachIntersection.IsActive);
+                        var vJr = new BeachIntersection(bPt, vPt.index, bPt.voronoiPointOwner, BeachIntersection.IsActive);
                         this.addJoint(vJl);
                         this.addJoint(vJr);
                         //create edge

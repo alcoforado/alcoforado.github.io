@@ -5,7 +5,7 @@
 import $ = require("jquery");
 import shapes2d = require("shapes2d");
 import glut = require("glutils");
-
+import la = require("linearalgebra");
 
 export interface AttributeDesc {
     name: string;
@@ -90,7 +90,7 @@ export class ShaderColor2D {
 
     lines: Array<shapes2d.Shape2D>
 
-    points: Array<shapes2d.Vector2>
+    points: Array<la.Vec2>
 
     iBuffer: WebGLBuffer
 
@@ -229,8 +229,8 @@ export class ShaderColor2D {
         //draw points
         var pointsV: number[] = [];
         for (var i = 0; i < this.points.length; i++) {
-            pointsV.push(this.points[i].x);
-            pointsV.push(this.points[i].y);
+            pointsV.push(this.points[i][0]);
+            pointsV.push(this.points[i][1]);
             pointsV.push(1.0);
             pointsV.push(1.0);
             pointsV.push(1.0);

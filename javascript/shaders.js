@@ -136,8 +136,8 @@ define(["require", "exports", "shapes2d", "glutils"], function (require, exports
             //draw points
             var pointsV = [];
             for (var i = 0; i < this.points.length; i++) {
-                pointsV.push(this.points[i].x);
-                pointsV.push(this.points[i].y);
+                pointsV.push(this.points[i][0]);
+                pointsV.push(this.points[i][1]);
                 pointsV.push(1.0);
                 pointsV.push(1.0);
                 pointsV.push(1.0);

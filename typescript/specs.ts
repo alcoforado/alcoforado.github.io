@@ -25,6 +25,7 @@ describe("Javascript language tests", function () {
 });
 
 
+
 describe("alghorithms tests", function () {
     it("Array Insert Sort should work for empty arrays", function () {
         var a = [];
@@ -368,3 +369,88 @@ describe("Matrix", function () {
     
 
 });
+
+function vec2_equal(v: LA.Vec2, v2:Array<number>) {
+    expect(v[0]).toBeCloseTo(v2[0], 6);
+    expect(v[1]).toBeCloseTo(v2[1], 6);
+
+}
+
+describe("GL Mapping", function () {
+    it("Mapping to Left Bottom Should have correct mapping", function () {
+
+        var map = new LA.GLScreenMapping([-1, -1], [400, 200], false);
+        var v1 = map.MapToGL(new LA.Vec2([0, 0]));
+        var v2 = map.MapToGL(new LA.Vec2([400, 200]));
+        var v3 = map.MapToGL(new LA.Vec2([200, 100]));
+        var v4 = map.MapToGL(new LA.Vec2([0, 200]));
+        var v5 = map.MapToGL(new LA.Vec2([400, 0]));
+
+
+        vec2_equal(v1, [-1, -1]);
+        vec2_equal(v2, [1,1]);
+        vec2_equal(v3, [0, 0]);
+        vec2_equal(v4, [-1, 1]);
+        vec2_equal(v5, [1, -1]);
+    });
+
+
+
+
+    it("Mapping to Top Bottom with inverted Y direction should have correct mapping", function () {
+
+        var map = new LA.GLScreenMapping([-1, 1], [400, 200], true);
+        var v1 = map.MapToGL(new LA.Vec2([0, 0]));
+        var v2 = map.MapToGL(new LA.Vec2([400, 200]));
+        var v3 = map.MapToGL(new LA.Vec2([200, 100]));
+        var v4 = map.MapToGL(new LA.Vec2([0, 200]));
+        var v5 = map.MapToGL(new LA.Vec2([400, 0]));
+
+
+        vec2_equal(v1, [-1, 1]);
+        vec2_equal(v2, [1, -1]);
+        vec2_equal(v3, [0, 0]);
+        vec2_equal(v4, [-1, -1]);
+        vec2_equal(v5, [1, 1]);
+    });
+
+
+
+    it("Mapping and Unmapping should be an Identity operation", function () {
+
+        var map = new LA.GLScreenMapping([-1, -1], [400, 200], false);
+        var v1 = map.MapToScreen(map.MapToGL(new LA.Vec2([0, 0])));
+        var v2 = map.MapToScreen(map.MapToGL(new LA.Vec2([400, 200])));
+        var v3 = map.MapToScreen(map.MapToGL(new LA.Vec2([200, 100])));
+        var v4 = map.MapToScreen(map.MapToGL(new LA.Vec2([0, 200])));
+        var v5 = map.MapToScreen(map.MapToGL(new LA.Vec2([400, 0])));
+
+       
+
+        vec2_equal(v1, [0,0]);
+        vec2_equal(v2, [400, 200]);
+        vec2_equal(v3, [200, 100]);
+        vec2_equal(v4, [0, 200]);
+        vec2_equal(v5, [400, 0]);
+    });
+
+    it("Mapping and Unmapping with Swipping Y direction should be an Identity operation", function () {
+
+        var map = new LA.GLScreenMapping([-1, -1], [400, 200], true);
+        var v1 = map.MapToScreen(map.MapToGL(new LA.Vec2([0, 0])));
+        var v2 = map.MapToScreen(map.MapToGL(new LA.Vec2([400, 200])));
+        var v3 = map.MapToScreen(map.MapToGL(new LA.Vec2([200, 100])));
+        var v4 = map.MapToScreen(map.MapToGL(new LA.Vec2([0, 200])));
+        var v5 = map.MapToScreen(map.MapToGL(new LA.Vec2([400, 0])));
+
+
+
+        vec2_equal(v1, [0, 0]);
+        vec2_equal(v2, [400, 200]);
+        vec2_equal(v3, [200, 100]);
+        vec2_equal(v4, [0, 200]);
+        vec2_equal(v5, [400, 0]);
+    });
+
+
+})

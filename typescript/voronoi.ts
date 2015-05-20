@@ -20,9 +20,9 @@ export class VoronoiPoint extends shapes.Vector2 {
     }
 }
 
-export class BeachLinePoints extends shapes.Vector2 {
+export class BeachLinePoints extends la.Vec2 {
     constructor(x: number, y: number, public voronoiPointOwner: number) {
-        super(x, y);
+        super([x, y]);
     }
 }
 
@@ -158,7 +158,7 @@ export class Voronoi {
         }
     }
 
-
+    /*
     connectEdges(edge1: Edge, edge2: Edge) {
         var seg1 = new la.Segment2D(this.vPoints[edge1.i].toVec2(), this.vPoints[edge1.j].toVec2());
         var mseg1 = seg1.FindMediatrix();
@@ -176,7 +176,7 @@ export class Voronoi {
 
 
     }
-
+    */
     constructor(pts: shapes.Vector2[], public x1: number, public x2: number, public dx: number, public yMin: number, public yMax: number, public dy: number) {
         this.x1 = x1;
         this.x2 = x2;
@@ -255,30 +255,30 @@ export class Voronoi {
             for (var i = 0; i < this.vPoints.length; i++) {
                 var vPt = this.vPoints[i];
                 if (vPt.aboveScanLine) {
-                    var y = vPt.beachLine(bP.x, this.cY);
+                    var y = vPt.beachLine(bP[0], this.cY);
                     if (y < ymin) {
                         ymin = y;
                         iCurr = i;
                     }
                 }
             }
-            bP.y = ymin;
+            bP[1] = ymin;
             bP.voronoiPointOwner = iCurr;
 
             if (iX != 0) {
                 var bPp = this.bPoints[iX - 1];
                 if (bPp.voronoiPointOwner != bP.voronoiPointOwner) {
-                    if (bP.y > this.yMin)
+                    if (bP[1] > this.yMin)
                         this.bExistIntersectionPointInTheCanvas = true;
                     var beachJoint = this.findIntersection(bPp.voronoiPointOwner, bP.voronoiPointOwner)
                     if (beachJoint == null) {
-                        beachJoint = new BeachIntersection(bP.toVec2(), bPp.voronoiPointOwner, bP.voronoiPointOwner, BeachIntersection.IsActive);
+                        beachJoint = new BeachIntersection(bP, bPp.voronoiPointOwner, bP.voronoiPointOwner, BeachIntersection.IsActive);
                         orphans.push(beachJoint);
                         this.addJoint(beachJoint);
                     }
                     else {
-                        beachJoint.pt[0] = bP.x;
-                        beachJoint.pt[1] = bP.y;
+                        beachJoint.pt[0] = bP[0];
+                        beachJoint.pt[1] = bP[1];
                         beachJoint.state = BeachIntersection.IsActive;
                     }
                 }
@@ -293,12 +293,12 @@ export class Voronoi {
                 vPt.aboveScanLine = true;
 
                 //find the X
-                var iX = Math.floor((vPt.x + 1.0) / this.dx);
+                var iX = Math.floor((vPt.x - this.x1) / this.dx);
                 var bPt = this.bPoints[iX];
-                if (bPt.y != Number.MAX_VALUE) {
+                if (bPt[1] != Number.MAX_VALUE) {
                     //Create Joint points
-                    var vJl = new BeachIntersection(bPt.toVec2(), bPt.voronoiPointOwner, vPt.index, BeachIntersection.IsActive);
-                    var vJr = new BeachIntersection(bPt.toVec2(), vPt.index, bPt.voronoiPointOwner, BeachIntersection.IsActive);
+                    var vJl = new BeachIntersection(bPt, bPt.voronoiPointOwner, vPt.index, BeachIntersection.IsActive);
+                    var vJr = new BeachIntersection(bPt, vPt.index, bPt.voronoiPointOwner, BeachIntersection.IsActive);
                     this.addJoint(vJl);
                     this.addJoint(vJr);
                     //create edge

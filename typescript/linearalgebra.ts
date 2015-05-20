@@ -69,6 +69,13 @@
         return result;
     }
 
+   
+    a_equal(x: Vec2): boolean;
+    a_equal(y: Array<number>): boolean;
+    a_equal(x: any): boolean {
+        return gl_equal(x[0], this[0]) && gl_equal(x[1], this[1]);
+    }
+   
 
     fvscale_a(sc: number[]): Vec2 {
         this[0] *= sc[0];
@@ -582,8 +589,10 @@ export class GLScreenMapping {
     //where
     //Inv(S)= [2/dim[0]     0    ]
     //        [0        2/dims[1]]
-    MapToGL(vin: Vec2): Vec2 {
-        var v = vin.clone();
+    MapToGL(vin: Vec2): Vec2;
+    MapToGL(vin: Array<number>): Vec2;
+    MapToGL(vin: any): Vec2 {
+        var v = new Vec2([vin[0], vin[1]]);
         v.fvscale_a(this.scale_inv).finc(this.origin);
         return v;
     }
@@ -598,6 +607,11 @@ export class GLScreenMapping {
                 ));
     }
 
+    GetScreenRect(): Array<Vec2> {
+        return [
+            this.MapToScreen(new Vec2([-1, -1])),
+            this.MapToScreen(new Vec2([1, 1]))];
+    }
     
 
 }

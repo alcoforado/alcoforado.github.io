@@ -26,14 +26,20 @@ class GLApp {
     shader: Shaders.ShaderColor2D;
     canvas: HTMLCanvasElement;
     glTransform: LA.GLScreenMapping;
-
+    problemDomain: LA.GLScreenMapping;
 
     normalizedDX(): number {
-        return 2.0 / this.canvas.width;
+        return this.problemDomain.dims[0] / this.canvas.width;
     }
 
     normalizedDY(): number {
-        return 2.0 / this.canvas.height;
+        return this.problemDomain.dims[1] / this.canvas.height;
+    }
+
+    setViewport(canvas:HTMLCanvasElement) {
+        this.gl.viewport(0, 0, canvas.width, canvas.height);
+        this.glTransform =   new LA.GLScreenMapping([-1, 1], [canvas.width, canvas.height], true);
+        this.problemDomain = new LA.GLScreenMapping([-1, -1], [canvas.width, canvas.height], false);
     }
 
     InitScreen(canvas: HTMLCanvasElement) {
@@ -48,9 +54,12 @@ class GLApp {
         gl.clear(gl.COLOR_BUFFER_BIT);
         this.shader = new Shaders.ShaderColor2D(gl);
         this.voronoi = null;
+        this.setViewport(canvas);
         this.draw();
-
     }
+
+
+
     clearScreen() {
         this.gl.clearColor(0, 0, 0, 1);
         this.gl.clear(this.gl.COLOR_BUFFER_BIT);
@@ -62,7 +71,7 @@ class GLApp {
             throw "voronoi.iterate: call startVoronoi first"
         }
         if (this.voronoi.isVoronoiCompleted() && loop) {
-            this.voronoi = new Voronoi.Voronoi(this.voronoi.vPoints, -1, 1, this.normalizedDX(), -1, 1, this.voronoi.dy);
+            this.voronoi = new Voronoi.Voronoi(this.voronoi.vPoints, this.voronoi.x1, this.voronoi.x2, this.normalizedDX(), this.voronoi.yMin, this.voronoi.yMax, this.voronoi.dy);
         }
         if (this.voronoi.isVoronoiCompleted() && !loop)
             return;
@@ -76,20 +85,26 @@ class GLApp {
         this.shader.lines = [];
         var cl = new Shapes.CyclicColorArray([new Shapes.Vector4(1, 1, 1, 1)]);
         var clRed = new Shapes.CyclicColorArray([new Shapes.Vector4(1, 0, 0, 1)]);
+        var transform = this.problemDomain;
 
+        //Draw scan line
+        var rect = transform.GetScreenRect();
         this.shader.addShape(new Shapes.Line2D(
-            new Shapes.Vector2(-1, this.voronoi.cY),
-            new Shapes.Vector2(1, this.voronoi.cY)),
+            transform.MapToGL([rect[0][0], this.voronoi.cY]),
+            transform.MapToGL([rect[1][0], this.voronoi.cY])),
             cl);
 
-        this.shader.points = this.voronoi.bPoints;
+
+        var v2:Array<LA.Vec2> = [];
+        this.voronoi.bPoints.forEach(function (elem: Voronoi.BeachLinePoints) {
+            v2.push(transform.MapToGL(elem));
+        });
+        this.shader.points = v2;
 
         for (var i = 0; i < this.voronoi.iEdges.length; i++)
         {
             var iEdge = this.voronoi.iEdges[i];
-            var line = new Shapes.Line2D(
-                new Shapes.Vector2(iEdge.p1.pt[0], iEdge.p1.pt[1]),
-                new Shapes.Vector2(iEdge.p2.pt[0], iEdge.p2.pt[1]))
+            var line = new Shapes.Line2D(transform.MapToGL(iEdge.p1.pt),transform.MapToGL(iEdge.p2.pt));
             this.shader.addShape(line, clRed);
         }
     }
@@ -109,8 +124,9 @@ class GLApp {
         this.voronoi = null;
     }
 
-    startVoronoi(pts:Shapes.Vector2[],dy:number) {
-        this.voronoi = new Voronoi.Voronoi(pts, -1, 1, this.normalizedDX(),  -1, 1, dy);
+    startVoronoi(pts: Shapes.Vector2[], dy: number) {
+        var rect=this.problemDomain.GetScreenRect();
+        this.voronoi = new Voronoi.Voronoi(pts, rect[0][0], rect[1][0], this.normalizedDX(),  rect[0][1], rect[1][1], dy);
     }
 
 
@@ -153,9 +169,9 @@ export class Main {
                     glApp.InitScreen(canvas);
                     this.set('glApp', glApp);
                     this.set('canInputPoints', true);
-                    this.set('dy', glApp.normalizedDY().toPrecision(4));
+                    this.set('dy', 1);
                     this.set('dyFactor', 1);
-                    this.set('scanLinePos', 1);
+                    this.set('scanLinePos', glApp.problemDomain.dims[1]);
                     this.set('edges', []);
                     this.updateControllerModel(glApp);
                    
@@ -164,7 +180,7 @@ export class Main {
                     //Add observer on list of pts to include such list in the canvas shader.
                     this.addObserver('pts', this.ptsChanged);
                     this.addObserver('dyFactor', function () {
-                        this.set('dy', (glApp.normalizedDY() / this.get('dyFactor')).toFixed(6));
+                        this.set('dy', (1 / this.get('dyFactor')).toFixed(6));
                     });
 
 
@@ -234,7 +250,10 @@ export class Main {
                     if (!this.get('canInputPoints'))
                         return;
                     var pts: Shapes.Vector2[] = this.get('pts');
-                    pts.pushObject(pt.toPrecision(5));
+                    var glApp:GLApp = this.get('glApp');
+
+                    var p = glApp.problemDomain.MapToScreen(glApp.glTransform.MapToGL(pt.toVec2()));
+                    pts.pushObject(new Shapes.Vector2(p[0], p[1]));
                     this.propertyDidChange('pts');
                 },
                 resize_canvas: function () {
@@ -244,6 +263,7 @@ export class Main {
                     setTimeout(function () {
                         glApp.gl.viewport(0, 0, glApp.canvas.width, glApp.canvas.height);
                         glApp.glTransform = new LA.GLScreenMapping([-1, 1], [this.form_X, this.form_Y], true);
+                        glApp.problemDomain = new LA.GLScreenMapping([-1, -1], [this.form_X, this.form_Y], false);
                         glApp.draw();
                     }, 100);
                 }
@@ -256,7 +276,7 @@ export class Main {
                 }
                 else {
 
-                    this.set('scanLinePos', 1);
+                    this.set('scanLinePos', glApp.problemDomain.dims[1]);
                     this.set('edges', []);
                 }
 
@@ -271,15 +291,17 @@ export class Main {
             ptsChanged: function () {
                 var glApp: GLApp = this.get('glApp');
                 var pts: Shapes.Vector2[] = this.get('pts');
-                var dx:  Shapes.Vector2 = new Shapes.Vector2(glApp.normalizedDX(), glApp.normalizedDY());
+                var dx:  LA.Vec2 = new LA.Vec2([2,2]);
 
-                dx = dx.scale(2);
 
                 glApp.shader.shapes = [];
 
                 var cl: Shapes.CyclicColorArray = new Shapes.CyclicColorArray([new Shapes.Vector4(0, 0, 1, 1)]);
                 pts.forEach(function (pt: Shapes.Vector2) {
-                    var rect: Shapes.Rect2D = new Shapes.Rect2D(pt.minus(dx), pt.plus(dx));
+                    var gl_point = pt.toVec2();
+                    var rect: Shapes.Rect2D = new Shapes.Rect2D(
+                        glApp.problemDomain.MapToGL(gl_point.sub(dx)),
+                        glApp.problemDomain.MapToGL(gl_point.add(dx)))
                     glApp.shader.addShape(rect, cl);
                 });
                 glApp.clearScreen();
@@ -302,8 +324,8 @@ export class Main {
             click: function (e: MouseEvent) {
                 var x:number = e.offsetX == undefined ? e.layerX : e.offsetX;
                 var y:number = e.offsetY == undefined ? e.layerY : e.offsetY;
-                var point = glut.convertScreenCoordinatesToNormalized(this.canvas, new Shapes.Vector2(x,y));
-                this.get('controller').send('opengl_canvas_click', new Shapes.Vector2(point.x,point.y));
+                var point = new Shapes.Vector2(x,y);
+                this.get('controller').send('opengl_canvas_click', point);
             },
             didInsertElement: function () {
                 var canvas = document.getElementsByClassName("opengl_canvas")[0];

@@ -111,10 +111,10 @@ define(["require", "exports", "linearalgebra"], function (require, exports, la) 
         };
         Line2D.prototype.vertices = function () {
             return [
-                this.p1.x,
-                this.p1.y,
-                this.p2.x,
-                this.p2.y
+                this.p1[0],
+                this.p1[1],
+                this.p2[0],
+                this.p2[1]
             ];
         };
         return Line2D;
@@ -129,21 +129,21 @@ define(["require", "exports", "linearalgebra"], function (require, exports, la) 
             return 0 /* INDEXED_TRIANGLES */;
         };
         Rect2D.createRectFromPoint = function (barycenter, width, length) {
-            return new Rect2D(new Vector2(barycenter.x - width / 2.0, barycenter.y - length / 2.0), new Vector2(barycenter.x + width / 2.0, barycenter.y + length / 2.0));
+            return new Rect2D(new la.Vec2([barycenter[0] - width / 2.0, barycenter[1] - length / 2.0]), new la.Vec2([barycenter[0] + width / 2.0, barycenter[1] + length / 2.0]));
         };
         Rect2D.prototype.n_vertices = function () {
             return 4;
         };
         Rect2D.prototype.vertices = function () {
             return [
-                this.p1.x,
-                this.p1.y,
-                this.p2.x,
-                this.p1.y,
-                this.p2.x,
-                this.p2.y,
-                this.p1.x,
-                this.p2.y
+                this.p1[0],
+                this.p1[1],
+                this.p2[0],
+                this.p1[1],
+                this.p2[0],
+                this.p2[1],
+                this.p1[0],
+                this.p2[1]
             ];
         };
         Rect2D.prototype.indices = function () {

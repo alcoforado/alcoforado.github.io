@@ -126,10 +126,10 @@ export interface ITopology2D {
 
 
 export class Line2D implements ITopology2D {
-    p1: Vector2;
-    p2: Vector2;
+    p1: la.Vec2;
+    p2: la.Vec2;
 
-    constructor(p1: Vector2, p2: Vector2) {
+    constructor(p1: la.Vec2, p2: la.Vec2) {
         this.p1 = p1;
         this.p2 = p2;
     }
@@ -148,10 +148,10 @@ export class Line2D implements ITopology2D {
 
     vertices() {
         return [
-            this.p1.x,
-            this.p1.y,
-            this.p2.x,
-            this.p2.y
+            this.p1[0],
+            this.p1[1],
+            this.p2[0],
+            this.p2[1]
         ];
     }
 
@@ -161,18 +161,18 @@ export class Line2D implements ITopology2D {
 
 export class Rect2D implements ITopology2D{
 
-    p1: Vector2;
-    p2: Vector2;
-    constructor(p1: Vector2, p2: Vector2) {
+    p1: la.Vec2;
+    p2: la.Vec2;
+    constructor(p1: la.Vec2, p2: la.Vec2) {
         this.p1 = p1;
         this.p2 = p2;
     }
 
     topology_type() { return TopologyType.INDEXED_TRIANGLES; }
 
-    static createRectFromPoint(barycenter: Vector2, width: number, length: number):Rect2D {
-        return new Rect2D(new Vector2(barycenter.x - width / 2.0, barycenter.y - length / 2.0),
-                          new Vector2(barycenter.x + width / 2.0, barycenter.y + length / 2.0));
+    static createRectFromPoint(barycenter: la.Vec2, width: number, length: number):Rect2D {
+        return new Rect2D(new la.Vec2([barycenter[0] - width / 2.0, barycenter[1] - length / 2.0]),
+                          new la.Vec2([barycenter[0] + width / 2.0, barycenter[1] + length / 2.0]));
     }
 
     n_vertices() {
@@ -183,10 +183,10 @@ export class Rect2D implements ITopology2D{
 
     vertices() {
         return [
-            this.p1.x, this.p1.y,
-            this.p2.x, this.p1.y,
-            this.p2.x, this.p2.y,
-            this.p1.x, this.p2.y];
+            this.p1[0], this.p1[1],
+            this.p2[0], this.p1[1],
+            this.p2[0], this.p2[1],
+            this.p1[0], this.p2[1]];
     }
     indices() {
         return [
