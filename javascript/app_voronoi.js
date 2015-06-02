@@ -103,11 +103,10 @@ define(["require", "exports", "shapes2d", "shaders", "glutils", "voronoi", "embe
             });
             this.App.PointsRoute = Ember.Route.extend({
                 model: function () {
-                    return { pts: [], scanLinePos: 0, loop: false, isPaused: true, canInputPoints: true, dyFactor: true };
+                    return [{ pts: [], scanLinePos: 1, loop: false, isPaused: true, canInputPoints: true, dyFactor: 1 }];
                 }
             });
-            this.App.PointsController = Ember.ObjectController.extend({
-                needs: ['view:Opengl'],
+            this.App.PointsController = Ember.Controller.extend({
                 cannotInputPoints: Ember.computed.not('canInputPoints'),
                 actions: {
                     init_canvas: function (canvas) {
@@ -116,13 +115,12 @@ define(["require", "exports", "shapes2d", "shaders", "glutils", "voronoi", "embe
                         this.set('glApp', glApp);
                         this.set('canInputPoints', true);
                         this.set('dy', 1);
-                        this.set('dyFactor', 1);
                         this.set('scanLinePos', glApp.problemDomain.dims[1]);
                         this.set('edges', []);
                         this.updateControllerModel(glApp);
                         //Add observer on list of pts to include such list in the canvas shader.
-                        this.addObserver('pts', this.ptsChanged);
-                        this.addObserver('dyFactor', function () {
+                        this.addObserver('pts', this, this.ptsChanged);
+                        this.addObserver('dyFactor', this, function () {
                             this.set('dy', (1 / this.get('dyFactor')).toFixed(6));
                         });
                     },
@@ -152,7 +150,7 @@ define(["require", "exports", "shapes2d", "shaders", "glutils", "voronoi", "embe
                             glApp.iterate(loop);
                             glApp.draw();
                             controller.updateControllerModel(glApp);
-                        }, 100 / this.get('dyFactor'));
+                        }, 0);
                     },
                     pause: function () {
                         clearInterval(this.playInterval);
@@ -217,6 +215,7 @@ define(["require", "exports", "shapes2d", "shaders", "glutils", "voronoi", "embe
                 canvasY: 300,
                 form_X: 600,
                 form_Y: 300,
+                pts: [],
                 //Observers Section
                 ptsChanged: function () {
                     var glApp = this.get('glApp');
@@ -231,7 +230,7 @@ define(["require", "exports", "shapes2d", "shaders", "glutils", "voronoi", "embe
                     });
                     glApp.clearScreen();
                     glApp.shader.draw();
-                }
+                },
             });
             this.App.PointsView = Ember.View.extend({
                 classNames: ['main_view'],

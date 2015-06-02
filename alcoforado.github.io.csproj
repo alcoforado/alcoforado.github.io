@@ -33,6 +33,7 @@
     <Content Include="images\voronoi_screenshot.png" />
     <Content Include="index.html" />
     <Content Include="javascript\boot.js" />
+    <Content Include="javascript\ember-template-compiler.js" />
     <Content Include="javascript\ember.js" />
     <Content Include="javascript\glutils.js" />
     <Content Include="javascript\handlebars.js" />

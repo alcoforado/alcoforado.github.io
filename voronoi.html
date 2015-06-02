@@ -21,7 +21,7 @@
                 },
                 shim: {
 	            'ember' : {
-	               deps: ['handlebars','jquery'],
+	               deps: ['handlebars','jquery','ember-template-compiler'],
 	               exports: 'Ember'
 	            }
 
@@ -106,7 +106,7 @@
                     Voronoi Diagram
                 </div>
                 <div id="divcanvas">
-                    {{view "Main.App.OpenglView"}}
+                    {{view "opengl"}}
                     <button {{action 'add_points'}}> Add Points</button>
                     <button {{action 'reset' }}>Reset</button>
                     <button {{action 'play' }}>Play</button>
@@ -143,20 +143,13 @@
                 <table>
                     <th colspan="2" style="text-align:center">Voronoi Points</th>
                     <tbody>
-                        {{#each pts}}
-                        <tr><td>x: {{x}}</td><td>y: {{y}}</td></tr>
+                        {{#each pt in pts}}
+                        <tr><td>x: {{pt.x}}</td><td>y: {{pt.y}}</td></tr>
                         {{/each}}
                     </tbody>
                 </table>
 
-                <!--<table>
-                    <th colspan="2" style="text-align:center">Edge Set</th>
-                    <tbody>
-                        {{#each edges}}
-                        <tr><td>x: {{x}}</td><td>y: {{y}}</td></tr>
-                        {{/each}}
-                    </tbody>
-                </table>-->
+       
 
             </div>
 
@@ -164,9 +157,7 @@
                 <table>
                 <th colspan="2" style="text-align:center">Edge Set</th>
                 <tbody>
-                    <!--{{#each edges}}
-                    <tr><td>x: {{x}}</td><td>y: {{y}}</td></tr>
-                    {{/each}}-->
+                    
                 </tbody>
                     </table>
             </div>

@@ -14,7 +14,6 @@ import Shapes = require("shapes2d");
 import Shaders = require("shaders");
 import glut = require("glutils");
 import Voronoi = require("voronoi");
-//import Handlebars = require("handlebars");
 import Ember = require("ember");
 import LA = require("linearalgebra")
 
@@ -156,21 +155,20 @@ export class Main {
         });
         this.App.PointsRoute = Ember.Route.extend({
             model: function () {
-                return { pts: [], scanLinePos: 0, loop: false, isPaused: true, canInputPoints: true, dyFactor:true };
+                return [{ pts: [], scanLinePos: 1, loop: false, isPaused: true, canInputPoints: true, dyFactor:1 }];
             }
         });
 
-        this.App.PointsController = Ember.ObjectController.extend({
-            needs: ['view:Opengl'],
+        this.App.PointsController = Ember.Controller.extend({
+            
             cannotInputPoints: Ember.computed.not('canInputPoints'),
             actions: {
                 init_canvas: function (canvas: HTMLCanvasElement) {
-                    var glApp:GLApp = new GLApp();
+                    var glApp: GLApp = new GLApp();
                     glApp.InitScreen(canvas);
                     this.set('glApp', glApp);
                     this.set('canInputPoints', true);
                     this.set('dy', 1);
-                    this.set('dyFactor', 1);
                     this.set('scanLinePos', glApp.problemDomain.dims[1]);
                     this.set('edges', []);
                     this.updateControllerModel(glApp);
@@ -178,16 +176,18 @@ export class Main {
 
                     
                     //Add observer on list of pts to include such list in the canvas shader.
-                    this.addObserver('pts', this.ptsChanged);
-                    this.addObserver('dyFactor', function () {
-                        this.set('dy', (1 / this.get('dyFactor')).toFixed(6));
+                    this.addObserver('pts', this, this.ptsChanged);
+                    this.addObserver('dyFactor', this, function () {
+                        this.set('dy',(1 / this.get('dyFactor')).toFixed(6));
                     });
+
+
 
 
                 },
                 next: function () {
-                    var glApp: GLApp  = this.get('glApp');
-                    var loop: boolean = this.get('loop');     
+                    var glApp: GLApp = this.get('glApp');
+                    var loop: boolean = this.get('loop');
                     glApp.iterate(loop);
                     glApp.draw();
                     this.updateControllerModel(glApp);
@@ -201,21 +201,21 @@ export class Main {
 
                     var glApp: GLApp = this.get('glApp');
                     this.set('isPaused', false);
-                   
+
                     if (this.get('canInputPoints')) {
                         this.set('canInputPoints', false);
                         var pts: Shapes.Vector2[] = this.get('pts');
                         var dy: number = Number(this.get('dy'));
-                        glApp.startVoronoi(pts,dy);
-            
+                        glApp.startVoronoi(pts, dy);
+
                     }
                     var controller = this;
-                    var loop:boolean = this.get('loop');                               
+                    var loop: boolean = this.get('loop');
                     this.playInterval = setInterval(function () {
                         glApp.iterate(loop);
                         glApp.draw();
                         controller.updateControllerModel(glApp);
-                    },100/this.get('dyFactor'))
+                    }, 0)
 
                 },
                 pause: function () {
@@ -223,7 +223,7 @@ export class Main {
                     this.set('isPaused', true);
                 },
                 reset: function () {
-                    var glApp:GLApp = this.get('glApp');
+                    var glApp: GLApp = this.get('glApp');
                     clearInterval(this.playInterval);
                     this.set('canInputPoints', true);
                     this.set('isPaused', true);
@@ -241,16 +241,16 @@ export class Main {
                     this.send('play');
                 },
                 add_points: function () {
-                    var pts = this.get('pts'); 
+                    var pts = this.get('pts');
                     this.send('reset');
                     this.set('pts', pts);
-                    
+
                 },
                 opengl_canvas_click: function (pt: Shapes.Vector2) {
                     if (!this.get('canInputPoints'))
                         return;
                     var pts: Shapes.Vector2[] = this.get('pts');
-                    var glApp:GLApp = this.get('glApp');
+                    var glApp: GLApp = this.get('glApp');
 
                     var p = glApp.problemDomain.MapToScreen(glApp.glTransform.MapToGL(pt.toVec2()));
                     pts.pushObject(new Shapes.Vector2(p[0], p[1]));
@@ -269,7 +269,7 @@ export class Main {
                 }
             },
             updateControllerModel: function () {
-                var glApp:GLApp = this.get('glApp');
+                var glApp: GLApp = this.get('glApp');
                 if (glApp.voronoi != null) {
                     this.set('scanLinePos', glApp.voronoi.cY.toFixed(4));
                     this.set('dy', glApp.voronoi.dy.toFixed(5));
@@ -286,7 +286,7 @@ export class Main {
             canvasY: 300,
             form_X: 600,
             form_Y: 300,
-          
+            pts: [],
             //Observers Section
             ptsChanged: function () {
                 var glApp: GLApp = this.get('glApp');
@@ -306,8 +306,8 @@ export class Main {
                 });
                 glApp.clearScreen();
                 glApp.shader.draw();
-            }
-            
+            },
+           
 
         });
         
