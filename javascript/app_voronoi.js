@@ -123,6 +123,7 @@ define(["require", "exports", "shapes2d", "shaders", "glutils", "voronoi", "embe
                         this.addObserver('dyFactor', this, function () {
                             this.set('dy', (1 / this.get('dyFactor')).toFixed(6));
                         });
+                        this.set('dyFactor', 10);
                     },
                     next: function () {
                         var glApp = this.get('glApp');

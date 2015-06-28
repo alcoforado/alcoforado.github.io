@@ -171,6 +171,7 @@ export class Main {
                     this.set('dy', 1);
                     this.set('scanLinePos', glApp.problemDomain.dims[1]);
                     this.set('edges', []);
+                    
                     this.updateControllerModel(glApp);
                    
 
@@ -180,7 +181,7 @@ export class Main {
                     this.addObserver('dyFactor', this, function () {
                         this.set('dy',(1 / this.get('dyFactor')).toFixed(6));
                     });
-
+                    this.set('dyFactor', 10);
 
 
 

@@ -103,9 +103,6 @@ export class Voronoi {
 
     addJoint(bj: BeachIntersection) {
         this.bJoints.push(bj);
-        /*alghorithms.insertSort(this.bJoints, bj, function (e1: any, e2: any): boolean {
-            return e1.pt[0] < e2.pt[0];
-        });*/
     }
 
 
@@ -158,25 +155,7 @@ export class Voronoi {
         }
     }
 
-    /*
-    connectEdges(edge1: Edge, edge2: Edge) {
-        var seg1 = new la.Segment2D(this.vPoints[edge1.i].toVec2(), this.vPoints[edge1.j].toVec2());
-        var mseg1 = seg1.FindMediatrix();
-
-        var seg2 = new la.Segment2D(this.vPoints[edge2.i].toVec2(), this.vPoints[edge2.j].toVec2());
-        var mseg2 = seg2.FindMediatrix();
-
-        var intersection = mseg1.FindProlongationIntersection(mseg2);
-
-        if (intersection.Type != la.SegmentIntersection.ONE_POINT)
-            throw "Intersection not found"
-
-        edge1.setPointByProximity(intersection.Point);
-        edge2.setPointByProximity(intersection.Point);
-
-
-    }
-    */
+    
     constructor(pts: shapes.Vector2[], public x1: number, public x2: number, public dx: number, public yMin: number, public yMax: number, public dy: number) {
         this.x1 = x1;
         this.x2 = x2;
@@ -210,24 +189,7 @@ export class Voronoi {
 
     }
 
-    /*
-        GetActiveVoronoiPointsForScanLine(y:number):VoronoiPoint[] {
-            var result: VoronoiPoint[] = [];
-            for (var i = 0; i < this.vPoints.length; i++) {
-                var vPt = this.vPoints[i];
-                if (vPt.y > y) {
-                    result.push(vPt);
-                    if (!vPt.justAppearedOnHorizon())
-                        vPt.justAppearedOnHorizon = true;
-                    //Event horizon happened
-                    //Create two ed
-
-                }
-
-
-            }
-        }
-    */
+   
     isPointOutOfScreen(p: la.Vec2) {
         return
         Math.abs(p[0] - this.x1) < this.dx ||
