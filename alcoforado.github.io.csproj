@@ -17,6 +17,8 @@
     <IISExpressUseClassicPipelineMode />
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="BinPacking.html" />
+    <Content Include="css\binpack.css" />
     <Content Include="css\ie.css" />
     <Content Include="css\jasmine.css" />
     <Content Include="css\normalize.css" />
@@ -67,6 +69,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="typescript\bin_pack\" />
     <Folder Include="typescript\voronoi\" />
   </ItemGroup>
   <ItemGroup>

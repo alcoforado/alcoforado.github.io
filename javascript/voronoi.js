@@ -71,25 +71,6 @@ define(["require", "exports", "shapes2d", "linearalgebra", "alghorithms"], funct
     })();
     exports.Edge = Edge;
     var Voronoi = (function () {
-        /*
-        connectEdges(edge1: Edge, edge2: Edge) {
-            var seg1 = new la.Segment2D(this.vPoints[edge1.i].toVec2(), this.vPoints[edge1.j].toVec2());
-            var mseg1 = seg1.FindMediatrix();
-    
-            var seg2 = new la.Segment2D(this.vPoints[edge2.i].toVec2(), this.vPoints[edge2.j].toVec2());
-            var mseg2 = seg2.FindMediatrix();
-    
-            var intersection = mseg1.FindProlongationIntersection(mseg2);
-    
-            if (intersection.Type != la.SegmentIntersection.ONE_POINT)
-                throw "Intersection not found"
-    
-            edge1.setPointByProximity(intersection.Point);
-            edge2.setPointByProximity(intersection.Point);
-    
-    
-        }
-        */
         function Voronoi(pts, x1, x2, dx, yMin, yMax, dy) {
             this.x1 = x1;
             this.x2 = x2;
@@ -135,9 +116,6 @@ define(["require", "exports", "shapes2d", "linearalgebra", "alghorithms"], funct
         };
         Voronoi.prototype.addJoint = function (bj) {
             this.bJoints.push(bj);
-            /*alghorithms.insertSort(this.bJoints, bj, function (e1: any, e2: any): boolean {
-                return e1.pt[0] < e2.pt[0];
-            });*/
         };
         Voronoi.prototype.setActiveJointsAsStopped = function () {
             for (var k = 0; k < this.bJoints.length; k++) {
@@ -178,24 +156,6 @@ define(["require", "exports", "shapes2d", "linearalgebra", "alghorithms"], funct
                 j2.pt = pt.clone();
             }
         };
-        /*
-            GetActiveVoronoiPointsForScanLine(y:number):VoronoiPoint[] {
-                var result: VoronoiPoint[] = [];
-                for (var i = 0; i < this.vPoints.length; i++) {
-                    var vPt = this.vPoints[i];
-                    if (vPt.y > y) {
-                        result.push(vPt);
-                        if (!vPt.justAppearedOnHorizon())
-                            vPt.justAppearedOnHorizon = true;
-                        //Event horizon happened
-                        //Create two ed
-    
-                    }
-    
-    
-                }
-            }
-        */
         Voronoi.prototype.isPointOutOfScreen = function (p) {
             return;
             Math.abs(p[0] - this.x1) < this.dx || Math.abs(this.x2 - p[0]) < this.dx || p[1] <= this.yMin;

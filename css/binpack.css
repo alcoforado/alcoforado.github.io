@@ -1,0 +1,23 @@
+﻿body {
+
+
+}
+
+
+.text-container h1 {
+    text-align: center;
+}
+
+.text-container  {
+    width: 800px;
+    margin: 0 auto;
+    
+}
+
+.title-panel {
+    border-radius:15px;
+    border-color: black;
+    border-width: 1px;
+    border-style: solid;
+    background: linear-gradient(#528AE2,white,#528AE2);
+}
