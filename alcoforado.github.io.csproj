@@ -17,7 +17,7 @@
     <IISExpressUseClassicPipelineMode />
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="BinPacking.html" />
+    <Content Include="bin_packing.html" />
     <Content Include="css\binpack.css" />
     <Content Include="css\ie.css" />
     <Content Include="css\jasmine.css" />
@@ -76,6 +76,7 @@
     <TypeScriptCompile Include="typescript\alghorithms.ts" />
     <TypeScriptCompile Include="typescript\app_voronoi.ts" />
     <TypeScriptCompile Include="typescript\app_voronoi_gpu.ts" />
+    <TypeScriptCompile Include="typescript\defines\angular.d.ts" />
     <TypeScriptCompile Include="typescript\defines\backbone.d.ts" />
     <TypeScriptCompile Include="typescript\defines\d3.d.ts" />
     <TypeScriptCompile Include="typescript\defines\ember.d.ts" />

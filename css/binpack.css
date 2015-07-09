@@ -1,6 +1,6 @@
 ﻿body {
-
-
+    background-color: rgb(229, 238, 252);
+    
 }
 
 
@@ -16,8 +16,50 @@
 
 .title-panel {
     border-radius:15px;
-    border-color: black;
+    border-color: lightgray;
     border-width: 1px;
     border-style: solid;
-    background: linear-gradient(#528AE2,white,#528AE2);
+    background: linear-gradient(rgb(171, 214, 244),white,rgb(171, 214, 244));
+    
+}
+
+.form-row {
+    padding: 0px 0px 10px 0px;
+}
+
+.span-label {
+    display:inline-block;
+    width:141px;
+    text-align:left;
+}
+
+.round-panel 
+{
+    border-radius: 27px;
+    padding: 27px;
+    border: 1px solid lightgray;
+    /*box-shadow: 10px 10px 5px #888888;*/
+}
+.main-form
+{
+    display:block;
+    margin: 0 auto;
+    width:211px;
+    background: rgb(171, 214, 244);
+    color:black;
+    
+}
+.center-text {
+    text-align: center;
+    width: 100%;
+    padding: 0px 0px 15px 0px;
+}
+
+.main-form input[type=number]
+{
+    width:53px;
+}
+
+.main-form h1 {
+    font-size:15px;
 }
