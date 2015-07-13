@@ -35,6 +35,7 @@
     <Content Include="images\voronoi_screenshot.png" />
     <Content Include="index.html" />
     <Content Include="javascript\boot.js" />
+    <Content Include="javascript\domReady.js" />
     <Content Include="javascript\ember-template-compiler.js" />
     <Content Include="javascript\ember.js" />
     <Content Include="javascript\glutils.js" />
@@ -42,6 +43,7 @@
     <Content Include="javascript\jasmine-html.js" />
     <Content Include="javascript\jasmine.js" />
     <Content Include="javascript\jquery-1.11.1.js" />
+    <Content Include="javascript\jquery-2.1.4.js" />
     <Content Include="javascript\jquery-paginator.js" />
     <Content Include="javascript\jquery-rotate.js" />
     <Content Include="javascript\jquery-ui-1.11.1.js" />
@@ -54,6 +56,7 @@
     <Content Include="javascript\jquery.validate.unobtrusive.js" />
     <Content Include="javascript\jquery.validate.unobtrusive.min.js" />
     <Content Include="javascript\require.js" />
+    <Content Include="javascript\require_config.js" />
     <Content Include="javascript\respond.js" />
     <Content Include="javascript\require_specrunner.js" />
     <Content Include="SpecRunner.html" />
@@ -76,8 +79,10 @@
     <TypeScriptCompile Include="typescript\alghorithms.ts" />
     <TypeScriptCompile Include="typescript\app_voronoi.ts" />
     <TypeScriptCompile Include="typescript\app_voronoi_gpu.ts" />
+    <TypeScriptCompile Include="typescript\bin_packing.ts" />
     <TypeScriptCompile Include="typescript\defines\angular.d.ts" />
     <TypeScriptCompile Include="typescript\defines\backbone.d.ts" />
+    <TypeScriptCompile Include="typescript\defines\custom.d.ts" />
     <TypeScriptCompile Include="typescript\defines\d3.d.ts" />
     <TypeScriptCompile Include="typescript\defines\ember.d.ts" />
     <TypeScriptCompile Include="typescript\defines\handlebars.d.ts" />
@@ -87,6 +92,7 @@
     <TypeScriptCompile Include="typescript\defines\require.d.ts" />
     <TypeScriptCompile Include="typescript\defines\glutils.d.ts" />
     <TypeScriptCompile Include="typescript\defines\webgl.d.ts" />
+    <TypeScriptCompile Include="typescript\effects.ts" />
     <TypeScriptCompile Include="typescript\linearalgebra.ts" />
     <TypeScriptCompile Include="typescript\shapes2d.ts" />
     <TypeScriptCompile Include="typescript\defines\underscore.d.ts" />

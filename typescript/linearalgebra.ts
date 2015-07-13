@@ -560,6 +560,26 @@ export class Segment2D {
 
 }
 
+
+export class Interval {
+
+    constructor(public a: number, public b: number) {
+        this.a = (b < a) ?  b: a;
+        this.b = (b < a) ? a : b;
+    }
+
+    public size(): number {
+        return this.b - this.a;
+    }
+
+    public RandomSample():number {
+        var sample = Math.random()
+        return this.a + this.size() * sample;
+    }
+
+}
+
+
 export class GLScreenMapping {
     origin: Vec2;
     dims: number[];
@@ -615,3 +635,5 @@ export class GLScreenMapping {
     
 
 }
+
+

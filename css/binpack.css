@@ -1,6 +1,8 @@
-﻿body {
-    background-color: rgb(229, 238, 252);
-    
+html,body {
+    background: radial-gradient(rgb(12, 12, 86),rgb(7, 7, 61),rgb(5, 5, 56));
+    height: 100%;
+    color:white;
+    font-size: 18px;
 }
 
 
@@ -19,7 +21,7 @@
     border-color: lightgray;
     border-width: 1px;
     border-style: solid;
-    background: linear-gradient(rgb(171, 214, 244),white,rgb(171, 214, 244));
+    background: linear-gradient(rgb(29, 151, 237),rgb(21, 16, 97),rgb(21, 16, 97),rgb(12, 145, 237));
     
 }
 
@@ -27,9 +29,21 @@
     padding: 0px 0px 10px 0px;
 }
 
+.group-form {
+    margin: 0 auto;
+    border: 1px ridge; 
+    border-radius: 5px;
+    padding:5px;
+    margin-bottom: 10px;
+}
+
+.group-form div {
+    margin-bottom:5px;
+}
+
+
 .span-label {
     display:inline-block;
-    width:141px;
     text-align:left;
 }
 
@@ -44,9 +58,9 @@
 {
     display:block;
     margin: 0 auto;
-    width:211px;
-    background: rgb(171, 214, 244);
-    color:black;
+    width: 220px;
+    background: rgb(152, 196, 247);
+    color: rgb(3, 3, 3);
     
 }
 .center-text {
@@ -61,5 +75,19 @@
 }
 
 .main-form h1 {
-    font-size:15px;
+    font-size: 19px;
+}
+
+
+.round-button
+{
+    display:inline-block;
+    text-align:center;
+    border-radius:10px;
+    border: 1px solid;
+    padding: 5px;
+    background: linear-gradient(darkblue,darkblue);
+    color: white;
+    cursor: default;
+    box-shadow: 2px 2px 0px rgb(57, 110, 173);
 }

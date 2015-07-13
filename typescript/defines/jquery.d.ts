@@ -3925,5 +3925,10 @@ interface JQuery {
 declare module "jquery" {
     export = $;
 }
+
+declare module "jquery2" {
+    export = $;
+}
+
 declare var jQuery: JQueryStatic;
 declare var $: JQueryStatic;

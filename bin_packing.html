@@ -2,38 +2,63 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title></title>
+    
+    <style type="text/css">
+        @charset "UTF-8";
+        [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak, .ng-hide:not(.ng-hide-animate) {
+            display: none !important;
+        }
+        ng\:form {
+            display: block;
+        }
+    </style>
+
+
+
+    
+    
     <link rel="stylesheet" href="css/binpack.css">
+    
+
+
+    
+    <!--<script src="javascript/effects.js"></script>-->
+    <script data-main="javascript/require_config" src="javascript/require.js"></script>
+    
+
 </head>
-<body>
+<body ng-cloak  ng-controller="Ctrl as controller">
     <div class="text-container">
-        
+
         <div class="title-panel">
-            <h1> Unbounded Bin Pack 2D Problem  </h1>
-        </div>        
+            <h1> Unbounded Bin Pack 2D Problem   </h1>
+        </div>
 
         <p>
-            Organize a set of rectangles regions with minimum wasted area in a larger rectangle. 
+            Organize a set of rectangles regions with minimum wasted area in a larger rectangle.
             Best solution is not garanteed. Bin Pack is an NP-Hard problem.`
         </p>
 
         <form class="main-form round-panel">
             <div class="title center-text">
-                <h1>Rectangles Generation</h1>
+                <h1>Rectangles Random Generation</h1>
             </div>
             <div class="form-row">
-                <span class="span-label">Number of Elements:</span> <input type="number"  min="0" max="99999" value=""/>
+                <span class="span-label">Number of Elements:</span> <input ng-model="Data.NumElements"  type="number" min="0" max="99999" value="" />
             </div>
-            <div class="form-row">
-                <span class="span-label">Min Size Y:</span> <input type="number"  value="" />
+            <div class="group-form">
+                <div >Width</div> 
+                <div>   <span>Min </span><input type="number" value="" ng-model="Data.WidthRange.a" /> <span> Max </span><input ng-model="Data.WidthRange.b"  type="number" value="" /></div>
+                </div>
+            <div class="group-form">
+                <div>Height</div>
+                <div>   <span>Min </span><input type="number" value="" ng-model="Data.HeightRange.a" /> <span> Max </span><input ng-model="Data.HeightRange.b" type="number" value="" /></div>
             </div>
-            <div class="form-row">
-                <span class="span-label">Max Size Y:</span> <input type="number"  value="" />
-            </div>
-            <div class="form-row">
-                <span class="span-label">Min  Size X:</span> <input type="number"  value="" />
-            </div>
-            <div class="form-row">
-                <span class="span-label">Max Size X:</span> <input type="number"  value="" />
+
+            <div class="center-text">
+                <div class="round-button" data-effects-on-hover-bright-background="100">
+                    Run
+                </div>
             </div>
         </form>
 
