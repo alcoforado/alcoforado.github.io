@@ -10,7 +10,8 @@ import la = require("linearalgebra");
 import angular = require("angular");
 import Effects=require("effects");    
 
-    class Data {
+
+ class Data {
         constructor(public NumElements: number, public WidthRange: la.Interval,public HeightRange: la.Interval)
         {
             

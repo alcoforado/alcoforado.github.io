@@ -179,6 +179,13 @@ export class Rect2D implements ITopology2D{
         return 4;
     }
 
+    width(): number {
+        return this.p2[0] - this.p1[0];
+    }
+
+    height(): number {
+        return this.p2[1] - this.p1[1];
+    }
 
 
     vertices() {
@@ -194,5 +201,11 @@ export class Rect2D implements ITopology2D{
             1, 2, 3
         ]
     }
+
+    canContain(rect:Rect2D): boolean {
+        return this.width() >= rect.width() && this.height() >= rect.height();
+    }
+
+
 }
 

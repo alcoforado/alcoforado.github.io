@@ -134,6 +134,12 @@ define(["require", "exports", "linearalgebra"], function (require, exports, la) 
         Rect2D.prototype.n_vertices = function () {
             return 4;
         };
+        Rect2D.prototype.width = function () {
+            return this.p2[0] - this.p1[0];
+        };
+        Rect2D.prototype.height = function () {
+            return this.p2[1] - this.p1[1];
+        };
         Rect2D.prototype.vertices = function () {
             return [
                 this.p1[0],
@@ -155,6 +161,9 @@ define(["require", "exports", "linearalgebra"], function (require, exports, la) 
                 2,
                 3
             ];
+        };
+        Rect2D.prototype.canContain = function (rect) {
+            return this.width() >= rect.width() && this.height() >= rect.height();
         };
         return Rect2D;
     })();

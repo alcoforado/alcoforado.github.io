@@ -80,6 +80,7 @@
     <TypeScriptCompile Include="typescript\app_voronoi.ts" />
     <TypeScriptCompile Include="typescript\app_voronoi_gpu.ts" />
     <TypeScriptCompile Include="typescript\bin_packing.ts" />
+    <TypeScriptCompile Include="typescript\bin_packing_algorithm.ts" />
     <TypeScriptCompile Include="typescript\defines\angular.d.ts" />
     <TypeScriptCompile Include="typescript\defines\backbone.d.ts" />
     <TypeScriptCompile Include="typescript\defines\custom.d.ts" />

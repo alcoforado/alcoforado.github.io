@@ -51,7 +51,7 @@ html,body {
 {
     border-radius: 27px;
     padding: 27px;
-    border: 1px solid lightgray;
+    border: 1px solid;
     /*box-shadow: 10px 10px 5px #888888;*/
 }
 .main-form
@@ -59,9 +59,8 @@ html,body {
     display:block;
     margin: 0 auto;
     width: 220px;
-    background: rgb(152, 196, 247);
-    color: rgb(3, 3, 3);
-    
+    background: radial-gradient(rgb(12, 12, 86),rgb(7, 7, 61),rgb(5, 5, 56));
+    border-color: rgb(79, 83, 160);
 }
 .center-text {
     text-align: center;
@@ -86,8 +85,20 @@ html,body {
     border-radius:10px;
     border: 1px solid;
     padding: 5px;
-    background: linear-gradient(darkblue,darkblue);
+    background: rgb(12, 12, 86);
     color: white;
     cursor: default;
     box-shadow: 2px 2px 0px rgb(57, 110, 173);
+}
+
+.round-button:hover
+{
+    background: #1d60b1;
+}
+
+.round-button:active
+{
+    position: relative;
+    top:2px;
+    left:2px;
 }
