@@ -56,12 +56,27 @@ html,body {
 }
 .main-form
 {
-    display:block;
-    margin: 0 auto;
+    display:inline-block;
     width: 220px;
     background: radial-gradient(rgb(12, 12, 86),rgb(7, 7, 61),rgb(5, 5, 56));
     border-color: rgb(79, 83, 160);
 }
+
+.efficiency-graph-container
+{
+    display:inline-block;
+    background-color:white;
+    width: 545px;
+    height: 369px;
+    vertical-align:bottom;
+}
+.centralize
+{
+    display: block;
+    margin: 0 auto;
+    width: 840px;
+}
+
 .center-text {
     text-align: center;
     width: 100%;
@@ -101,4 +116,21 @@ html,body {
     position: relative;
     top:2px;
     left:2px;
+}
+
+.rectangle {
+    display:inline-block;
+    margin: 0px;
+    border: 1px solid  black;
+    background-color: rgb(250,12,30);
+
+}
+
+.bin-pack-root {
+    background-color: white;
+    position: relative;
+}
+
+.bin-pack-node {
+    position:absolute;
 }

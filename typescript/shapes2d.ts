@@ -179,6 +179,10 @@ export class Rect2D implements ITopology2D{
         return 4;
     }
 
+    area(): number {
+        return this.width() * this.height();
+    }
+
     width(): number {
         return this.p2[0] - this.p1[0];
     }

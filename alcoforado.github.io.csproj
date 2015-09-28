@@ -35,6 +35,7 @@
     <Content Include="images\voronoi_screenshot.png" />
     <Content Include="index.html" />
     <Content Include="javascript\boot.js" />
+    <Content Include="javascript\d3.js" />
     <Content Include="javascript\domReady.js" />
     <Content Include="javascript\ember-template-compiler.js" />
     <Content Include="javascript\ember.js" />
@@ -99,6 +100,7 @@
     <TypeScriptCompile Include="typescript\defines\underscore.d.ts" />
     <TypeScriptCompile Include="typescript\shaders.ts" />
     <TypeScriptCompile Include="typescript\specs.ts" />
+    <TypeScriptCompile Include="typescript\svg_plots.ts" />
     <TypeScriptCompile Include="typescript\voronoi.ts" />
   </ItemGroup>
   <PropertyGroup>

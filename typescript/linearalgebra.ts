@@ -123,6 +123,10 @@ export class Vec3 {
         }
     }
 
+    toRGB() {
+        return "rgb(" + this[0] + "," + this[1] + "," + this[2] + ")";
+    }
+
     clone(): Vec3 {
         return new Vec3([this[0], this[1],this[2]]);
 
@@ -578,7 +582,10 @@ export class Interval {
         var sample = Math.random()
         return this.a + this.size() * sample;
     }
-
+    public RandomIntegerSample():number {
+        var d = this.RandomSample();
+        return Number(d.toFixed(0)); 
+    }
 }
 
 

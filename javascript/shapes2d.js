@@ -134,6 +134,9 @@ define(["require", "exports", "linearalgebra"], function (require, exports, la) 
         Rect2D.prototype.n_vertices = function () {
             return 4;
         };
+        Rect2D.prototype.area = function () {
+            return this.width() * this.height();
+        };
         Rect2D.prototype.width = function () {
             return this.p2[0] - this.p1[0];
         };
