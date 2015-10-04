@@ -91,7 +91,7 @@ export class BinPack  {
         this.used_dims = new la.Vec2([0, 0]);
 
         lst = lst.sort((r1: Rect, r2: Rect):number => {
-            return Math.max(r2.height, r2.width) - Math.max(r1.height, r1.width) 
+            return r2.height - r1.height;//Math.max(r2.height, r2.width) - Math.max(r1.height, r1.width) 
         });
 
         for (var i = 0; i < lst.length; i++) {
