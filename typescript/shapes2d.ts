@@ -175,6 +175,10 @@ export class Rect2D implements ITopology2D{
                           new la.Vec2([barycenter[0] + width / 2.0, barycenter[1] + length / 2.0]));
     }
 
+    canFit(width: number, height: number): boolean {
+        return this.width() >= width && this.height() >= height;
+    }
+
     n_vertices() {
         return 4;
     }

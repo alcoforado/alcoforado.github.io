@@ -131,6 +131,9 @@ define(["require", "exports", "linearalgebra"], function (require, exports, la) 
         Rect2D.createRectFromPoint = function (barycenter, width, length) {
             return new Rect2D(new la.Vec2([barycenter[0] - width / 2.0, barycenter[1] - length / 2.0]), new la.Vec2([barycenter[0] + width / 2.0, barycenter[1] + length / 2.0]));
         };
+        Rect2D.prototype.canFit = function (width, height) {
+            return this.width() >= width && this.height() >= height;
+        };
         Rect2D.prototype.n_vertices = function () {
             return 4;
         };
