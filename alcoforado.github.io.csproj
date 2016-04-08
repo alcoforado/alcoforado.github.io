@@ -25,6 +25,7 @@
     <Content Include="css\pygment_trac.css" />
     <Content Include="css\styles.css" />
     <Content Include="css\voronoi.css" />
+    <Content Include="images\binpack.png" />
     <Content Include="images\bullet.png" />
     <Content Include="images\hr.gif" />
     <Content Include="images\icon-ok.svg" />
