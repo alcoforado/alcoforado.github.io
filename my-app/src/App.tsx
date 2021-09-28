@@ -1,29 +1,21 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-import { AppBar } from '@material-ui/core';
+import './scss/app.scss';
+import AppBar from './components/AppBar';
+import Ripple from './components/Ripple';
 function App() {
   return (
     <div className="App">
-      <AppBar position="static">
+      <AppBar>
+
 
 
       </AppBar>
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+     <Ripple>
+    <div className="test">Hello World</div>
+    </Ripple>
     </div>
+
+    
   );
 }
 

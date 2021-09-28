@@ -1,0 +1,56 @@
+@import "pallete.scss";
+@import "mixins.scss";
+@use "sass:color";
+$background: white;
+$font-color: #2e2e2e; 
+$primary: $indigo-600;
+$theme: dark;
+$font-color-contrast: rgba(0,0,0,0.3);
+
+
+$primary-font-color: white;
+$mdc-theme-secondary: #D28900;
+$focus-input-background:rgba(0,0,0,0);
+$line-separator: #43574f;
+$panel-border-color: rgba(255, 255, 255, 0.03);
+$inner-panel-color:#2f3138;
+$panel-color: #424242;
+$highlight-color: #D28900;
+$font-color: white;
+$font-size: 15px;
+$font-size-big: 22px;
+$highlight-line-color: #1385e5;
+$link-text-color: #3a67e2;
+$link-text-color-dark: #2d51b5;
+$error-background-color: #5a265a;
+$secondary-color: #ef6c00;
+$primary-color: #4285f4;
+$primary-color-highlight: #0d47a1;
+$secondary-color: #aa66cc;
+$secondary-color-highlight: #9933cc;
+$default-color: #2bbbad;
+$default-color-dark: #00695c;
+$info-color: #33b5e5;
+$info-color-dark: #0099cc;
+$success-color: #00c851;
+$success-color-dark: #007e33;
+$warning-color: #ffbb33;
+$warning-color-dark: #ff8800;
+$danger-color: #ff3547;
+$danger-color-dark: #cc0000;
+$elegant-color: #2e2e2e;
+$elegant-color-dark: #212121;
+$stylish-color: #4b515d;
+$stylish-color-dark: #3e4551;
+$unique-color: #3f729b;
+$unique-color-dark: #1c2331;
+$special-color: #37474f;
+$special-color-dark: #263238;
+
+
+
+@function if-theme-dark($dark,$light)
+{
+    @if ($theme == dark) { @return $dark; }
+    @else {@return $light}
+}
