@@ -2,36 +2,40 @@ import { MouseEventHandler, useRef, useState } from "react"
 
 export default function Ripple(props:any) {
     const root = useRef<HTMLDivElement>(null)
-    var [X,setX]= useState(0);
-    var [Y,setY]= useState(0);
-    var [width,setWidth] = useState(0);
-    var [height,setHeight] = useState(0);
-
+    var [X,setX]= useState<number>(0);
+    var [Y,setY]= useState<number>(0);
+    var [width,setWidth] = useState<number|null>(0);
+    var [height,setHeight] = useState<number|null>(0);
+    var [isContracting,setIsContracting] =  useState(false);
     var startRipple:MouseEventHandler<HTMLDivElement> = (ev) => {
         const rootRect = root.current?.getBoundingClientRect();
+        
         if (rootRect)
         {
             setX(ev.clientX - rootRect.left);
             setY(ev.clientY - rootRect.top); 
         }
-        var size=Math.max(rootRect?.width ?? 0,rootRect?.width ?? 0)
+        var size=2*Math.max(rootRect?.width ?? 0,rootRect?.height ?? 0)
         setWidth(size);
         setHeight(size);
-       
+        setIsContracting(false);
         setTimeout(()=>{
-            
-            setWidth(0);
-            setHeight(0);
-        },2000)
+            setIsContracting(true);
+            setWidth(null);
+            setHeight(null);
+        }, 2000)
 
     }
 
 
+    
+
     var style = {
-        top:X,
-        left:Y,
-        width,
-        height
+        top:Y,
+        left:X,
+        width: width ?? "",
+        height: height ?? "",
+        transform: isContracting ? "" : "transform width 2s, height 2s"
     }
 
     return (
