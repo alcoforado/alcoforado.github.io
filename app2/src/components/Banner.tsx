@@ -22,7 +22,6 @@ height: "auto",
 position:"relative",
 maxWidth: "750px"
 
-//aspectRatio:"1.777777",
 }}>
     <img src="./images/corners.svg" width="100%" height="100%" css={{position:"absolute"}}/>
     <div css={{

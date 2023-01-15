@@ -1,6 +1,8 @@
 import React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Banner from './components/Banner';
+import OptionalSideBySide from './components/OptionalSideBySide';
+import AppCard from './components/AppCard';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -13,6 +15,9 @@ import IconButton from '@mui/material/IconButton';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { purple } from '@mui/material/colors';
 import Grid from '@mui/material/Grid'; 
+import Item from '@mui/material/Grid';
+import { Routes, Route } from "react-router-dom";
+import Home from "./pages/Home"
 const theme = createTheme({
   palette: {
     secondary: {
@@ -29,49 +34,23 @@ const theme = createTheme({
 })
 
 function App():JSX.Element {
-
   return (
-<>
+  <>
+    <AppBar color='secondary'>
+        <Toolbar>
+          <IconButton size="large" color="inherit"><MenuIcon/></IconButton>
+          <Typography align='left' sx={{flexGrow:1}}>Alcoforado Github Page</Typography>
+          <IconButton size="large" color="inherit" ><LinkedInIcon/></IconButton>
+          <IconButton size="large" color="inherit"><GitHubIcon/></IconButton>
+        </Toolbar>
+    </AppBar>
+    <Toolbar/>
+    <Routes>
+      <Route path="/" element={<Home/>}>
 
-  <AppBar color='secondary'>
-      <Toolbar>
-      <IconButton size="large" color="inherit"><MenuIcon/></IconButton>
-      <Typography align='left' sx={{flexGrow:1}}>Alcoforado Github Page</Typography>
-      <IconButton size="large" color="inherit" ><LinkedInIcon/></IconButton>
-      <IconButton size="large" color="inherit"><GitHubIcon/></IconButton>
-        
-      </Toolbar>
-      
- </AppBar>
- <Toolbar/>
-
-
-<Banner>
-    <Typography variant="h5">
-      Welcome to my portfolio App. 
-    </Typography>
-    <Typography variant="h5">
-      Here you will find many interactive webgl applications like games, numerical simulations, calculation tools and much more. Select a card to start
-    </Typography>
-</Banner>
-
-
- <Container sx={{
-  backgroundImage:`url(${"./images/landscape.svg"})`,
-  backgroundRepeat:"no-repeat",
-  backgroundSize:"100%",
-  backgroundPosition:"bottom",
-  minWidth:"100%",
-  minHeight:"100vh",
-  height: "auto",
-  aspectRatio:"1.84",
-  margin:0
-  }}>
- </Container>
- </>) as JSX.Element;
-    
-
-  
+      </Route>
+    </Routes>
+  </>) as JSX.Element;
 }
 
 export default App;
