@@ -12,6 +12,7 @@ interface IAppCardProp {
     topImage?:string;
     title?:string;
     description?:string;
+    href:string;
 }
 
 export default function AppCard(prop:IAppCardProp) {
@@ -34,7 +35,7 @@ export default function AppCard(prop:IAppCardProp) {
              backgroundRepeat:"no-repeat",
              backgroundSize: "100% auto",
              backgroundPosition:"top"}}>
-        <Button variant="contained" size="small">Open</Button>
+        <Button href={prop.href} variant="contained" size="small">Open</Button>
       </CardActions>
     </Card>
   );

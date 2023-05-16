@@ -34,7 +34,7 @@ export default function Home():JSX.Element {
             }
         />
         <Container sx={{
-             backgroundImage:`url(${"./images/stripSecondary.svg"})`,
+             backgroundImage:`url(${"./images/stripPrimary.svg"})`,
              backgroundRepeat:"no-repeat",
              backgroundSize: "100% auto",
              backgroundPosition:"top",
@@ -49,9 +49,15 @@ export default function Home():JSX.Element {
         <Container>
         <AppCard
                 title="Voronoi Diagram 2D"
-                description="Solving Voronoi Diagrams in 2D with Fortuna alghorithm, using 'Beach Curves'">
-            </AppCard>
-        </Container>
+                description="Solving Voronoi Diagrams in 2D with Fortuna alghorithm, using 'Beach Curves'"
+                href="/Voronoi">
+        </AppCard>
+        <AppCard
+                title="Plot 3D functions"
+                description="Plotting 3D Functions"
+                href="/plots3d">
+        </AppCard>
+         </Container>
         <Container sx={{
             backgroundImage:`url(${"./images/landscape.svg"})`,
             backgroundRepeat:"no-repeat",

@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "gl-matrix": "latest",
     "@mui/types": "latest",
     "@mui/material": "^5.11.3",
     "@mui/icons-material":"latest",

@@ -18,6 +18,7 @@ import Grid from '@mui/material/Grid';
 import Item from '@mui/material/Grid';
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home"
+import Voronoi from "./pages/Voronoi"
 const theme = createTheme({
   palette: {
     secondary: {
@@ -40,15 +41,14 @@ function App():JSX.Element {
         <Toolbar>
           <IconButton size="large" color="inherit"><MenuIcon/></IconButton>
           <Typography align='left' sx={{flexGrow:1}}>Alcoforado Github Page</Typography>
-          <IconButton size="large" color="inherit" ><LinkedInIcon/></IconButton>
-          <IconButton size="large" color="inherit"><GitHubIcon/></IconButton>
+          <IconButton href="https://linkedin.com/in/marcos-mendes-a2478720" size="large" color="inherit" ><LinkedInIcon/></IconButton>
+          <IconButton href="https://github.com/alcoforado" size="large" color="inherit"><GitHubIcon/></IconButton>
         </Toolbar>
     </AppBar>
     <Toolbar/>
     <Routes>
-      <Route path="/" element={<Home/>}>
-
-      </Route>
+      <Route path="/" element={<Home/>}/>
+      <Route path="voronoi" element={<Voronoi title="Voronoi Diagram"/>}/>
     </Routes>
   </>) as JSX.Element;
 }

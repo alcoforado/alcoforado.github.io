@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="298.0946mm"
+   height="76.086983mm"
+   viewBox="0 0 298.0946 76.086983"
+   version="1.1"
+   id="svg12013"
+   inkscape:version="1.2 (dc2aedaf03, 2022-05-15)"
+   sodipodi:docname="stripPrimary.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview12015"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="0.72515432"
+     inkscape:cx="475.07129"
+     inkscape:cy="65.503299"
+     inkscape:window-width="1920"
+     inkscape:window-height="1001"
+     inkscape:window-x="-9"
+     inkscape:window-y="-9"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs12010">
+    <inkscape:path-effect
+       effect="bspline"
+       id="path-effect13080"
+       is_visible="true"
+       lpeversion="1"
+       weight="33.333333"
+       steps="2"
+       helper_size="0"
+       apply_no_weight="true"
+       apply_with_weight="true"
+       only_selected="false" />
+    <inkscape:path-effect
+       effect="bspline"
+       id="path-effect13074"
+       is_visible="true"
+       lpeversion="1"
+       weight="33.333333"
+       steps="2"
+       helper_size="0"
+       apply_no_weight="true"
+       apply_with_weight="true"
+       only_selected="false" />
+    <filter
+       inkscape:menu="Shadows and Glows"
+       inkscape:menu-tooltip="Cut out, add inner shadow and colorize some parts of an image"
+       style="color-interpolation-filters:sRGB"
+       inkscape:label="Emergence"
+       id="filter14831"
+       x="-0.020504048"
+       y="-0.12268479"
+       width="1.0495515"
+       height="1.2964882">
+      <feColorMatrix
+         values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.21 0.72 0.07 0 0 "
+         result="result1"
+         id="feColorMatrix14803" />
+      <feColorMatrix
+         values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 2 0 "
+         result="result9"
+         id="feColorMatrix14805" />
+      <feComposite
+         in2="result9"
+         in="SourceGraphic"
+         operator="in"
+         result="result4"
+         id="feComposite14807" />
+      <feFlood
+         result="result2"
+         flood-color="rgb(0,0,0)"
+         id="feFlood14809" />
+      <feComposite
+         in2="result9"
+         operator="in"
+         result="result10"
+         id="feComposite14811" />
+      <feComposite
+         in2="result4"
+         operator="atop"
+         id="feComposite14813" />
+      <feGaussianBlur
+         stdDeviation="3"
+         result="result8"
+         id="feGaussianBlur14815" />
+      <feOffset
+         dx="3"
+         dy="3"
+         result="result3"
+         in="result8"
+         id="feOffset14817" />
+      <feFlood
+         flood-opacity="1"
+         flood-color="rgb(219,173,62)"
+         result="result5"
+         id="feFlood14819" />
+      <feMerge
+         result="result6"
+         id="feMerge14827">
+        <feMergeNode
+           in="result5"
+           id="feMergeNode14821" />
+        <feMergeNode
+           in="result3"
+           id="feMergeNode14823" />
+        <feMergeNode
+           in="result4"
+           id="feMergeNode14825" />
+      </feMerge>
+      <feComposite
+         in2="SourceGraphic"
+         operator="in"
+         result="result7"
+         id="feComposite14829" />
+    </filter>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath14887">
+      <rect
+         style="fill:#eb61f0;fill-opacity:1;stroke:none;stroke-width:1;stroke-dasharray:none;stroke-opacity:1"
+         id="rect14889"
+         width="297.72974"
+         height="97.783783"
+         x="-4.6394968e-07"
+         y="97.418922"
+         d="M -4.6394968e-7,97.418922 H 297.72974 V 195.20271 H -4.6394968e-7 Z" />
+    </clipPath>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath14887-5">
+      <rect
+         style="fill:#eb61f0;fill-opacity:1;stroke:none;stroke-width:1;stroke-dasharray:none;stroke-opacity:1"
+         id="rect14889-1"
+         width="297.72974"
+         height="97.783783"
+         x="-4.6394968e-07"
+         y="97.418922" />
+    </clipPath>
+    <filter
+       inkscape:menu="Shadows and Glows"
+       inkscape:menu-tooltip="Cut out, add inner shadow and colorize some parts of an image"
+       style="color-interpolation-filters:sRGB"
+       inkscape:label="Emergence"
+       id="filter14831-0"
+       x="-0.020504048"
+       y="-0.12268479"
+       width="1.0495515"
+       height="1.2964882">
+      <feColorMatrix
+         values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.21 0.72 0.07 0 0 "
+         result="result1"
+         id="feColorMatrix14803-7" />
+      <feColorMatrix
+         values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 2 0 "
+         result="result9"
+         id="feColorMatrix14805-4" />
+      <feComposite
+         in2="result9"
+         in="SourceGraphic"
+         operator="in"
+         result="result4"
+         id="feComposite14807-4" />
+      <feFlood
+         result="result2"
+         flood-color="rgb(0,0,0)"
+         id="feFlood14809-9" />
+      <feComposite
+         in2="result9"
+         operator="in"
+         result="result10"
+         id="feComposite14811-5" />
+      <feComposite
+         in2="result4"
+         operator="atop"
+         id="feComposite14813-5" />
+      <feGaussianBlur
+         stdDeviation="3"
+         result="result8"
+         id="feGaussianBlur14815-4" />
+      <feOffset
+         dx="3"
+         dy="3"
+         result="result3"
+         in="result8"
+         id="feOffset14817-8" />
+      <feFlood
+         flood-opacity="1"
+         flood-color="rgb(219,173,62)"
+         result="result5"
+         id="feFlood14819-5" />
+      <feMerge
+         result="result6"
+         id="feMerge14827-1">
+        <feMergeNode
+           in="result5"
+           id="feMergeNode14821-9" />
+        <feMergeNode
+           in="result3"
+           id="feMergeNode14823-5" />
+        <feMergeNode
+           in="result4"
+           id="feMergeNode14825-6" />
+      </feMerge>
+      <feComposite
+         in2="SourceGraphic"
+         operator="in"
+         result="result7"
+         id="feComposite14829-3" />
+    </filter>
+    <inkscape:path-effect
+       effect="bspline"
+       id="path-effect13080-3"
+       is_visible="true"
+       lpeversion="1"
+       weight="33.333333"
+       steps="2"
+       helper_size="0"
+       apply_no_weight="true"
+       apply_with_weight="true"
+       only_selected="false" />
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath14887-6">
+      <rect
+         style="fill:#eb61f0;fill-opacity:1;stroke:none;stroke-width:1;stroke-dasharray:none;stroke-opacity:1"
+         id="rect14889-4"
+         width="297.72974"
+         height="97.783783"
+         x="-4.6394968e-07"
+         y="97.418922"
+         d="M -4.6394968e-7,97.418922 H 297.72974 V 195.20271 H -4.6394968e-7 Z" />
+    </clipPath>
+    <filter
+       inkscape:menu="Shadows and Glows"
+       inkscape:menu-tooltip="Cut out, add inner shadow and colorize some parts of an image"
+       style="color-interpolation-filters:sRGB"
+       inkscape:label="Emergence"
+       id="filter14831-8"
+       x="-0.020504048"
+       y="-0.12268479"
+       width="1.0495515"
+       height="1.2964882">
+      <feColorMatrix
+         values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.21 0.72 0.07 0 0 "
+         result="result1"
+         id="feColorMatrix14803-2" />
+      <feColorMatrix
+         values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 2 0 "
+         result="result9"
+         id="feColorMatrix14805-8" />
+      <feComposite
+         in2="result9"
+         in="SourceGraphic"
+         operator="in"
+         result="result4"
+         id="feComposite14807-3" />
+      <feFlood
+         result="result2"
+         flood-color="rgb(0,0,0)"
+         id="feFlood14809-6" />
+      <feComposite
+         in2="result9"
+         operator="in"
+         result="result10"
+         id="feComposite14811-3" />
+      <feComposite
+         in2="result4"
+         operator="atop"
+         id="feComposite14813-57" />
+      <feGaussianBlur
+         stdDeviation="3"
+         result="result8"
+         id="feGaussianBlur14815-5" />
+      <feOffset
+         dx="3"
+         dy="3"
+         result="result3"
+         in="result8"
+         id="feOffset14817-1" />
+      <feFlood
+         flood-opacity="1"
+         flood-color="rgb(219,173,62)"
+         result="result5"
+         id="feFlood14819-2" />
+      <feMerge
+         result="result6"
+         id="feMerge14827-4">
+        <feMergeNode
+           in="result5"
+           id="feMergeNode14821-7" />
+        <feMergeNode
+           in="result3"
+           id="feMergeNode14823-57" />
+        <feMergeNode
+           in="result4"
+           id="feMergeNode14825-4" />
+      </feMerge>
+      <feComposite
+         in2="SourceGraphic"
+         operator="in"
+         result="result7"
+         id="feComposite14829-1" />
+    </filter>
+    <inkscape:path-effect
+       effect="bspline"
+       id="path-effect13080-1"
+       is_visible="true"
+       lpeversion="1"
+       weight="33.333333"
+       steps="2"
+       helper_size="0"
+       apply_no_weight="true"
+       apply_with_weight="true"
+       only_selected="false" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0.36486768,-111.446)">
+    <path
+       id="path13076"
+       style="fill:#0c8ef6;fill-opacity:1;stroke:none;stroke-width:1;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter14831)"
+       inkscape:path-effect="#path-effect13080"
+       inkscape:original-d="M 338.22974,142.66216 C 298.94621,161.75702 259.66322,180.85123 220.37838,199.94594 163.09371,172.70242 105.81222,145.46027 48.527026,118.21622 25.418721,136.70333 2.3110752,155.18945 -20.797297,173.67567 l -9.851351,-41.22973 c 33.0813436,-9.12135 66.162425,-18.24297 99.243242,-27.36486 38.068596,23.10883 76.134636,46.21602 114.202706,69.32432 48.52826,-24.32454 97.05431,-48.64838 145.58109,-72.97297 3.28405,13.74351 6.56783,27.48674 9.85135,41.22973 z"
+       d="M 316.94604,145.33796 C 298.94606,161.7567 259.66306,180.85091 211.37841,176.77661 163.09376,172.7023 105.81227,145.46016 65.615383,141.0816 25.418492,136.70304 2.3108435,155.18916 -9.2432267,164.43242 -20.797297,173.67567 -30.648648,132.44594 -14.10802,127.88511 c 16.5406278,-4.56084 49.621709,-13.68246 85.196482,-6.68887 35.574768,6.9936 73.640818,30.10078 116.938878,29.49254 43.29806,-0.60824 91.82411,-24.93207 117.72951,-30.22243 25.9054,-5.29036 29.18918,8.45287 11.18919,24.87161 z"
+       sodipodi:nodetypes="ccccccccc"
+       clip-path="url(#clipPath14887)"
+       transform="translate(-7.9276376e-8,-1.0945952)" />
+    <path
+       id="path13076-0"
+       style="fill:#d654f0;fill-opacity:1;stroke:none;stroke-width:1;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter14831-8)"
+       inkscape:path-effect="#path-effect13080-1"
+       inkscape:original-d="M 338.22974,142.66216 C 298.94621,161.75702 259.66322,180.85123 220.37838,199.94594 163.09371,172.70242 105.81222,145.46027 48.527026,118.21622 25.418721,136.70333 2.3110752,155.18945 -20.797297,173.67567 l -9.851351,-41.22973 c 33.0813436,-9.12135 66.162425,-18.24297 99.243242,-27.36486 38.068596,23.10883 76.134636,46.21602 114.202706,69.32432 48.52826,-24.32454 97.05431,-48.64838 145.58109,-72.97297 3.28405,13.74351 6.56783,27.48674 9.85135,41.22973 z"
+       d="M 316.94604,145.33796 C 298.94606,161.7567 259.66306,180.85091 211.37841,176.77661 163.09376,172.7023 105.81227,145.46016 65.615383,141.0816 25.418492,136.70304 2.3108435,155.18916 -9.2432267,164.43242 -20.797297,173.67567 -30.648648,132.44594 -14.10802,127.88511 c 16.5406278,-4.56084 49.621709,-13.68246 85.196482,-6.68887 35.574768,6.9936 73.640818,30.10078 116.938878,29.49254 43.29806,-0.60824 91.82411,-24.93207 117.72951,-30.22243 25.9054,-5.29036 29.18918,8.45287 11.18919,24.87161 z"
+       sodipodi:nodetypes="ccccccccc"
+       clip-path="url(#clipPath14887-6)"
+       transform="matrix(1.0024509,0,0,0.63555221,-0.20056776,56.937627)" />
+  </g>
+</svg>
