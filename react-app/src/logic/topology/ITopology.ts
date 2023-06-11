@@ -28,7 +28,7 @@ export class Rectangle implements ITopology {
     Rectangle(p1:vec3,p2:vec3,p3:vec3,p4:vec3):void
     {
         this._v=new Float32Array(4*3);
-        var vs=new VecStreamFloat(this._v,0,4*3);
+        var vs=new VecStreamFloat(this._v,0,4*3,3,0,3);
         vs.push(p1);
         vs.push(p2);
         vs.push(p3);
