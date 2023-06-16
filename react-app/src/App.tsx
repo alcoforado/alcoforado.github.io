@@ -19,6 +19,7 @@ import Item from '@mui/material/Grid';
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home"
 import Voronoi from "./pages/Voronoi"
+import ViewPortTest from "./pages/ViewPortTest"
 const theme = createTheme({
   palette: {
     secondary: {
@@ -49,6 +50,7 @@ function App():JSX.Element {
     <Routes>
       <Route path="/" element={<Home/>}/>
       <Route path="voronoi" element={<Voronoi title="Voronoi Diagram"/>}/>
+      <Route path="viewporttest" element={<ViewPortTest title="Viewport Test"/>}/>
     </Routes>
   </>) as JSX.Element;
 }

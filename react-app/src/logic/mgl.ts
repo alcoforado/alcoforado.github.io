@@ -3,7 +3,7 @@ export default class MGL {
     constructor(canvas:HTMLCanvasElement|null)
     {
         
-        this._gl=canvas?.getContext('webgl') ?? null
+        this._gl=canvas?.getContext('webgl2') ?? null
     }
     compileShader(source:string,type:number):WebGLShader
     {
@@ -29,9 +29,9 @@ export default class MGL {
         throw "WebContext GL is invalid"
     }
 
-    setProgram(urlVerticeShader:URL,urlFragmentShader:URL):Promise<WebGLProgram>
+    createProgram(urlVerticeShader:URL,urlFragmentShader:URL):Promise<WebGLProgram>
     {
-        var fShader:string;
+        var fShader:string="";
         var vShader:string="";
         var fShader:string="";
         var p1 = fetch(urlVerticeShader).then(response=>response.text())
