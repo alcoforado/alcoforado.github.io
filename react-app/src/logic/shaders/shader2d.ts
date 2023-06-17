@@ -1,4 +1,4 @@
-import MGL from "../mgl";
+import MGL from "../mgl/mgl";
 import { ITopology } from '../topology/ITopology';
 import { CyclicColorRender } from "../renders/cyclicColorRender";
 import { BufferLayout, LayoutFieldType } from "./bufferLayout";

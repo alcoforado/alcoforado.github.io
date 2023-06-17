@@ -1,6 +1,6 @@
 import { Typography } from "@mui/material";
 import { MutableRefObject, useEffect , useRef, useState} from "react";
-import MGL from "../logic/mgl";
+import MGL from "../logic/mgl/mgl";
 interface VoronoiProp {
     title:string;
 }
