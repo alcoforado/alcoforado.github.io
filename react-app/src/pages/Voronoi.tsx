@@ -12,7 +12,7 @@ export default function Voronoi(prop:VoronoiProp){
     useEffect(()=>{
         var mgl=new MGL(canvas.current);
         let gl=mgl.gl();
-        gl.clearColor(0,0,0,1.0);
+        gl.clearColor(0.0,0,0,1.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
     },[])
     return <>

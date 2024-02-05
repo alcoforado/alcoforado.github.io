@@ -26,7 +26,7 @@ export class VecStreamFloat {
                 this.streamOffset+=this.struct_size-this.elem_size;
             }
         }
-        if (j!==0)
+        if (j!==this.elem_size)
         {
             throw new Error("Error vector to add into the stream is not a multiple of " + this.elem_size);
         }

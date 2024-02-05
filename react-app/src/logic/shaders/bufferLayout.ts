@@ -3,7 +3,7 @@ export class BufferLayout {
     private _totalBytes:number=0;
     public addMember(shaderVarName:string,fieldType:LayoutFieldType):BufferLayout 
     {
-        if (this._v.findIndex((value)=>value.ShaderVariableName==shaderVarName))
+        if (this._v.findIndex((value)=>value.ShaderVariableName==shaderVarName)>=0)
         {
             throw `Field ${shaderVarName} already exists`;
         }
