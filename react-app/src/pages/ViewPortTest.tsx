@@ -4,7 +4,7 @@ import { MutableRefObject, useEffect , useRef, useState} from "react";
 import MGL from "../logic/mgl/mgl";
 import { Shader2d } from "../logic/shaders/shader2d";
 import { CyclicColorRender } from "../logic/renders/cyclicColorRender";
-import {Rectangle} from "../logic/topology/rectangle";
+import {Rectangle} from "../logic/topology/2d/rectangle";
 interface PlotProp {
     title:string;
 }
@@ -23,7 +23,8 @@ export default function ViewPortTest(prop:PlotProp){
         gl.clearColor(1,0,0,1.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
         var sh=new Shader2d(mgl);
-        //sh.addShape(new Rectangle([-1,1,0],[-1,-1,0],[1,-1,0],[1,1,0]),new CyclicColorRender([[1,1,1]]))
+        sh.addShape(new Rectangle([-1,-1],1,1),new CyclicColorRender([[1,1,1]]))
+        sh.draw();
 
     },[])
     return <>

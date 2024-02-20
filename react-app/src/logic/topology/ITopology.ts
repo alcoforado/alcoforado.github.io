@@ -4,5 +4,5 @@ export interface ITopology {
     NVertices():number;
     NIndices():number;
     Serialize(v:VecStreamFloat,i:VecStreamInt):void;
-    
+    VertexDim():number;
 }

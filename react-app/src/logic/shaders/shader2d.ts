@@ -1,23 +1,21 @@
 import MGL from "../mgl/mgl";
 import { ITopology } from '../topology/itopology';
 import { CyclicColorRender } from "../renders/cyclicColorRender";
-import { BufferLayout, LayoutFieldType } from "./bufferLayout";
+import {MGLProgram} from '../mgl/mglProgram'
 import  DrawTree  from "./drawTree";
+import {BufferLayout} from '../mgl/bufferLayout'
 export class Shader2d {
-    private program:WebGLProgram|null=null;
+    private program:MGLProgram;
     private bufferLayout:BufferLayout;
     private drawTree:DrawTree<CyclicColorRender>;
     constructor(private glContext:MGL)
-    {
+    {  
         //create program
         this.bufferLayout=new BufferLayout();
-        this.bufferLayout
-           .addMember("position",LayoutFieldType.VEC3)
-           .addMember("vColor",LayoutFieldType.VEC3)
-        this.drawTree=new DrawTree<CyclicColorRender>(glContext,this.bufferLayout)
-        
-        glContext.createProgram( "~/glsl/shader2d.vert","~/glsl/shader2d.frag")
-        .then((pg)=>this.program=pg);
+        this.program=new MGLProgram(glContext,"/glsl/vshader2d.glsl","/glsl/fshader2d.glsl");
+        this.program.BindingManager.VertexAttributes.add("position",2);
+        this.program.BindingManager.VertexAttributes.add("vColor",4);
+        this.drawTree=new DrawTree<CyclicColorRender>(this.glContext,this.bufferLayout)
         
     }
     
@@ -28,9 +26,8 @@ export class Shader2d {
 
     draw()
     {
+
         //this.drawTree.Serialize();
     }
-
-    
 
 };

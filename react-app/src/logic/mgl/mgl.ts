@@ -2,6 +2,7 @@ import {MGLBuffer} from "./mglBuffer"
 
 export default class MGL {
     _gl:WebGLRenderingContext|null;
+    _initPromises:Array<Promise<any>>=[];
     constructor(canvas:HTMLCanvasElement|null)
     {
         
@@ -19,8 +20,9 @@ export default class MGL {
         var success = this.gl().getShaderParameter(shader,this.gl().COMPILE_STATUS);
         if (success)
             return shader
-        this.gl().deleteShader(shader);
-        throw this.gl().getShaderInfoLog(shader)
+        var str=this.gl().getShaderInfoLog(shader);
+        throw new Error(`Error compiling shader ${source}: ${str}`);
+        //this.gl().deleteShader(shader);
 
     }
 
@@ -57,6 +59,11 @@ export default class MGL {
               }
             return program;
         });
+    }
+
+    waitFor(p:Promise<any>)
+    {
+        this._initPromises.push(p);
     }
 
     createBuffer():MGLBuffer {

@@ -1,52 +1,83 @@
 export class VecStreamFloat {
-    streamOffset:number=0
-    constructor(private owner:Float32Array,private startIndex:number,private size:number,private struct_size:number,private struct_offset:number,private elem_size:number)
+    _streamOffset:number=0;
+    _streamOffsetInTheElement:number=0
+    /**
+     * 
+     * @param owner The javascript native array for which this stream writes and reads from
+     * @param startIndex The index of the float array to start the stream.
+     * @param element_size_in_floats An element is a sequence of floats contiguous in the array  
+     * @param stride_in_floats Number of floats to jump in order to go the next element 
+     * @param number_of_elements How many elements this stream can store, if not provided then number of elements will be calculated from the owner array size.
+     * 
+     * Example for StartIndex=1, Element Size =3, Stride=2
+     *                     |StartIndex=1|   
+     * owner Array: |Float0|Float1      |Float2|Float3|Float4|Float5|Float6|Float7|Float8| 
+     *                     |-----Element 1 -----------|--Stride-----|-----Element 2------|
+     */
+    constructor(private owner:Float32Array,private startIndex:number,private element_size_in_floats:number,private stride_in_floats:number,private number_of_elements:number)
     {
-        this.streamOffset=startIndex;
+        this._streamOffset=startIndex;
+
+        if (this.startIndex+(element_size_in_floats+stride_in_floats)*number_of_elements-stride_in_floats > owner.length)
+        {
+            throw Error("VecStreamFloat doesn't fit in the owner array");
+        }
     }
 
     nFloats():number {
-        return this.size;
+        return this.number_of_elements*this.element_size_in_floats;
     }
 
     push(v:number[]|Float32Array)
     {
-        if (v.length+this.streamOffset>=this.size)
-            throw new Error("Array to insert will overflow the buffer")
-        let j=0;
+        if (Math.floor((this.owner.length-this._streamOffset+this.stride_in_floats)/(this.element_size_in_floats+this.stride_in_floats))*this.element_size_in_floats < v.length)
+            throw Error("VecStreamFloat is not big enough");
+
         for (var i=0;i<v.length;i++)
         {
-            if (j++<this.elem_size)
+            if (this._streamOffsetInTheElement++<this.element_size_in_floats)
             {
-                this.owner[this.streamOffset++]=v[i]
+                this.owner[this._streamOffset++]=v[i]
+
             }
             else 
             {
-                j=0;
-                this.streamOffset+=this.struct_size-this.elem_size;
+                this._streamOffset+=this.stride_in_floats;
+                this.owner[this._streamOffset++]=v[i]
+                this._streamOffsetInTheElement=1;
             }
         }
-        if (j!==this.elem_size)
+        if (this._streamOffsetInTheElement!==this.element_size_in_floats)
         {
-            throw new Error("Error vector to add into the stream is not a multiple of " + this.elem_size);
+            throw new Error("Error vector to add into the stream is not a multiple of " + this.element_size_in_floats);
         }
     }
  }
 
  export class Vec3StreamFloat extends VecStreamFloat {
     
-    constructor(owner:Float32Array,startIndex:number,size:number, struct_size:number, struct_offset:number)
+    constructor(owner:Float32Array,startIndex:number,stride_in_floats:number,number_of_elements:number)
+    
     {
-        super(owner,startIndex,size,struct_size,struct_offset,3);
+        super(owner,startIndex,3,stride_in_floats,number_of_elements);
     }
  }
 
-
  export class Vec4StreamFloat extends VecStreamFloat {
     
-    constructor(owner:Float32Array,startIndex:number,size:number, struct_size:number, struct_offset:number)
+    constructor(owner:Float32Array,startIndex:number,stride_in_floats:number,number_of_elements:number)
+    
     {
-        super(owner,startIndex,size,struct_size,struct_offset,4);
+        super(owner,startIndex,4,stride_in_floats,number_of_elements);
+    }
+ }
+
+ export class Vec2StreamFloat extends VecStreamFloat {
+    
+    constructor(owner:Float32Array,startIndex:number,stride_in_floats:number,number_of_elements:number)
+    
+    {
+        super(owner,startIndex,2,stride_in_floats,number_of_elements);
     }
  }
 

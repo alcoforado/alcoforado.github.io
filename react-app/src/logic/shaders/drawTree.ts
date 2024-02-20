@@ -1,4 +1,4 @@
-import { BufferLayout } from "./bufferLayout";
+import { BufferLayout } from "../mgl/bufferLayout";
 import MGL from "../mgl/mgl";
 import {MGLBuffer} from "../mgl/mglBuffer"
 import {ITopology} from "../topology/itopology"
