@@ -15,7 +15,7 @@ export class Shader2d {
         this.program=new MGLProgram(glContext,"/glsl/vshader2d.glsl","/glsl/fshader2d.glsl");
         this.program.BindingManager.VertexAttributes.add("position",2);
         this.program.BindingManager.VertexAttributes.add("vColor",4);
-        this.drawTree=new DrawTree<CyclicColorRender>(this.glContext,this.bufferLayout)
+        this.drawTree=new DrawTree<CyclicColorRender>(this.glContext,this.program)
         
     }
     
