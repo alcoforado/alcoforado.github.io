@@ -24,6 +24,10 @@ export class VecStreamFloat {
         }
     }
 
+    getStartIndex() { return this.startIndex; }
+    getElementSizeInFloats() {return this.element_size_in_floats}
+    getNumberOfElements() {return this.number_of_elements}
+    getBuffer() {return this.owner}
     nFloats():number {
         return this.number_of_elements*this.element_size_in_floats;
     }

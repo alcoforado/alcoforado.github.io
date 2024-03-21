@@ -1,6 +1,7 @@
 import { vec3 } from "gl-matrix";
 import { VecStreamFloat } from "../vecstream";
-export class CyclicColorRender {
+import { IRender,RenderContext } from "../shaders/irender";
+export class CyclicColorRender implements IRender {
     _v:Float32Array= new Float32Array();
     constructor(colors:Array<vec3>)
     {
@@ -13,8 +14,9 @@ export class CyclicColorRender {
         })
     }
 
-    render(a:VecStreamFloat)
+    serialize(ctx:RenderContext)
     {   
+        let a=ctx.vAttributes["color"];
         let acum=this._v.length;
         while(acum<=a.nFloats())
         {

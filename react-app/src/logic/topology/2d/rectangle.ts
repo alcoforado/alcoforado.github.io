@@ -1,6 +1,6 @@
 import { VecStreamFloat,VecStreamInt } from "../../vecstream";
 import {vec3,vec2} from "gl-matrix"
-import {ITopology} from "../itopology"
+import {IDrawContext, ITopology} from "../../shaders/itopology"
 
 export class Rectangle implements ITopology {
     _v:any;
@@ -34,8 +34,10 @@ export class Rectangle implements ITopology {
        
     }
 
+    draw(ctx: IDrawContext): void {
+        ctx.DrawIndexedTriangles()
+    }
     
-
 
 
 
