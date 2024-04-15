@@ -18,6 +18,7 @@ export class Shader2d {
             config.addVertexAttribute("vColor",4);
             
         })
+        
 
         
     }

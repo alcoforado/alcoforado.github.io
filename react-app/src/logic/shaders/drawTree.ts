@@ -5,22 +5,28 @@ import {MGLBuffer} from "../mgl/mglBuffer"
 import {ITopology,IDrawContext} from "./itopology"
 import {IRender, RenderContext} from "./irender";
 import { VecStreamFloat, VecStreamInt } from "../vecstream";
+
+enum DrawTreeState {EMPTY,ALLOCATED,CHANGED}
+
 export  default class DrawTree<Render> {
     _allocs:Array<VecAllocation>=[];
     _buffer:MGLBuffer;
+    _elBuffer:MGLBuffer;
     totalVertices:number=0;
     totalIndices: number=0;
+    state: DrawTreeState=DrawTreeState.EMPTY;
     vV:Float32Array|null=null;
     vI:Int32Array|null=null;
     constructor(private _mgl:MGL,private bufferLayout:BufferLayout,private _bindingManager:BindingManager){
         this._buffer=new MGLBuffer(_mgl);
-        
+        this._elBuffer=new MGLBuffer(_mgl);
     }
 
     addObject(tp:ITopology,rnd:IRender) 
     {
+       
         this._allocs.push(new VecAllocation(tp,rnd));
-
+        this.state=DrawTreeState.CHANGED;
     }
 
     private allocateMemory() {
@@ -31,8 +37,12 @@ export  default class DrawTree<Render> {
             this.totalIndices+=alloc.topology.nIndices()
         });
 
-        this.vV=new Float32Array(this.totalVertices*this._bindingManager.VertexAttributes.elemSize());
-        this.vI=new Int32Array(this.totalIndices);
+        var nFloats = this.totalVertices*this._bindingManager.VertexAttributes.elemSize();
+        if (this.vV ==null || this.vV.length < nFloats)
+            this.vV=new Float32Array(nFloats);
+
+        if (this.vI ==null || this.vI.length < this.totalIndices)
+            this.vI=new Int32Array(this.totalIndices);
 
         var distributor=  new AttributesArrayDistributor(this.vV,this._bindingManager.VertexAttributes);
         let indexStart=0;
@@ -45,23 +55,33 @@ export  default class DrawTree<Render> {
             
         })
 
+        
 
     }
 
-    serialize(){
-        if (!this.vV)
-            this.allocateMemory();
-
+    private serialize(){
+        
+        this.allocateMemory();
          this._allocs.forEach(alloc=>{
             alloc.topology.serialize(alloc.attributes!["position"],alloc.indices!);
             alloc.render.serialize(new RenderContext(alloc.attributes!));
          })  
     }
 
-    draw() {
+    draw() 
+    {
+        this._buffer.bindToArrayBuffer();
+        this._elBuffer.bindToElementArray();
+        if (this.state == DrawTreeState.CHANGED)
+        {
+            this.serialize();
+            this._buffer.load(this.vV);
+            this._elBuffer.load(this.vI)
+        }
+
 
         this._allocs.forEach(alloc=>{
-            alloc.topology.draw(new DrawContext(this._mgl,alloc));
+            alloc.topology.draw(new DrawContext(this._mgl,alloc,this._buffer,this._elBuffer));
         })
 
     }
@@ -82,6 +102,10 @@ class VecAllocation {
 
 class DrawContext implements IDrawContext {
     constructor(private mgl:MGL,private alloc:VecAllocation){}
+    DrawIndexedTriangles(): void {
+        let gl=this.mgl.gl();
+        gl.
+    }
 }
 
 class AttributesArrayDistributor {

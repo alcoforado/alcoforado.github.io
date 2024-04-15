@@ -9,5 +9,6 @@ export interface ITopology {
 }
 
 export interface IDrawContext {
+    DrawIndexedTriangles(): void;
     
 }
