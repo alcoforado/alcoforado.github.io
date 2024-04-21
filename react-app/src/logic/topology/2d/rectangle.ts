@@ -5,16 +5,16 @@ import {IDrawContext, ITopology} from "../../shaders/itopology"
 export class Rectangle implements ITopology {
     _v:any;
 
-    NVertices():number {
+    nVertices():number {
         return 4;
     }
-    NIndices():number {
+    nIndices():number {
         return 3*2;
     }
 
-    VertexDim():number {return 2;}
+    vertexDim():number {return 2;}
     
-    Serialize(v:VecStreamFloat,i:VecStreamInt):void
+    serialize(v:VecStreamFloat,i:VecStreamInt):void
     {
         v.push(this._v);
         i.push([0,1,3,1,2,3]);
@@ -29,7 +29,6 @@ export class Rectangle implements ITopology {
             topLeft[0]+width,topLeft[1],
             topLeft[0]+width,topLeft[1]+height,
             topLeft[0]      ,topLeft[1]+height,
-
             ]) ;
        
     }

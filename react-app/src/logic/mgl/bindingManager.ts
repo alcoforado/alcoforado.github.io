@@ -14,7 +14,7 @@ export class BindingManager implements IBindingContext {
     
     constructor(private _mgl:MGL){}
 
-    VertexAttributes:BufferLayout=new BufferLayout();
+    private VertexAttributes:BufferLayout=new BufferLayout();
 
     getPositionAttribute() {
         var result= this.VertexAttributes.attributes.find(x=>x.ShaderVariableName==="position");
