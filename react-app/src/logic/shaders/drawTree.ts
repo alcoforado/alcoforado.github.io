@@ -18,8 +18,8 @@ export  default class DrawTree<Render> {
     vV:Float32Array|null=null;
     vI:Int32Array|null=null;
     constructor(private _mgl:MGL,private bufferLayout:BufferLayout,private _bindingManager:BindingManager){
-        this._buffer=new MGLBuffer(_mgl);
-        this._elBuffer=new MGLBuffer(_mgl);
+        this._buffer=new MGLBuffer(_mgl,MGLBuffer.BufferType.ARRAY_BUFFER );
+        this._elBuffer=new MGLBuffer(_mgl,MGLBuffer.BufferType.ELEMENT_ARRAY_BUFFER);
     }
 
     addObject(tp:ITopology,rnd:IRender) 
@@ -70,8 +70,8 @@ export  default class DrawTree<Render> {
 
     draw() 
     {
-        this._buffer.bindToArrayBuffer();
-        this._elBuffer.bindToElementArray();
+        this._buffer.setAsActive();
+        this._elBuffer.setAsActive();
         if (this.state == DrawTreeState.CHANGED)
         {
             this.serialize();
@@ -81,7 +81,7 @@ export  default class DrawTree<Render> {
 
 
         this._allocs.forEach(alloc=>{
-            alloc.topology.draw(new DrawContext(this._mgl,alloc,this._buffer,this._elBuffer));
+            alloc.topology.draw(new DrawContext(this._mgl,alloc));
         })
 
     }
@@ -104,7 +104,6 @@ class DrawContext implements IDrawContext {
     constructor(private mgl:MGL,private alloc:VecAllocation){}
     DrawIndexedTriangles(): void {
         let gl=this.mgl.gl();
-        gl.
     }
 }
 
