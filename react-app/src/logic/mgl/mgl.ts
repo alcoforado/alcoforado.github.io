@@ -1,4 +1,3 @@
-import {MGLBuffer} from "./mglBuffer"
 
 export default class MGL {
     _gl:WebGLRenderingContext|null;
@@ -7,6 +6,8 @@ export default class MGL {
     {
         
         this._gl=canvas?.getContext('webgl2') ?? null
+        if (this._gl==null)
+            throw new Error("WebGL not supported by the browser. Please update your browser to the latest version");
     }
     compileShader(source:string,type:number):WebGLShader
     {
@@ -35,9 +36,6 @@ export default class MGL {
 
     createProgram(urlVerticeShader:string,urlFragmentShader:string):Promise<WebGLProgram>
     {
-        var fShader:string="";
-        var vShader:string="";
-        var fShader:string="";
         var p1 = fetch(urlVerticeShader).then(response=>response.text(), ()=>{throw new Error("Invalid Vertice Shader "+urlVerticeShader)})
         var p2 = fetch(urlFragmentShader).then(response=>response.text(),()=>{throw new Error("Invalid pixel shader "+urlFragmentShader)})
         
@@ -66,9 +64,11 @@ export default class MGL {
         this._initPromises.push(p);
     }
 
-    createBuffer():MGLBuffer {
-  
-        return new MGLBuffer(this);
+    waitInitialization(callback:()=>void)
+    {
+        Promise
+        .all(this._initPromises)
+        .then(callback)
     }
 
     

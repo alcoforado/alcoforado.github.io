@@ -1,31 +1,30 @@
-import { BindingManager } from "../mgl/bindingManager";
-import { BufferLayout } from "../mgl/bufferLayout";
+import { IBindingManager } from "../mgl/bindingManager";
 import MGL from "../mgl/mgl";
-import {MGLBuffer} from "../mgl/mglBuffer"
-import {ITopology,IDrawContext} from "./itopology"
-import {IRender, RenderContext} from "./irender";
-import { VecStreamFloat, VecStreamInt } from "../vecstream";
+import {VertexMGLBuffer,IndexMGLBuffer} from "../mgl/mglBuffer"
+import {IShape,IDrawContext,ISerializeContext} from "./ishape"
+import {IRender} from "./irender";
+import { VecStreamFloat, VecStreamIndex } from "../vecstream";
+import { MGLProgram } from "../mgl/mglProgram";
 
 enum DrawTreeState {EMPTY,ALLOCATED,CHANGED}
 
-export  default class DrawTree<Render> {
+export  default class DrawTree {
     _allocs:Array<VecAllocation>=[];
-    _buffer:MGLBuffer;
-    _elBuffer:MGLBuffer;
+    _buffer:VertexMGLBuffer;
+    _elBuffer:IndexMGLBuffer;
     totalVertices:number=0;
     totalIndices: number=0;
     state: DrawTreeState=DrawTreeState.EMPTY;
     vV:Float32Array|null=null;
-    vI:Int32Array|null=null;
-    constructor(private _mgl:MGL,private bufferLayout:BufferLayout,private _bindingManager:BindingManager){
-        this._buffer=new MGLBuffer(_mgl,MGLBuffer.BufferType.ARRAY_BUFFER );
-        this._elBuffer=new MGLBuffer(_mgl,MGLBuffer.BufferType.ELEMENT_ARRAY_BUFFER);
+    vI:Uint32Array|null=null;
+    constructor(private _mgl:MGL,private _program:MGLProgram){
+        this._buffer=new VertexMGLBuffer(_mgl);
+        this._elBuffer=new IndexMGLBuffer(_mgl);
     }
 
-    addObject(tp:ITopology,rnd:IRender) 
+    addObject(sh:IShape) 
     {
-       
-        this._allocs.push(new VecAllocation(tp,rnd));
+        this._allocs.push(new VecAllocation(sh));
         this.state=DrawTreeState.CHANGED;
     }
 
@@ -33,57 +32,57 @@ export  default class DrawTree<Render> {
         this.totalVertices=0;
         this.totalIndices=0;
         this._allocs.forEach(alloc=>{
-            this.totalVertices+=alloc.topology.nVertices();
-            this.totalIndices+=alloc.topology.nIndices()
+            this.totalVertices+=alloc.shape.nVertices();
+            this.totalIndices+=alloc.shape.nIndices()
         });
-
-        var nFloats = this.totalVertices*this._bindingManager.VertexAttributes.elemSize();
+        var bindingManager=this._program.GetBindingManager();
+        var nFloats = this.totalVertices*bindingManager.getVertexDataSizeInFloats();
         if (this.vV ==null || this.vV.length < nFloats)
             this.vV=new Float32Array(nFloats);
 
         if (this.vI ==null || this.vI.length < this.totalIndices)
-            this.vI=new Int32Array(this.totalIndices);
+            this.vI=new Uint32Array(this.totalIndices);
 
-        var distributor=  new AttributesArrayDistributor(this.vV,this._bindingManager.VertexAttributes);
+        var distributor=  this._program.GetBindingManager().getAttributeDataIterator(this.vV);
         let indexStart=0;
+        let nElems=0;
         this._allocs.forEach(alloc=>{
-            let subArrays=distributor.getChunk(alloc.topology.nVertices());
-            let indices= new VecStreamInt(this.vI!,indexStart,alloc.topology.nIndices());
+
+            let subArrays=distributor.getChunk(alloc.shape.nVertices());
+            
+            let indices= new VecStreamIndex(this.vI!,indexStart,alloc.shape.nIndices(),nElems);
+            nElems+=alloc.shape.nVertices();
             alloc.indices=indices;
             alloc.attributes=subArrays;
-            indexStart+=alloc.topology.nIndices()
-            
+            indexStart+=alloc.shape.nIndices()
         })
-
-        
-
     }
 
     private serialize(){
         
         this.allocateMemory();
          this._allocs.forEach(alloc=>{
-            alloc.topology.serialize(alloc.attributes!["position"],alloc.indices!);
-            alloc.render.serialize(new RenderContext(alloc.attributes!));
+                alloc.shape.serialize(new SerializeContext(alloc.attributes!,alloc.indices!));
          })  
     }
 
     draw() 
     {
+        debugger;
         this._buffer.setAsActive();
         this._elBuffer.setAsActive();
+        this._program.setAsActive();
         if (this.state == DrawTreeState.CHANGED)
-        {
-            this.serialize();
-            this._buffer.load(this.vV);
-            this._elBuffer.load(this.vI)
-        }
-
-
+            {
+                this.serialize();
+                this._buffer.load(this.vV!);
+                this._elBuffer.load(this.vI!)
+            }
+        this._program.GetBindingManager().setVertexArrayBinding(this.vV!)
         this._allocs.forEach(alloc=>{
-            alloc.topology.draw(new DrawContext(this._mgl,alloc));
-        })
+            alloc.shape.draw(new DrawContext(this._mgl,alloc));
 
+        })
     }
 
 
@@ -92,10 +91,11 @@ export  default class DrawTree<Render> {
 
 
 class VecAllocation {
-    public indices: VecStreamInt|null=null;
+    public indices: VecStreamIndex|null=null;
     public attributes:{[key:string]:VecStreamFloat}|null=null;
-    constructor(public topology:ITopology,public render:IRender)
+    constructor(public shape:IShape)
     {    
+
     }
 
 }
@@ -104,39 +104,21 @@ class DrawContext implements IDrawContext {
     constructor(private mgl:MGL,private alloc:VecAllocation){}
     DrawIndexedTriangles(): void {
         let gl=this.mgl.gl();
+        gl.drawElements(gl.TRIANGLES,
+            this.alloc.indices!.size(),
+            gl.UNSIGNED_INT,
+            4*this.alloc.indices!.startIndex()   
+        )
+    }
+    DrawPoints():void {
+        let gl=this.mgl.gl();
+        let pos=this.alloc.attributes!["position"];
+        gl.drawArrays(gl.POINTS,pos.getStartIndex(),pos.getNumberOfElements())
     }
 }
 
-class AttributesArrayDistributor {
-    private nElems:number=0;
-    private subArrays:{[key:string]:VecStreamFloat}={};
-    constructor(private v:Float32Array,private vertexAttributes:BufferLayout){
-        this.nElems=v.length/vertexAttributes.elemSize();
-        let startIndex=0;
-        this.vertexAttributes.attributes.forEach(at=>{
-            this.subArrays[at.ShaderVariableName]=new  VecStreamFloat(v,startIndex,at.SizeInFloat,0,0);
-            startIndex=startIndex+this.nElems*at.SizeInFloat;
-        })
-    }
-
-    getChunk(nVertices:number)
-    {
-        for (var key in this.subArrays)
-        {
-            let old= this.subArrays[key];
-            this.subArrays[key]=new VecStreamFloat(
-                old.getBuffer(), //original buffer
-                old.getStartIndex()+old.nFloats(), //start index
-                old.getElementSizeInFloats(), 
-                0, //stride
-                 nVertices) //nElems
-        }
-        return this.subArrays;
-    }
-
-   
-    
-
-
-
+export class SerializeContext  implements  ISerializeContext{
+    constructor(public vAttributes:{[key:string]:VecStreamFloat},public indices:VecStreamIndex){};
 }
+
+

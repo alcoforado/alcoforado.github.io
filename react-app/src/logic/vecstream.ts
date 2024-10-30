@@ -88,29 +88,31 @@ export class VecStreamFloat {
 
 
 
-export class VecStreamInt {
+export class VecStreamIndex {
     streamOffset:number=0
-    constructor(private owner:Int32Array,private startIndex:number,private size:number)
+    constructor(private owner:Uint32Array,private _startIndex:number,private _size:number,private displacement:number)
     {
-        this.streamOffset=startIndex;
+        this.streamOffset=_startIndex;
     }
 
     get(i:number):number
     {   
-        return this.owner[i+this.startIndex]
+        return this.owner[i+this._startIndex]
     }
     set(i:number,value:number):void
     {
-        if (i>=this.size)
+        if (i>=this._size)
             throw "Error index out of range";
-         this.owner[i+this.startIndex]=value;
+         this.owner[i+this._startIndex]=value+this.displacement;
     }
+    size(){return this._size;}
+    startIndex() {return this._startIndex}
 
     push(v:number[])
     {
         for (var i=0;i<v.length;i++)
         {
-            this.owner[this.streamOffset++]=v[i]
+            this.owner[this.streamOffset++]=v[i]+this.displacement;
         }
     }
 }
