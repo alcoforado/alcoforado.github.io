@@ -1,3 +1,5 @@
+import {vec2,vec3,vec4} from 'gl-matrix'
+
 export class VecStreamFloat {
     _streamOffset:number=0;
     _streamOffsetInTheElement:number=0
@@ -56,6 +58,91 @@ export class VecStreamFloat {
             throw new Error("Error vector to add into the stream is not a multiple of " + this.element_size_in_floats);
         }
     }
+
+    pushVec2(v:vec2[]) {
+        if (this.element_size_in_floats!==2)
+        {
+            throw new Error("Invalid size for structure")
+        }
+
+        var i=0,j=0;
+        this.pushf((index)=>{
+            var result = v[i][j]
+            if (j===1) {
+                j=0;
+                i++;
+            }
+            else 
+                j++;
+            return result;
+        },v.length*2);
+    }
+
+    pushVec3(v:vec3[]) {
+        if (this.element_size_in_floats!==3)
+        {
+            throw new Error("Invalid size for structure")
+        }
+
+        var i=0,j=0;
+        this.pushf((index)=>{
+            var result = v[i][j]
+            if (j===2) {
+                j=0;
+                i++;
+            }
+            else 
+                j++;
+            return result;
+        },v.length*3);
+    }
+
+    pushVec4(v:vec4[]) {
+        if (this.element_size_in_floats!==4)
+        {
+            throw new Error("Invalid size for structure")
+        }
+
+        var i=0,j=0;
+        this.pushf((index)=>{
+            var result = v[i][j]
+            if (j===3) {
+                j=0;
+                i++;
+            }
+            else 
+                j++;
+            return result;
+        },v.length*4);
+    }
+    
+
+
+
+    pushf(fmap:(index:number)=>number,size:number)
+    {
+        if (Math.floor((this.owner.length-this._streamOffset+this.stride_in_floats)/(this.element_size_in_floats+this.stride_in_floats))*this.element_size_in_floats < size)
+            throw Error("VecStreamFloat is not big enough");
+
+        for (var i=0;i<size;i++)
+        {
+            if (this._streamOffsetInTheElement++<this.element_size_in_floats)
+            {
+                this.owner[this._streamOffset++]=fmap(i)
+
+            }
+            else 
+            {
+                this._streamOffset+=this.stride_in_floats;
+                this.owner[this._streamOffset++]=fmap(i)
+                this._streamOffsetInTheElement=1;
+            }
+        }
+        if (this._streamOffsetInTheElement!==this.element_size_in_floats)
+        {
+            throw new Error("Error vector to add into the stream is not a multiple of " + this.element_size_in_floats);
+        }
+    }
  }
 
  export class Vec3StreamFloat extends VecStreamFloat {
@@ -102,7 +189,7 @@ export class VecStreamIndex {
     set(i:number,value:number):void
     {
         if (i>=this._size)
-            throw "Error index out of range";
+            throw new Error("Error index out of range");
          this.owner[i+this._startIndex]=value+this.displacement;
     }
     size(){return this._size;}

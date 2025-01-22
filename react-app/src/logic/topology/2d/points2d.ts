@@ -1,6 +1,6 @@
 import { VecStreamFloat,VecStreamIndex } from "../../vecstream";
 import {vec2,vec3} from "gl-matrix"
-import {IDrawContext, ISerializeContext,IShape} from "../../shaders/ishape"
+import {IDrawContext, ISerializeContext,IShape} from "../../shapes/ishape"
 
 export class Points2D implements IShape {
     _v:any;
@@ -23,7 +23,7 @@ export class Points2D implements IShape {
     
     constructor(v:vec2[],rgbn:vec3[])
     {
-        this._v=new Float32Array(v.length*2);
+        this._v= new Float32Array(v.length*2);
         var k=0;
         for(var i=0;i<v.length;i++) {
             this._v[k++]=v[i][0];

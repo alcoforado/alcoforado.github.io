@@ -1,4 +1,5 @@
-﻿export class Vec2 {
+﻿
+export class Vec2 {
     0: number;
     1: number;
 
@@ -37,6 +38,18 @@
 
     }
 
+    static toFloat32Array(v:Vec2[]):Float32Array
+    {
+        let r=new Float32Array(v.length*2);
+        var k=0;
+        for(var i=0;i<v.length;i++) {
+            r[k++]=v[i][0];
+            r[k++]=v[i][1];
+        }
+        return r;
+
+    }
+    
     fdec(v:Vec2): Vec2 {
         this[0] -= v[0];
         this[1] -= v[1];

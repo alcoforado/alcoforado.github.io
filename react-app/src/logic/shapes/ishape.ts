@@ -1,4 +1,4 @@
-import { VecStreamFloat } from "../vecstream";
+import { VecStreamFloat,VecStreamIndex } from "../vecstream";
 
 
 export interface  IShape {
@@ -12,7 +12,8 @@ export interface  IShape {
 };
 
 export interface ISerializeContext {
-    vAttributes:{[key:string]:VecStreamFloat}
+    vAttributes:{[key:string]:VecStreamFloat},
+    indices:VecStreamIndex
 }
 
 

@@ -1,8 +1,8 @@
-import { VecStreamFloat,VecStreamIndex } from "../vecstream";
+import { VecStreamFloat,VecStreamIndex } from "../../vecstream";
 import {vec3,vec2} from "gl-matrix"
-import {ITopology} from "../shaders/itopology"
-import { ISerializeContext,IDrawContext } from "../shaders/ishape";
-export class Rectangle implements ITopology {
+import {ITopology2D} from "./itopology2d"
+import { ISerializeContext,IDrawContext } from "../../shapes/ishape";
+export class Rectangle implements ITopology2D {
     _v:any;
 
     nVertices():number {
@@ -20,6 +20,7 @@ export class Rectangle implements ITopology {
         i.push([0,1,2,2,3,0]);
     }
 
+
     
     //points must be in anti clock sequence
     constructor(bottomLeft:vec2,width:number,height:number)
@@ -34,12 +35,6 @@ export class Rectangle implements ITopology {
        
     }
 
-    draw(ctx: IDrawContext): void {
-
-        ctx.DrawIndexedTriangles()
-    }
-    
-
-
+   
 
 }

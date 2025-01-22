@@ -1,14 +1,17 @@
-
+import {IShader} from '../shaders/ishader'
+import {ShaderType,ShaderFactory} from '../shaders/shader-factory'
+import {IShape} from '../shapes/ishape'
 export default class MGL {
     _gl:WebGLRenderingContext|null;
+    private _shaders:{[key:number]:IShader}={}
     _initPromises:Array<Promise<any>>=[];
     constructor(canvas:HTMLCanvasElement|null)
     {
-        
         this._gl=canvas?.getContext('webgl2') ?? null
         if (this._gl==null)
             throw new Error("WebGL not supported by the browser. Please update your browser to the latest version");
     }
+    
     compileShader(source:string,type:number):WebGLShader
     {
         var shader=this.gl().createShader(type);
@@ -25,6 +28,30 @@ export default class MGL {
         throw new Error(`Error compiling shader ${source}: ${str}`);
         //this.gl().deleteShader(shader);
 
+    }
+
+    loadShader(tp:ShaderType)
+    {
+        if (this._shaders[tp])
+            return;
+        this._shaders[tp]=ShaderFactory(this,tp);
+    }
+
+    getShader(tp:ShaderType)
+    {
+        return this._shaders[tp];
+    }
+
+    register(tp:ShaderType,sh:IShape)
+    {
+        this.getShader(tp).addShape(sh);
+    }
+
+    draw() {
+        for (let key in this._shaders)
+        {
+            this._shaders[key].draw();
+        }
     }
 
     gl():WebGLRenderingContext
@@ -66,6 +93,7 @@ export default class MGL {
 
     waitInitialization(callback:()=>void)
     {
+        
         Promise
         .all(this._initPromises)
         .then(callback)

@@ -1,10 +1,10 @@
 import { Typography } from "@mui/material";
-import { MutableRefObject, useEffect , useRef, useState} from "react";
+import {  useEffect , useRef, useState} from "react";
 
 import MGL from "../logic/mgl/mgl";
-import { Shader2d } from "../logic/shaders/shader2d";
-import { CyclicColorRender } from "../logic/renders/cyclicColorRender";
-import {Rectangle} from "../logic/shapes/rectangle";
+import {Rectangle} from "../logic/topology/2d/rectangle";
+import { ShaderType } from "../logic/shaders/shader-factory";
+import {Shape2DVertexColor} from '../logic/shapes/shapes2d'
 interface PlotProp {
     title:string;
 }
@@ -24,13 +24,15 @@ export default function ViewPortTest(prop:PlotProp){
         gl.enable(gl.DEPTH_TEST);
         gl.clearColor(1.0,0.0,0.0,1.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
-        var sh=new Shader2d(mgl);
+        mgl.loadShader(ShaderType.VERTICE_COLOR_2D)
+        
         //sh.addShape(new Rectangle([0.25,0.25],0.5,0.5),new CyclicColorRender([[1,0,0],[0,1,0],[0,0,1]]));
       
         
         mgl.waitInitialization(()=>{
-            sh.addShape(new Rectangle([0,0],1,1),new CyclicColorRender([[1,0,0],[0,1,0],[0,0,1],[1,1,0]]));
-            sh.draw()
+            new Shape2DVertexColor(mgl,new Rectangle([0,0],1,1),
+            [[0,0,0,1],[0,1,0,1],[0,0,1,1],[1,1,0,1]]);
+            mgl.draw();
             
         });
     },[_mgl])

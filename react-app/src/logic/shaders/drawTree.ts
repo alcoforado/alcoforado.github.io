@@ -1,8 +1,7 @@
-import { IBindingManager } from "../mgl/bindingManager";
+//import { IBindingManager } from "../mgl/bindingManager";
 import MGL from "../mgl/mgl";
 import {VertexMGLBuffer,IndexMGLBuffer} from "../mgl/mglBuffer"
-import {IShape,IDrawContext,ISerializeContext} from "./ishape"
-import {IRender} from "./irender";
+import {IShape,IDrawContext,ISerializeContext} from "../shapes/ishape"
 import { VecStreamFloat, VecStreamIndex } from "../vecstream";
 import { MGLProgram } from "../mgl/mglProgram";
 
@@ -72,7 +71,7 @@ export  default class DrawTree {
         this._buffer.setAsActive();
         this._elBuffer.setAsActive();
         this._program.setAsActive();
-        if (this.state == DrawTreeState.CHANGED)
+        if (this.state === DrawTreeState.CHANGED)
             {
                 this.serialize();
                 this._buffer.load(this.vV!);

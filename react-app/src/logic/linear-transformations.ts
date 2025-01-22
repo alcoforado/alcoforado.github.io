@@ -56,8 +56,6 @@
 
     }
     
-   
-
     add(x: Vec2): Vec2 {
         var result = new Vec2();
         result[0] = this[0] + x[0];
