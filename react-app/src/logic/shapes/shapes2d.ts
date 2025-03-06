@@ -16,7 +16,7 @@ export class Shape2DVertexColor implements IShape  {
     }
 
     nVertices():number {return this._mesh.nVertices()}
-    nIndices():number {return this._mesh.nIndices()}
+    nIndices():number {return this._mesh.nIndices()}x
     vertexDim():number{return 2;};
     serialize(ctx:ISerializeContext):void
     {
