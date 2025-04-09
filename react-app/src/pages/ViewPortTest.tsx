@@ -4,7 +4,7 @@ import {  useEffect , useRef, useState} from "react";
 import MGL from "../logic/mgl/mgl";
 import {Rectangle} from "../logic/topology/2d/rectangle";
 import { ShaderType } from "../logic/shaders/shader-factory";
-import {Shape2DVertexColor} from '../logic/shapes/shapes2d'
+import {Shape2DVertexColor} from '../logic/shapes/shape2dVertextColor'
 interface PlotProp {
     title:string;
 }
@@ -25,7 +25,7 @@ export default function ViewPortTest(prop:PlotProp){
         gl.clearColor(1.0,0.0,0.0,1.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
         mgl.loadShader(ShaderType.VERTICE_COLOR_2D)
-        
+        mgl.loadShader(ShaderType.TEXTURE_2D);
         //sh.addShape(new Rectangle([0.25,0.25],0.5,0.5),new CyclicColorRender([[1,0,0],[0,1,0],[0,0,1]]));
       
         

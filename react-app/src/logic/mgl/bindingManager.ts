@@ -23,7 +23,7 @@ export class BufferLayoutItem {
     constructor(public ShaderVariableName:string,public SizeInFloat:number){}
 }
 
-export enum UniformType {INT="integer"}
+export enum UniformType {INT="integer",TEXTURE="texture"}
 class UniformVariable {
     private _currentValue:any;
     constructor(public Type:UniformType)

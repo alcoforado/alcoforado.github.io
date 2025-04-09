@@ -5,9 +5,9 @@ import MGL from '../mgl/mgl'
 import {ShaderType} from '../shaders/shader-factory'
 export class Shape2DVertexColor implements IShape  {
      
-    constructor(mgl:MGL,private _mesh:ITopology2D,private _rgba:vec4[])
+    constructor(mgl:MGL,private _topology:ITopology2D,private _rgba:vec4[])
     {
-       if (_rgba.length!==_mesh.nVertices())
+       if (_rgba.length!==_topology.nVertices())
        {
             throw new Error('color vertices dimension mismatch');
        }
@@ -15,12 +15,12 @@ export class Shape2DVertexColor implements IShape  {
 
     }
 
-    nVertices():number {return this._mesh.nVertices()}
-    nIndices():number {return this._mesh.nIndices()}x
+    nVertices():number {return this._topology.nVertices()}
+    nIndices():number {return this._topology.nIndices()}
     vertexDim():number{return 2;};
     serialize(ctx:ISerializeContext):void
     {
-        this._mesh.serialize(ctx.vAttributes['position'],ctx.indices);
+        this._topology.serialize(ctx.vAttributes['position'],ctx.indices);
         ctx.vAttributes['vColor'].pushVec4(this._rgba);
 
     }
