@@ -27,14 +27,16 @@ export default function ViewPortTest(prop:PlotProp){
         mgl.loadShader(ShaderType.VERTICE_COLOR_2D)
         mgl.loadShader(ShaderType.TEXTURE_2D);
         //sh.addShape(new Rectangle([0.25,0.25],0.5,0.5),new CyclicColorRender([[1,0,0],[0,1,0],[0,0,1]]));
-      
+       
+        new Shape2DVertexColor(mgl,new Rectangle([0,0],1,1),
+        [[0,0,0,1],[0,1,0,1],[0,0,1,1],[1,1,0,1]]);
+        new Shape2DVertexColor(mgl,new Rectangle([0,0],-1,-1),
+        [[0,0,0,1],[0,1,0,1],[0,0,1,1],[1,1,0,1]]);
+
         
         mgl.waitInitialization(()=>{
-            new Shape2DVertexColor(mgl,new Rectangle([0,0],1,1),
-            [[0,0,0,1],[0,1,0,1],[0,0,1,1],[1,1,0,1]]);
-            new Shape2DVertexColor(mgl,new Rectangle([0,0],-1,-1),
-            [[0,0,0,1],[0,1,0,1],[0,0,1,1],[1,1,0,1]]);
-
+            
+          
 
 
             mgl.draw();
