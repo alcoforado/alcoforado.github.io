@@ -46,9 +46,7 @@ export  default class DrawTree {
         let indexStart=0;
         let nElems=0;
         this._allocs.forEach(alloc=>{
-
             let subArrays=distributor.getChunk(alloc.shape.nVertices());
-            
             let indices= new VecStreamIndex(this.vI!,indexStart,alloc.shape.nIndices(),nElems);
             nElems+=alloc.shape.nVertices();
             alloc.indices=indices;

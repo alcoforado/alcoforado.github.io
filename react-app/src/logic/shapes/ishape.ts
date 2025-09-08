@@ -22,5 +22,6 @@ export interface ISerializeContext {
 
 export interface IDrawContext {
     DrawIndexedTriangles(): void;
+    DrawTriangles():void;
     DrawPoints():void;
 }

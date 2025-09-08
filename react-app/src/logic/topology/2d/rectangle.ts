@@ -20,8 +20,6 @@ export class Rectangle implements ITopology2D {
         i.push([0,1,2,2,3,0]);
     }
 
-
-    
     //points must be in anti clock sequence
     constructor(bottomLeft:vec2,width:number,height:number)
     {
@@ -30,9 +28,7 @@ export class Rectangle implements ITopology2D {
             bottomLeft[0]+width,bottomLeft[1],
             bottomLeft[0]+width,bottomLeft[1]+height,
             bottomLeft[0]      ,bottomLeft[1]+height,
-
             ]) ;
-       
     }
 
    

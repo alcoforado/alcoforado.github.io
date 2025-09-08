@@ -54,6 +54,31 @@ export default class MGL {
         }
     }
 
+    loadFile(file:string,callbackFn:(a:string)=>void) {
+        let p=  new  Promise<string>((resolve,reject)=>{
+            fetch(file).then((response)=>{
+                if (response.ok)
+                {
+                    response.text()
+                    .then(data=>{
+                        callbackFn(data);
+                        resolve(data)
+                    })
+                    .catch(()=> 
+                    { 
+                        console.log(`corrupted data while accessing ${file}`);
+                        reject();
+                    })
+                }
+                else {
+                    console.log(`Could not load file ${file}: ${response}`)
+                    reject();
+                }
+            })
+        })
+        this.waitFor(p)
+    }
+
     gl():WebGLRenderingContext
     {
         if (this._gl)

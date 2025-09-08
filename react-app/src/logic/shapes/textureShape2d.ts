@@ -2,12 +2,13 @@ import {ITopology2D} from '../topology/2d/itopology2d';
 import { ISerializeContext, IShape,IDrawContext } from './ishape';
 import MGL from '../mgl/mgl'
 import {ShaderType} from '../shaders/shader-factory'
-export class Sprite2D implements IShape  {
+import { MGLTexture } from '../mgl/mglTexture';
+export class TextureShape2D implements IShape  {
      
-    constructor(mgl:MGL,private _topology:ITopology2D)
+    constructor(mgl:MGL,private _topology:ITopology2D,private _textCoord:number[],private _texture:MGLTexture)
     {
+        
        mgl.register(ShaderType.TEXTURE_2D,this)
-
     }
 
     nVertices():number {return this._topology.nVertices()}
@@ -16,8 +17,7 @@ export class Sprite2D implements IShape  {
     serialize(ctx:ISerializeContext,):void
     {
         this._topology.serialize(ctx.vAttributes['position'],ctx.indices);
-       // ctx.vAttributes['vColor'].pushVec4(this._rgba);
-
+        ctx.vAttributes['texture'].push(this._textCoord);
     }
     draw(ctx:IDrawContext)
     {
