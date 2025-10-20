@@ -2,7 +2,7 @@ import {Rectangle} from '../topology/2d/rectangle';
 import { ISerializeContext, IShape,IDrawContext } from './ishape';
 import MGL from '../mgl/mgl'
 import { MGLTexture } from '../mgl/mglTexture';
-import { TextureShape2D } from './textureShape2D';
+import { TextureShape2D } from './textureShape2d';
 import {ShaderType} from '../shaders/shader-factory'
 export class Sprite2D extends TextureShape2D  {
      
