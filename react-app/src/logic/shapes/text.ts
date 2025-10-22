@@ -6,22 +6,90 @@ import {ShaderType} from '../shaders/shader-factory'
 import {MGLTexture} from '../mgl/mglTexture'
 import {XMLParser} from 'fast-xml-parser'
 
-export class Font {
+
+
+export interface IFontInfo {
+  info: Info
+  common: Common
+  pages: Pages
+  chars: Chars
+}
+
+export interface Info {
+  _face: string
+  _size: number
+  _bold: number
+  _italic: number
+  _charset: string
+  _unicode: number
+  _stretchH: number
+  _smooth: number
+  _aa: number
+  _padding: string
+  _spacing: string
+}
+
+export interface Common {
+  _lineHeight: number
+  _base: number
+  _scaleW: number
+  _scaleH: number
+  _pages: number
+  _packed: number
+}
+
+export interface Pages {
+  page: Page
+}
+
+export interface Page {
+  _id: number
+  _file: string
+}
+
+export interface Chars {
+  char: Char[]
+  _count: number
+}
+
+export interface Char {
+  _id: number
+  _x: number
+  _y: number
+  _width: number
+  _height: number
+  _xoffset: number
+  _yoffset: number
+  _xadvance: number
+  _page: number
+  _chnl: number
+}
+
+
+
+export class BitmapFont {
     _fontTexture:MGLTexture;
     _fontInfo:any;
     constructor(mgl:MGL,fontFile:string)
     {
-        this._fontTexture=new MGLTexture(mgl,new URL(fontFile+".png"));
+        this._fontTexture=new MGLTexture(mgl,new URL(fontFile+".png",window.location.origin));
         mgl.loadFile(fontFile+".xml",(data:string)=>{
-            let parser=new XMLParser();
-            this._fontInfo=parser.parse(data);
+            let parser=new XMLParser({
+                ignoreAttributes: false,
+                attributeNamePrefix : "_",
+                allowBooleanAttributes: true,
+                parseAttributeValue:true,
+            });
+            this._fontInfo=parser.parse(data).font;
+            (window as any).fontInfo=this._fontInfo;
+            console.log(this._fontInfo)
         })
     }
 }
 
 export class Text implements IShape  {
     private _nLetters:number;
-    constructor(private mgl:MGL, private bl:vec2,private text:string, private font:Font)
+    constructor(private mgl:MGL, private bl:vec2,private text:string, private font:BitmapFont)
     {
        mgl.register(ShaderType.TEXTURE_2D,this)
        this._nLetters=this.computeNLetters(text);
@@ -45,8 +113,10 @@ export class Text implements IShape  {
     {
         for (var il=0;il<this._nLetters;il++)
         {
-            var letter=this.text[il];
-          //  this.mgl.PixelLengthToViewPort();
+            let letter=this.text.charCodeAt(il);
+
+
+            this.mgl.PixelLengthToViewPort();
 
         }
         let nVertices=this.nVertices();

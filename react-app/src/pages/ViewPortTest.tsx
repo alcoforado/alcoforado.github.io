@@ -1,6 +1,6 @@
 import { Typography } from "@mui/material";
 import {  useEffect , useRef, useState} from "react";
-
+import {BitmapFont} from '../logic/shapes/text'
 import MGL from "../logic/mgl/mgl";
 import {Rectangle} from "../logic/topology/2d/rectangle";
 import { ShaderType } from "../logic/shaders/shader-factory";
@@ -14,7 +14,6 @@ export default function ViewPortTest(prop:PlotProp){
     let canvas=useRef<HTMLCanvasElement>(null)
     let [_mgl,setMGL] = useState<MGL>()
     useEffect(()=>{
-        console.log("hello")
         if (_mgl)
             return;
        var mgl=new MGL(canvas.current);
@@ -32,15 +31,10 @@ export default function ViewPortTest(prop:PlotProp){
         [[0,0,0,1],[0,1,0,1],[0,0,1,1],[1,1,0,1]]);
         new Shape2DVertexColor(mgl,new Rectangle([0,0],-1,-1),
         [[0,0,0,1],[0,1,0,1],[0,0,1,1],[1,1,0,1]]);
-
+        let font=new BitmapFont(mgl,"./bitmap-fonts/sans-serif-72-white");
         
         mgl.waitInitialization(()=>{
-            
-          
-
-
             mgl.draw();
-            
         });
     },[_mgl])
     return <>

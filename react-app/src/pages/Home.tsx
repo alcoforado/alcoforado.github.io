@@ -57,6 +57,11 @@ export default function Home():JSX.Element {
                 description="Plotting 3D Functions"
                 href="/plots3d">
         </AppCard>
+         <AppCard
+                title="Viewport Test"
+                description="Viewport tests"
+                href="/viewporttest">
+        </AppCard>
          </Container>
         <Container sx={{
             backgroundImage:`url(${"./images/landscape.svg"})`,
