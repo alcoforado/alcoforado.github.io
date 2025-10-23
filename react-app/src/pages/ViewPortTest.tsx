@@ -29,8 +29,8 @@ export default function ViewPortTest(prop:PlotProp){
        
         new Shape2DVertexColor(mgl,new Rectangle([0,0],1,1),
         [[0,0,0,1],[0,1,0,1],[0,0,1,1],[1,1,0,1]]);
-        new Shape2DVertexColor(mgl,new Rectangle([0,0],-1,-1),
-        [[0,0,0,1],[0,1,0,1],[0,0,1,1],[1,1,0,1]]);
+       // new Shape2DVertexColor(mgl,new Rectangle([0,0],-1,-1),
+       // [[0,0,0,1],[0,1,0,1],[0,0,1,1],[1,1,0,1]]);
         let font=new BitmapFont(mgl,"./bitmap-fonts/sans-serif-72-white");
         
         mgl.waitInitialization(()=>{

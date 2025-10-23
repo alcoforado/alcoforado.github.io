@@ -116,7 +116,6 @@ export class Text implements IShape  {
             let letter=this.text.charCodeAt(il);
 
 
-            this.mgl.PixelLengthToViewPort();
 
         }
         let nVertices=this.nVertices();
