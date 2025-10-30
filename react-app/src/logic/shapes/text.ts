@@ -69,7 +69,7 @@ export interface Char {
 
 export class BitmapFont {
     _fontTexture:MGLTexture;
-    _fontInfo:any;
+    _fontInfo:IFontInfo|null=null;
     constructor(mgl:MGL,fontFile:string)
     {
         this._fontTexture=new MGLTexture(mgl,new URL(fontFile+".png",window.location.origin));
@@ -81,18 +81,22 @@ export class BitmapFont {
                 parseAttributeValue:true,
             });
             this._fontInfo=parser.parse(data).font;
-            (window as any).fontInfo=this._fontInfo;
-            console.log(this._fontInfo)
         })
+    }
+    getInfo():IFontInfo {
+      if (this._fontInfo)
+        return this._fontInfo;
+      throw Error("Font Info not loaded yet")
     }
 }
 
 export class Text implements IShape  {
     private _nLetters:number;
-    constructor(private mgl:MGL, private bl:vec2,private text:string, private font:BitmapFont)
+    constructor(private mgl:MGL, private ulNDC:vec2,private text:string, private font:BitmapFont)
     {
        mgl.register(ShaderType.TEXTURE_2D,this)
        this._nLetters=this.computeNLetters(text);
+       text=text || '';
     }
     computeNLetters(text:string){
         var result:number=0;
@@ -111,9 +115,23 @@ export class Text implements IShape  {
     vertexDim():number{return 2;}
     serialize(ctx:ISerializeContext):void
     {
-        for (var il=0;il<this._nLetters;il++)
+        let fontInfo=this.font.getInfo();
+        let cY=2.0/this.mgl.getScreenHeight(); //NDC per pixel in Height
+        let cX=2.0/this.mgl.getScreenWidth();  //NDC per pixel in Width
+        let lineHeight=this.font.getInfo().common._lineHeight*cY;
+        let lineBase = this.font.getInfo().common._base*cY;
+        let topLineY= this.ulNDC[1]
+        let cursorStart=this.ulNDC[0];
+
+        for (var il=0;il<this.text.length;il++)
         {
+           if (!fontInfo.chars.char[il])
+              continue; 
+          let c=fontInfo.chars.char[il];
+          
+          this.font.getInfo()
             let letter=this.text.charCodeAt(il);
+            let lineHeightNDC=this.font._fontInfo
 
 
 
