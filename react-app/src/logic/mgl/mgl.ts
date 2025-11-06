@@ -2,6 +2,12 @@ import {IShader} from '../shaders/ishader'
 import {ShaderType,ShaderFactory} from '../shaders/shader-factory'
 import {IShape} from '../shapes/ishape'
 export default class MGL {
+    getScreenWidth() {
+      return this._gl?.canvas.width!;
+    }
+    getScreenHeight() {
+      return this._gl?.canvas.height!;
+    }
     _gl:WebGLRenderingContext|null;
     private _shaders:{[key:number]:IShader}={}
     _initPromises:Array<Promise<any>>=[];

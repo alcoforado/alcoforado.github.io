@@ -26,7 +26,9 @@ export class BufferLayoutItem {
 export enum UniformType {INT="integer",TEXTURE="texture"}
 class UniformVariable {
     private _currentValue:any;
-    constructor(public Type:UniformType)
+    public Location:WebGLUniformLocation=-1;
+
+    constructor(public name:string,public Type:UniformType)
     {
         this._currentValue=null;
         
@@ -44,7 +46,7 @@ export class BindingManager implements IBindingContext, IBindingManager {
     constructor(private _mgl:MGL){}
 
     private attributes:Array<BufferLayoutItem>=[];
-    private uniformVariables:Array<UniformVariable>=[]
+    private uniformVariables:Map<string,UniformVariable>=new Map();
 
 
     getPositionAttribute() {
@@ -78,7 +80,7 @@ export class BindingManager implements IBindingContext, IBindingManager {
 
     addUniformInt(varName:string):IBindingContext
     {
-        this.uniformVariables.push(new UniformVariable(UniformType.INT));
+        this.uniformVariables.set(varName,new UniformVariable(varName,UniformType.INT));
         return this;
     }
 
@@ -101,6 +103,14 @@ export class BindingManager implements IBindingContext, IBindingManager {
                 throw Error(`Variable ${attr.ShaderVariableName} not found in program`)
             }
             attr.ProgramIndexLocation=result;
+        })
+        this.uniformVariables.forEach((uvar,key)=>{
+            let location=this._mgl.gl().getUniformLocation(pg,key);
+            if (location == null)
+            {
+                throw Error(`Uniform Variable ${uvar.name} not found in program`)
+            }
+            uvar.Location=location;
         })
     }
 

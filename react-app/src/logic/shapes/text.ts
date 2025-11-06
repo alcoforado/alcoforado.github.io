@@ -120,20 +120,37 @@ export class Text implements IShape  {
         let cX=2.0/this.mgl.getScreenWidth();  //NDC per pixel in Width
         let lineHeight=this.font.getInfo().common._lineHeight*cY;
         let lineBase = this.font.getInfo().common._base*cY;
-        let topLineY= this.ulNDC[1]
-        let cursorStart=this.ulNDC[0];
+        let topLineNDCY= this.ulNDC[1]
+        let cursorNDCX=this.ulNDC[0];
+        let cTY=1.0/fontInfo.common._scaleH;
+        let cTX=1.0/fontInfo.common._scaleW;
+        
 
-        for (var il=0;il<this.text.length;il++)
+        for (var il=0,indexOff=0;il<this.text.length;il++,indexOff+=4)
         {
            if (!fontInfo.chars.char[il])
               continue; 
-          let c=fontInfo.chars.char[il];
-          
-          this.font.getInfo()
-            let letter=this.text.charCodeAt(il);
-            let lineHeightNDC=this.font._fontInfo
+          let charCode = this.text.charCodeAt(il);
 
+          let ch=fontInfo.chars.char[charCode];
+          let topChar=topLineNDCY+ch._yoffset*cY;
+          let x0=cursorNDCX;
+          let x1=x0+ch._width*cX;
+          let y1= topLineNDCY-ch._yoffset*cY;
+          let y0= y1-ch._height*cY;
+          //texture coords
+          let u0=ch._x*cTX; //left texture quad
+          let u1=u0+ch._width*cTX; //right texture quad
+          let v1=ch._y*cTY;  //top texture
+          let v0=v1+ch._height*cTY //bottom texture
 
+          ctx.vAttributes["position"].pushVec2([[x0,y0],[x1,y0],[x1,y1],[x0,y1]]); 
+          ctx.vAttributes["texture"].pushVec2([[u0,v0],[u1,v0],[u1,v1],[u0,v1]])
+          ctx.indices.push([0+indexOff,1+indexOff,2+indexOff,
+                            0+indexOff,2+indexOff,3+indexOff]);
+
+          //advance cursor 
+          cursorNDCX+=(ch._xoffset+ch._xadvance)*cX;
 
         }
         let nVertices=this.nVertices();

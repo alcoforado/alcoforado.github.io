@@ -6,13 +6,11 @@ export class Shader2dTexture extends IShader {
     //private drawTree:DrawTree<CyclicColorRender>;
     constructor(private glContext:MGL)
     {  
-        //create program
-        
-        let program=new MGLProgram(glContext,"/glsl/vshader2d.glsl","/glsl/fshader2d.glsl");
+        let program=new MGLProgram(glContext,"/glsl/vtexturendc.glsl","/glsl/ftexturendc.glsl");
         program.config((config)=>{
             config.addVertexAttribute("position",2);
-            config.addVertexAttribute("vColor",4);
-            config.addUniformInt("pointSize");
+            config.addVertexAttribute("texCoord",2);
+            config.addUniformInt("sampler");
         })
         let drawTree=new DrawTree(glContext,program);
         super(glContext,drawTree,program);
