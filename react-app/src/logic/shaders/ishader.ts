@@ -18,6 +18,8 @@ export class  IShader {
         this.drawTree.addObject(sh);
     }
 
+    
+
     draw():void
     {
         this.drawTree.draw();

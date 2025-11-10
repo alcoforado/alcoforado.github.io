@@ -16,6 +16,10 @@ export default class MGL {
         this._gl=canvas?.getContext('webgl2') ?? null
         if (this._gl==null)
             throw new Error("WebGL not supported by the browser. Please update your browser to the latest version");
+        
+        //browsers load images for textures from top while open gl expects from bottom.
+        this._gl.pixelStorei(this._gl.UNPACK_FLIP_Y_WEBGL,true)
+    
     }
     
     compileShader(source:string,type:number):WebGLShader

@@ -1,9 +1,13 @@
     import { VecStreamFloat } from '../vecstream';
 import MGL from './mgl';
 
-export interface IBindingContext {
-    addVertexAttribute(shaderVarName:string,sizeInFloats:number):IBindingContext;
-    addUniformInt(varName:string):IBindingContext;
+type OnBeforeFirstExecutionHandler=(mgl:MGL)=>void;
+
+export interface IBindingConfiguration {
+    addVertexAttribute(shaderVarName:string,sizeInFloats:number):IBindingConfiguration;
+    addUniformInt(varName:string):IBindingConfiguration;
+    onBeforeFirstExecution:OnBeforeFirstExecutionHandler|null;
+    
 
 }
 
@@ -37,11 +41,12 @@ class UniformVariable {
 
 }
 
-export class BindingManager implements IBindingContext, IBindingManager {
+export class BindingManager implements IBindingConfiguration, IBindingManager {
     
     
     private  _vertexSize:number=0;
     
+    public onBeforeFirstExecution:OnBeforeFirstExecutionHandler|null=null;
     
     constructor(private _mgl:MGL){}
 
@@ -65,7 +70,7 @@ export class BindingManager implements IBindingContext, IBindingManager {
     }
 
         
-    addVertexAttribute(shaderVarName:string,sizeInFloats:number):IBindingContext
+    addVertexAttribute(shaderVarName:string,sizeInFloats:number):IBindingConfiguration
     {
         if (this.attributes.findIndex((value)=>value.ShaderVariableName==shaderVarName)>=0)
         {
@@ -78,7 +83,7 @@ export class BindingManager implements IBindingContext, IBindingManager {
         return this;
     }
 
-    addUniformInt(varName:string):IBindingContext
+    addUniformInt(varName:string):IBindingConfiguration
     {
         this.uniformVariables.set(varName,new UniformVariable(varName,UniformType.INT));
         return this;

@@ -11,6 +11,7 @@ export class Shader2dTexture extends IShader {
             config.addVertexAttribute("position",2);
             config.addVertexAttribute("texCoord",2);
             config.addUniformInt("sampler");
+            
         })
         let drawTree=new DrawTree(glContext,program);
         super(glContext,drawTree,program);

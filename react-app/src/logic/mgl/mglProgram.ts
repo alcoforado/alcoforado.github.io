@@ -1,9 +1,13 @@
 import MGL from "./mgl";
-import {BindingManager,IBindingContext, IBindingManager} from "./bindingManager";
-type ConfigFunction = (_context:IBindingContext) => void;
+import { BindingManager, IBindingConfiguration, IBindingManager } from './bindingManager';
+type ConfigFunction = (configuration:IBindingConfiguration) => void;
+
+
+
+
 export class MGLProgram {
    
-    private _configs:{(_context:IBindingContext):void}  []=[];
+    private _configs:ConfigFunction[]=[];
     private program:WebGLProgram|null=null;
     private linked:boolean=false;
     private BindingManager:BindingManager;
@@ -18,7 +22,11 @@ export class MGLProgram {
                 f(this.BindingManager)
             })
             this.BindingManager.assignSlots(pg);
-            
+            if (this.BindingManager.onBeforeFirstExecution)
+            {
+                this.setAsActive();
+                this.BindingManager.onBeforeFirstExecution(this.mgl);
+            }            
         });
         mgl.waitFor(p1);
     }
@@ -45,3 +53,4 @@ export class MGLProgram {
     
 
 }
+
