@@ -40,21 +40,20 @@ export default class MGL {
 
     }
 
-    loadShader(tp:ShaderType)
+   
+
+    getCreateShader(tp:ShaderType)
     {
         if (this._shaders[tp])
-            return;
-        this._shaders[tp]=ShaderFactory(this,tp);
-    }
+            return this._shaders[tp];
+        else
+            return this._shaders[tp]=ShaderFactory(this,tp);
 
-    getShader(tp:ShaderType)
-    {
-        return this._shaders[tp];
     }
 
     register(tp:ShaderType,sh:IShape)
     {
-        this.getShader(tp).addShape(sh);
+        this.getCreateShader(tp).addShape(sh);
     }
 
     draw() {
