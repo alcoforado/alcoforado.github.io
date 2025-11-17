@@ -21,7 +21,7 @@ export default function ViewPortTest(prop:PlotProp){
         let gl=mgl.gl();
         // Enable the depth test
         gl.enable(gl.DEPTH_TEST);
-        gl.clearColor(1.0,0.0,0.0,1.0);
+        gl.clearColor(0.0,0.0,0.0,1.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
         mgl.loadShader(ShaderType.VERTICE_COLOR_2D)
         mgl.loadShader(ShaderType.TEXTURE_2D);

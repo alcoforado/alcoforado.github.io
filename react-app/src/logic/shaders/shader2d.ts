@@ -12,7 +12,6 @@ export class Shader2d extends IShader {
         program.config((config)=>{
             config.addVertexAttribute("position",2);
             config.addVertexAttribute("vColor",4);
-            config.addUniformInt("pointSize");
         })
         let drawTree=new DrawTree(glContext,program);
         super(glContext,drawTree,program);

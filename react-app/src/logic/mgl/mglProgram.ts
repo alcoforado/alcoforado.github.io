@@ -18,13 +18,13 @@ export class MGLProgram {
         var p1=mgl.createProgram(verticeShader,fragmentShader).then(pg=>{
             this.program=pg;
             this.linked=true;  
+            this.setAsActive();
             this._configs.forEach(f=>{
                 f(this.BindingManager)
             })
             this.BindingManager.assignSlots(pg);
             if (this.BindingManager.onBeforeFirstExecution)
             {
-                this.setAsActive();
                 this.BindingManager.onBeforeFirstExecution(this.mgl);
             }            
         });
@@ -41,6 +41,19 @@ export class MGLProgram {
         this.mgl.gl().useProgram(this.program);
     }
     
+    listUniforms() {
+        if (!this.linked)
+            throw Error("Cant list uniforms, it was not linked yet")
+        const numUniforms = this.mgl.gl().getProgramParameter(this.program!, this.mgl.gl().ACTIVE_UNIFORMS);
+        var result:WebGLActiveInfo[]=[];
+        for (let i = 0; i < numUniforms; ++i) {
+            const info = this.mgl.gl().getActiveUniform(this.program!, i);
+            if (info)
+                result.push(info);
+        }
+        return result;
+    }
+
     config(c:ConfigFunction){
         if (this.linked) //program linked, execture right away
         {
